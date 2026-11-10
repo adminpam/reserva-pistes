@@ -1,6 +1,7 @@
 # Propuesta inicial (versión 2): ReservaPistes
 
-**Autores:** Denys Peresunko y Joy
+**Autores:** Denys Peresunko y Joy Liliana Castro Valencia
+
 **Módulo:** M0617 Programación asistida con IA (Vibe Coding), IES Sabadell
 
 ## Descripción
@@ -11,7 +12,7 @@ ReservaPistes es una aplicación web propia para reservar pistas y encontrar jug
 
 - Diseño propio: paleta de colores, tipografías, iconos y pantallas diseñados por nosotros, distintos de los de cualquier aplicación existente.
 - No usamos logotipos, imágenes, textos ni código de otras aplicaciones. El mapa usa OpenStreetMap, con su atribución.
-- Deportes, reglas de plazas por deporte y datos de ejemplo propios (clubes y usuarios ficticios).
+- Deportes con sus reglas reales de plazas, y datos reales de instalaciones deportivas procedentes de OpenStreetMap. Los usuarios y las reservas de ejemplo son ficticios.
 
 ## Problema que resuelve
 
@@ -44,16 +45,27 @@ Es difícil encontrar una pista libre y gente con quien jugar. Las reservas por 
 
 ## Datos (modelo inicial)
 
-Tablas principales: usuarios, deportes, clubes (con latitud y longitud), pistas, reservas, jugadores de cada partido y nivel de cada usuario por deporte. Un club tiene muchas pistas, una pista tiene muchas reservas y una reserva abierta tiene varios jugadores. Todos los datos de ejemplo son inventados (clubes y usuarios ficticios), no usamos datos personales reales.
+Tablas principales: usuarios, deportes, clubes (con latitud y longitud), pistas, reservas, jugadores de cada partido y nivel de cada usuario por deporte. Un club tiene muchas pistas, una pista tiene muchas reservas y una reserva abierta tiene varios jugadores. Los clubes se importan de datos reales de OpenStreetMap. Los usuarios y las reservas de ejemplo son ficticios: no usamos datos personales reales.
 
 ## Tecnologías
 
 - Backend: Laravel.
 - Frontend: plantillas Blade con CSS propio (o Tailwind) y JavaScript para el mapa.
 - Mapa: Leaflet con OpenStreetMap (gratuito y sin clave de API).
+- Datos reales de instalaciones: API Overpass de OpenStreetMap, ejecutada una sola vez con un comando de importación (no en cada visita).
+- Búsqueda de direcciones: Nominatim de OpenStreetMap.
+- Previsión del tiempo para pistas exteriores: Open-Meteo (sin clave de API).
 - Base de datos: MySQL o PostgreSQL en producción, según la plataforma gratuita de despliegue (se decide antes de programar).
 - Control de versiones: GitHub, con ramas por funcionalidad y pull requests revisados por la otra persona.
 - Herramienta de IA: Claude.
+
+## Datos reales y servicios externos
+
+- **Deportes:** tenis de mesa, bádminton, baloncesto 3x3, voleibol, fútbol sala y tenis, con su número real de jugadores por partido (por ejemplo, individual o dobles en tenis de mesa y bádminton).
+- **Ubicaciones:** las instalaciones deportivas reales (nombre, dirección, coordenadas y deportes) se importan de OpenStreetMap para la zona de Sabadell, Terrassa y Barcelona. Los datos son de colaboradores de OpenStreetMap y se citan con su atribución.
+- **Aviso en la aplicación:** es un proyecto académico. Las reservas y los precios son simulados y no se envían a los clubes reales.
+- **Claves de API:** los servicios elegidos no necesitan clave. Si más adelante usamos alguno que la necesite, la clave irá en el archivo .env y en las variables de entorno de la plataforma, nunca en el repositorio ni en los mensajes a la IA.
+- **Usuarios reales:** cualquier persona puede registrarse en la aplicación desplegada (por ejemplo, compañeros durante la presentación). Los datos de ejemplo que cargamos nosotros son ficticios.
 
 ## Convenciones de código
 
@@ -75,8 +87,8 @@ Tablas principales: usuarios, deportes, clubes (con latitud y longitud), pistas,
 
 ## Reparto
 
-- **Denys:** modelo de datos, reservas, partidos abiertos, roles y despliegue.
-- **Joy:** vistas y diseño, mapa, perfiles de jugador y manual de usuario.
+- **Denys:** modelo de datos, usuarios y roles, reservas, partidos abiertos y despliegue.
+- **Joy:** clubes y pistas (gestión del gestor de club), mapa, vistas y diseño, perfiles de jugador y manual de usuario.
 - **Los dos:** pruebas, documentación y registro de IA.
 
 ## Riesgos
