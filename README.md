@@ -1,66 +1,47 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ReservaPistes 🏸
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplicación web para **reservar pistas deportivas** y **encontrar compañeros de juego** en la zona Sabadell–Terrassa–Barcelona. Proyecto del módulo **M0617 Programación asistida con IA** (AEA6 «Vibe Coding»), IES Sabadell.
 
-## About Laravel
+**Autores:** Denys Peresunko (@adminpam) y Joy Liliana Castro Valencia (@joyvalencia)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+> ⚠️ Las reservas y pagos son **simulados**: es un proyecto educativo, no se cobra nada.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Qué hace
+- Mapa de **clubes reales** (importados de OpenStreetMap) con filtro por deporte.
+- Reserva de slots de una hora **sin solapamientos** (comprobación transaccional).
+- **Partidos abiertos**: plazas según el deporte (tenis de mesa 2, fútbol sala 10…), rango de nivel 1–5 opcional, apuntarse/salir.
+- Perfil con nivel por deporte; «Mis reservas» y «Mis partidos» con cancelación.
+- Panel de **gestor de club** (CRUD de pistas, reservas del club) y panel de **admin** (clubes, deportes, usuarios).
+- Tiempo actual en pistas exteriores (Open-Meteo). Todo **sin claves de API**.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Stack
+Laravel 12 · Blade + CSS propio · JS vanilla + Leaflet/OpenStreetMap · SQLite (local) / PostgreSQL (producción) · Vite
 
-## Learning Laravel
+## Herramientas de IA utilizadas
+El proyecto se ha desarrollado con asistencia de **Claude (Anthropic)** — generación de código guiada, revisión y documentación. Cada uso está registrado en [`docs/registre-ia.md`](docs/registre-ia.md) con su prompt, resultado y commit. Todo el código mergeado a `main` lo entendemos y podemos explicarlo.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Puesta en marcha local
+```bash
+git clone https://github.com/adminpam/reserva-pistes.git
+cd reserva-pistes
+composer install
+cp .env.example .env
+php artisan key:generate
+# SQLite: crear el archivo de base de datos si no existe
+# (Windows PowerShell): New-Item database/database.sqlite -ItemType File -Force
+php artisan migrate --seed
+npm install && npm run dev   # en otra terminal
+php artisan serve            # → http://127.0.0.1:8000
+php artisan clubs:import     # opcional: clubes reales desde OpenStreetMap
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+**Usuarios demo (ficticios, solo local):** `admin@reservapistes.test`, `gestor@reservapistes.test`, `marta@reservapistes.test` — contraseña: la de `SEED_PASSWORD` del `.env` (por defecto `password`).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Producción
+Desplegado en **Laravel Cloud** (PostgreSQL). URL: _pendiente — ver `docs/05-desplegament.md`_.
 
-## Laravel Sponsors
+## Documentación
+`docs/01-proposta.md` → propuesta · `02-requisits` · `03-disseny` · `04-arquitectura` · `05-desplegament` · `06-proves` · `registre-ia.md` · [`CHANGELOG.md`](CHANGELOG.md)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Capturas
+_Se añadirán al final del desarrollo (app desplegada)._
