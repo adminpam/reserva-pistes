@@ -16,3 +16,11 @@ Route::middleware("guest")->group(function () {
 });
 
 Route::post("/logout", [AuthController::class, "logout"])->middleware("auth")->name("logout");
+
+// --- Partidos abiertos ---
+Route::middleware("auth")->group(function () {
+    Route::get("/matches", [App\Http\Controllers\MatchController::class, "index"])->name("matches.index");
+    Route::get("/my/matches", [App\Http\Controllers\MatchController::class, "mine"])->name("matches.mine");
+    Route::post("/matches/{booking}/join", [App\Http\Controllers\MatchController::class, "join"])->name("matches.join");
+    Route::delete("/matches/{booking}/leave", [App\Http\Controllers\MatchController::class, "leave"])->name("matches.leave");
+});
