@@ -23,3 +23,19 @@ Route::middleware("auth")->group(function () {
     Route::get("/my/bookings", [App\Http\Controllers\BookingController::class, "index"])->name("bookings.index");
     Route::patch("/bookings/{booking}/cancel", [App\Http\Controllers\BookingController::class, "cancel"])->name("bookings.cancel");
 });
+
+// --- Panel de administración ---
+Route::middleware(["auth", "role:admin"])->prefix("admin")->name("admin.")->group(function () {
+    Route::get("/clubs", [App\Http\Controllers\Admin\AdminClubController::class, "index"])->name("clubs.index");
+    Route::patch("/clubs/{club}", [App\Http\Controllers\Admin\AdminClubController::class, "update"])->name("clubs.update");
+    Route::delete("/clubs/{club}", [App\Http\Controllers\Admin\AdminClubController::class, "destroy"])->name("clubs.destroy");
+
+    Route::get("/sports", [App\Http\Controllers\Admin\AdminSportController::class, "index"])->name("sports.index");
+    Route::post("/sports", [App\Http\Controllers\Admin\AdminSportController::class, "store"])->name("sports.store");
+    Route::patch("/sports/{sport}", [App\Http\Controllers\Admin\AdminSportController::class, "update"])->name("sports.update");
+    Route::delete("/sports/{sport}", [App\Http\Controllers\Admin\AdminSportController::class, "destroy"])->name("sports.destroy");
+
+    Route::get("/users", [App\Http\Controllers\Admin\AdminUserController::class, "index"])->name("users.index");
+    Route::patch("/users/{user}", [App\Http\Controllers\Admin\AdminUserController::class, "update"])->name("users.update");
+    Route::delete("/users/{user}", [App\Http\Controllers\Admin\AdminUserController::class, "destroy"])->name("users.destroy");
+});
