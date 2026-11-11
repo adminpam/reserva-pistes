@@ -24,3 +24,10 @@ Route::middleware("auth")->group(function () {
     Route::post("/matches/{booking}/join", [App\Http\Controllers\MatchController::class, "join"])->name("matches.join");
     Route::delete("/matches/{booking}/leave", [App\Http\Controllers\MatchController::class, "leave"])->name("matches.leave");
 });
+
+// --- Reservas ---
+Route::middleware("auth")->group(function () {
+    Route::post("/bookings", [App\Http\Controllers\BookingController::class, "store"])->name("bookings.store");
+    Route::get("/my/bookings", [App\Http\Controllers\BookingController::class, "index"])->name("bookings.index");
+    Route::patch("/bookings/{booking}/cancel", [App\Http\Controllers\BookingController::class, "cancel"])->name("bookings.cancel");
+});
