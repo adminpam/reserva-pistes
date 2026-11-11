@@ -16,3 +16,10 @@ Route::middleware("guest")->group(function () {
 });
 
 Route::post("/logout", [AuthController::class, "logout"])->middleware("auth")->name("logout");
+
+// --- Reservas ---
+Route::middleware("auth")->group(function () {
+    Route::post("/bookings", [App\Http\Controllers\BookingController::class, "store"])->name("bookings.store");
+    Route::get("/my/bookings", [App\Http\Controllers\BookingController::class, "index"])->name("bookings.index");
+    Route::patch("/bookings/{booking}/cancel", [App\Http\Controllers\BookingController::class, "cancel"])->name("bookings.cancel");
+});
