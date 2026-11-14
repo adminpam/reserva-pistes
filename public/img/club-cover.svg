@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Club deportivo">
+  <rect width="160" height="120" rx="12" fill="#1F2933"/>
+  <rect x="14" y="40" width="132" height="66" rx="6" fill="#0E9F8E"/>
+  <line x1="80" y1="40" x2="80" y2="106" stroke="#F7F7F5" stroke-width="2"/>
+  <circle cx="80" cy="73" r="12" fill="none" stroke="#F7F7F5" stroke-width="2"/>
+  <circle cx="132" cy="24" r="9" fill="#F59E0B"/>
+</svg>
