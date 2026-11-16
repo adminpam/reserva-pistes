@@ -51,3 +51,20 @@ Route::middleware(["auth", "role:admin"])->prefix("admin")->name("admin.")->grou
 Route::get("/", [App\Http\Controllers\MapController::class, "index"])->name("home");
 Route::get("/api/clubs", [App\Http\Controllers\MapController::class, "clubs"])->name("api.clubs");
 Route::get("/clubs/{club}", [App\Http\Controllers\ClubController::class, "show"])->name("clubs.show");
+
+// --- Perfil del jugador ---
+Route::middleware("auth")->group(function () {
+    Route::get("/profile", [App\Http\Controllers\ProfileController::class, "edit"])->name("profile.edit");
+    Route::patch("/profile", [App\Http\Controllers\ProfileController::class, "update"])->name("profile.update");
+});
+
+// --- Panel del gestor de club ---
+Route::middleware(["auth", "role:manager"])->prefix("manager")->name("manager.")->group(function () {
+    Route::get("/courts", [App\Http\Controllers\Manager\ManagerCourtController::class, "index"])->name("courts.index");
+    Route::get("/courts/create", [App\Http\Controllers\Manager\ManagerCourtController::class, "create"])->name("courts.create");
+    Route::post("/courts", [App\Http\Controllers\Manager\ManagerCourtController::class, "store"])->name("courts.store");
+    Route::get("/courts/{court}/edit", [App\Http\Controllers\Manager\ManagerCourtController::class, "edit"])->name("courts.edit");
+    Route::patch("/courts/{court}", [App\Http\Controllers\Manager\ManagerCourtController::class, "update"])->name("courts.update");
+    Route::delete("/courts/{court}", [App\Http\Controllers\Manager\ManagerCourtController::class, "destroy"])->name("courts.destroy");
+    Route::get("/bookings", [App\Http\Controllers\Manager\ManagerBookingController::class, "index"])->name("bookings.index");
+});
