@@ -1,5 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ReservaPistes">
-  <circle cx="32" cy="26" r="16" fill="#F59E0B" stroke="#1F2933" stroke-width="4"/>
-  <path d="M20 16 Q32 30 44 16" fill="none" stroke="#1F2933" stroke-width="3" stroke-linecap="round"/>
-  <path d="M8 52 Q24 38 32 50 Q40 60 56 46" fill="none" stroke="#0E9F8E" stroke-width="4" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 96" role="img" aria-label="ReservaPistes">
+  <!-- Astillas de velocidad: tres fragmentos ambar que cruzan por la izquierda -->
+  <g fill="#E8A317">
+    <path d="M6 30 h34 l-9 10 H-3 z" transform="translate(9 0)"/>
+    <path d="M14 46 h30 l-9 10 H5 z" transform="translate(6 0)"/>
+    <path d="M26 62 h22 l-9 10 H17 z" transform="translate(3 0)"/>
+  </g>
+  <!-- Letra R con la pierna derecha extendida hacia delante -->
+  <path fill="#FFFFFF" d="M46 16 h30 c13 0 21 8 21 19 0 9-5 15-13 18l18 27H86L70 55h-9v25H46V16z
+                           M61 29v14h13c5 0 8-3 8-7s-3-7-8-7H61z"/>
+  <!-- Pelota detenida en el hueco de la R -->
+  <circle cx="67.5" cy="36" r="4.5" fill="#E8A317"/>
 </svg>

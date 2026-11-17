@@ -1,5 +1,11 @@
 # Changelog
 
+## [Sin publicar] — 2026-11-17
+- Marca con el PNG original y cargador basado en la referencia del equipo.
+- Entrada estática opcional que espera a Laravel antes de abrir la aplicación.
+- Accesibilidad con movimiento reducido, espera limitada y reintento.
+- Nota: el bloque v1.0 inferior era un plan del registro anterior y debe revisarse antes de etiquetar la versión final; el despliegue actual es Render.
+
 ## [v1.0] — 2026-12-04
 Primera versión completa, desplegada en producción.
 - Partidos abiertos: plazas por deporte, rango de nivel, unirse/salir, «Mis partidos».

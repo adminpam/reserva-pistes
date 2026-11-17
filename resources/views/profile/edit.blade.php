@@ -1,34 +1,82 @@
-{{-- Perfil: nombre + nivel 1-5 por deporte. El nivel vacio significa
-     que el jugador no practica ese deporte. --}}
+{{-- Perfil: nombre público y nivel 1-5 por deporte. Nivel vacío = no juega. --}}
 @extends('layouts.app')
 @section('title', 'Mi perfil — ReservaPistes')
 
+@section('banner')
+    @include('partials.banner', [
+        'title'    => 'Mi perfil',
+        'subtitle' => 'Gestiona tus datos y tus niveles de juego.',
+        'image'    => \App\Support\Ui::sportCover('tenis'),
+    ])
+@endsection
+
 @section('content')
-<div class="auth-card card">
-    <h1>Mi perfil</h1>
-    <p class="muted">Tu nivel (1 = principiante, 5 = avanzado) se usa para los partidos con rango de nivel.</p>
+<form method="POST" action="{{ route('profile.update') }}">
+    @csrf @method('PATCH')
 
-    <form method="POST" action="{{ route('profile.update') }}">
-        @csrf @method('PATCH')
+    <div style="display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:start" class="profile-grid">
 
-        <label for="name">Nombre</label>
-        <input id="name" name="name" type="text" value="{{ old('name', $user->name) }}" required maxlength="100">
+        <aside class="card" style="text-align:center">
+            <span class="avatar avatar-lg" style="margin:8px auto 18px">{{ \App\Support\Ui::initials($user->name) }}</span>
+            <h3>{{ $user->name }}</h3>
+            <p class="muted">{{ $user->email }}</p>
+            <p class="tiny" style="margin-top:18px;padding-top:16px;border-top:1px solid var(--line)">
+                Miembro desde {{ $user->created_at->translatedFormat('F \d\e Y') }}
+            </p>
+            @if($user->isManager() || $user->isAdmin())
+                <span class="chip" style="margin-top:14px">{{ $user->isAdmin() ? 'Administrador' : 'Gestor de club' }}</span>
+            @endif
+        </aside>
 
-        <h2 class="h-small">Mis niveles</h2>
-        @foreach($sports as $sport)
-            <label class="level-row">
-                <img src="{{ asset('img/sports/'.$sport->icon) }}" alt="" width="22" height="22">
-                <span>{{ $sport->name }}</span>
-                <select name="levels[{{ $sport->id }}]">
-                    <option value="">No juego</option>
-                    @for($l = 1; $l <= 5; $l++)
-                        <option value="{{ $l }}" @selected($user->levelFor($sport->id) === $l)>Nivel {{ $l }}</option>
-                    @endfor
-                </select>
-            </label>
-        @endforeach
+        <div class="card">
+            <h2 class="section-title">Mis niveles</h2>
+            <p class="muted" style="margin-bottom:22px">
+                1 es principiante y 5 avanzado. Tu nivel se usa en los partidos que piden un rango.
+            </p>
 
-        <button class="btn btn-primary btn-block" type="submit">Guardar cambios</button>
-    </form>
-</div>
+            <div class="stack">
+                @foreach($sports as $sport)
+                    @php($actual = $user->levelFor($sport->id))
+                    <div class="inline" style="justify-content:space-between;gap:20px">
+                        <span class="inline" style="gap:12px;min-width:190px">
+                            <img src="{{ asset('img/sports/'.$sport->icon) }}" alt="" width="26" height="26">
+                            <strong>{{ $sport->name }}</strong>
+                        </span>
+
+                        <div class="level">
+                            <input type="radio" name="levels[{{ $sport->id }}]" id="lv{{ $sport->id }}-0"
+                                   value="" @checked($actual === null)>
+                            <label for="lv{{ $sport->id }}-0" title="No juego">—</label>
+                            @for($l = 1; $l <= 5; $l++)
+                                <input type="radio" name="levels[{{ $sport->id }}]" id="lv{{ $sport->id }}-{{ $l }}"
+                                       value="{{ $l }}" @checked($actual === $l)>
+                                <label for="lv{{ $sport->id }}-{{ $l }}">{{ $l }}</label>
+                            @endfor
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <div class="field" style="margin-top:30px;padding-top:24px;border-top:1px solid var(--line)">
+                <label for="name">Nombre público</label>
+                <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}"
+                       required maxlength="100">
+            </div>
+
+            <div class="inline" style="justify-content:flex-end;margin-top:8px">
+                <button class="btn btn-primary" type="submit">Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<style>
+/* El selector de nivel tiene seis opciones aquí (incluye "no juego") */
+.profile-grid .level { grid-template-columns: repeat(6, minmax(46px, 1fr)); }
+@media (max-width: 1024px) {
+    .profile-grid { grid-template-columns: 1fr !important; }
+    .profile-grid .inline { flex-direction: column; align-items: stretch !important; gap: 10px !important; }
+    .profile-grid .level { width: 100%; }
+}
+</style>
 @endsection

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Avatar">
-  <circle cx="24" cy="24" r="22" fill="#0E9F8E"/>
-  <circle cx="24" cy="18" r="8" fill="#F7F7F5"/>
-  <path d="M8 42 Q24 28 40 42" fill="#F7F7F5"/>
+  <circle cx="24" cy="24" r="24" fill="#12857A"/>
+  <circle cx="24" cy="19" r="8" fill="#F7F8F6"/>
+  <path d="M8 44c3-9 9-13 16-13s13 4 16 13z" fill="#F7F8F6"/>
 </svg>

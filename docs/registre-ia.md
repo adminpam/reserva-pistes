@@ -1,6 +1,6 @@
 # Registre d'ús d'IA
 
-Registro de cada uso relevante de IA en el proyecto. Herramienta usada en todo el proyecto: **Claude (Anthropic), chat web**. Repositorio: https://github.com/adminpam/reserva-pistes
+Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **Claude (Anthropic), chat web**, y **ChatGPT (OpenAI)**. Se indica la herramienta en las entradas nuevas; las entradas 1–15 pertenecen al registro anterior de Claude. Repositorio: https://github.com/adminpam/reserva-pistes
 
 ---
 
@@ -93,3 +93,23 @@ Registro de cada uso relevante de IA en el proyecto. Herramienta usada en todo e
 - Prompt: «Pasos para desplegar en Laravel Cloud con PostgreSQL: build de Vite, migrate --force --seed, clubs:import y variables de entorno seguras».
 - Resultado: _pendiente_ — app publicada en la URL de `docs/05-desplegament.md`; etiqueta v1.0.
 - Commit: _pendiente_
+
+---
+
+**16 · 17/11/2026 — Denys (revisión de interfaz con Joy pendiente)**
+- Herramienta: ChatGPT (OpenAI).
+- Objetivo: revisar el código existente y adaptar la marca y la carga a las referencias aportadas por el equipo.
+- Prompt (resumen): «La página no me gusta como se ve. Usa el logo original y una pantalla de carga con la misma pista de la referencia y una pelota luminosa que bote. Entrega archivos por paquetes con comandos para instalarlos desde Downloads». Se facilitó el ZIP del código y la URL de Render.
+- Resultado: PNG original conservado, pista SVG basada en la referencia, pelota animada, barra indeterminada, carga ligada al documento, entrada estática con comprobación de Laravel y límite de espera, e instalador con comprobación de versiones y copia de seguridad.
+- Validación: ver `docs/07-marca-y-carga.md`. Las comprobaciones en PHP/Laravel, la aprobación visual del equipo y la publicación de la entrada estática siguen pendientes.
+- Commit/PR: pendiente de crear por el equipo y sustituir esta línea por el enlace real.
+
+---
+
+**17 · 17/11/2026 — Denys**
+- Herramienta: ChatGPT (OpenAI).
+- Objetivo: ajustar el nombre, el ciclo de espera y la composición de móvil y tablet a partir de la revisión visual de Denys.
+- Prompt (resumen): «En móvil no queremos reducir la página de escritorio: queremos una estructura propia. Falta el espacio entre Reserva y Pistes; el segmento de carga debe desaparecer al final y volver a entrar desde el inicio. La pista y la pelota están bien».
+- Resultado: nombre con separación visible; segmento que atraviesa la barra en una sola dirección; estructura de teléfono con marca arriba, pista al centro y progreso abajo, variante horizontal y ajustes específicos de tablet. Se conservan la geometría de la pista y el bote aprobado.
+- Validación del paquete anterior en el ASUS de Denys: `npm run build` correcto, `php artisan view:clear` correcto y `BrandReadyTest` aprobado (1 test, 5 aserciones), según las salidas compartidas. El ajuste visual de esta entrada queda pendiente de revisar en el navegador del equipo.
+- Commit/PR: pendiente de sustituir por el enlace real del mismo PR de marca y carga.

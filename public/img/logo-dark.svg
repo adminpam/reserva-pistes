@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 96" role="img" aria-label="ReservaPistes">
+  <g fill="#E8A317">
+    <path d="M6 30 h34 l-9 10 H-3 z" transform="translate(9 0)"/>
+    <path d="M14 46 h30 l-9 10 H5 z" transform="translate(6 0)"/>
+    <path d="M26 62 h22 l-9 10 H17 z" transform="translate(3 0)"/>
+  </g>
+  <path fill="#0B2E2A" d="M46 16 h30 c13 0 21 8 21 19 0 9-5 15-13 18l18 27H86L70 55h-9v25H46V16z
+                           M61 29v14h13c5 0 8-3 8-7s-3-7-8-7H61z"/>
+  <circle cx="67.5" cy="36" r="4.5" fill="#E8A317"/>
+</svg>

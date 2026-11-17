@@ -1,41 +1,45 @@
-{{-- «Мои матчи»: созданные мной и те, куда я записан. Создатель отменяет
-     матч целиком, участник — просто выходит. --}}
+{{-- Partidos que organizo o en los que participo, separados en activos y jugados. --}}
 @extends('layouts.app')
 @section('title', 'Mis partidos — ReservaPistes')
 
-@section('content')
-<h1>Mis partidos</h1>
+@section('banner')
+    @include('partials.banner', [
+        'title'    => 'Mis partidos',
+        'subtitle' => 'Gestiona los partidos que organizas o en los que participas.',
+        'image'    => \App\Support\Ui::sportCover('voleibol'),
+    ])
+@endsection
 
-@forelse($matches as $match)
-    <div class="card row-card @if($match->status === 'cancelled') is-cancelled @endif">
-        <div>
-            <strong>{{ $match->court->sport->name }}</strong> en {{ $match->court->club->name }}
-            <p class="muted">
-                {{ $match->starts_at->format('d/m/Y H:i') }} ·
-                {{ $match->players->count() }}/{{ $match->court->sport->players_per_match }} jugadores ·
-                {{ $match->user_id === auth()->id() ? 'Organizador: tú' : 'Organiza: '.$match->user->name }}
-            </p>
-        </div>
-        <div class="row-actions">
-            @if($match->status === 'cancelled')
-                <span class="badge badge-muted">Cancelado</span>
-            @elseif($match->starts_at->isFuture())
-                <form method="POST" action="{{ route('matches.leave', $match) }}"
-                      onsubmit="return confirm('{{ $match->user_id === auth()->id() ? '¿Cancelar el partido para todos?' : '¿Salir del partido?' }}')">
-                    @csrf @method('DELETE')
-                    <button class="btn btn-danger" type="submit">
-                        {{ $match->user_id === auth()->id() ? 'Cancelar partido' : 'Salir' }}
-                    </button>
-                </form>
-            @else
-                <span class="badge">Jugado</span>
-            @endif
-        </div>
+@section('content')
+@php
+    $activos = $matches->filter(fn ($m) => $m->status !== 'cancelled' && $m->starts_at->isFuture());
+    $pasados = $matches->reject(fn ($m) => $m->status !== 'cancelled' && $m->starts_at->isFuture());
+@endphp
+
+@if($activos->isNotEmpty())
+    <h2 class="section-title">Mis partidos activos</h2>
+    <div class="stagger">
+        @foreach($activos as $match)
+            @include('matches._row', ['match' => $match, 'pasado' => false])
+        @endforeach
     </div>
-@empty
-    <div class="empty-state">
-        <img src="{{ asset('img/empty.svg') }}" alt="" width="120">
-        <p>No estás en ningún partido. <a href="{{ route('matches.index') }}">Busca uno abierto</a>.</p>
+@endif
+
+@if($pasados->isNotEmpty())
+    <h2 class="section-title mt-xl">Mis partidos pasados</h2>
+    <div>
+        @foreach($pasados as $match)
+            @include('matches._row', ['match' => $match, 'pasado' => true])
+        @endforeach
     </div>
-@endforelse
+@endif
+
+@if($matches->isEmpty())
+    <div class="empty">
+        <img src="{{ asset('img/empty.svg') }}" alt="">
+        <h3>Aún no tienes partidos</h3>
+        <p>Organiza un partido desde la ficha de un club o únete a alguno de los que hay abiertos.</p>
+        <a class="btn btn-primary" href="{{ route('matches.index') }}">Buscar partidos</a>
+    </div>
+@endif
 @endsection

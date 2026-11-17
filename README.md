@@ -18,7 +18,7 @@ Aplicación web para **reservar pistas deportivas** y **encontrar compañeros de
 Laravel 12 · Blade + CSS propio · JS vanilla + Leaflet/OpenStreetMap · SQLite (local) / PostgreSQL (producción) · Vite
 
 ## Herramientas de IA utilizadas
-El proyecto se ha desarrollado con asistencia de **Claude (Anthropic)** — generación de código guiada, revisión y documentación. Cada uso está registrado en [`docs/registre-ia.md`](docs/registre-ia.md) con su prompt, resultado y commit. Todo el código mergeado a `main` lo entendemos y podemos explicarlo.
+El proyecto se ha desarrollado con asistencia de **Claude (Anthropic)** y **ChatGPT (OpenAI)** — generación de código guiada, revisión y documentación. Cada uso está registrado en [`docs/registre-ia.md`](docs/registre-ia.md) con su prompt, resultado y commit. Todo el código mergeado a `main` lo entendemos y podemos explicarlo.
 
 ## Puesta en marcha local
 ```bash
@@ -38,7 +38,9 @@ php artisan clubs:import     # opcional: clubes reales desde OpenStreetMap
 **Usuarios demo (ficticios, solo local):** `admin@reservapistes.test`, `gestor@reservapistes.test`, `marta@reservapistes.test` — contraseña: la de `SEED_PASSWORD` del `.env` (por defecto `password`).
 
 ## Producción
-Desplegado en **Laravel Cloud** (PostgreSQL). URL: _pendiente — ver `docs/05-desplegament.md`_.
+Desplegado en **Render** con Docker: https://reserva-pistes.onrender.com/.
+
+La pantalla de carga y la entrada estática opcional están documentadas en [`docs/07-marca-y-carga.md`](docs/07-marca-y-carga.md). La configuración de despliegue de `docs/05-desplegament.md` está pendiente de actualizar desde el plan anterior de Laravel Cloud.
 
 ## Documentación
 `docs/01-proposta.md` → propuesta · `02-requisits` · `03-disseny` · `04-arquitectura` · `05-desplegament` · `06-proves` · `registre-ia.md` · [`CHANGELOG.md`](CHANGELOG.md)

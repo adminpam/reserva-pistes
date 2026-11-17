@@ -1,51 +1,61 @@
-{{-- Админка клубов: поиск, назначение менеджера, удаление.
-     Новые клубы появляются через php artisan clubs:import. --}}
+{{-- Administración de clubes: buscar, asignar gestor y eliminar. --}}
 @extends('layouts.app')
-@section('title', 'Admin · Clubes — ReservaPistes')
+@section('title', 'Administración · Clubes — ReservaPistes')
+
+@section('banner')
+    @include('partials.banner', [
+        'title'    => 'Administración',
+        'subtitle' => 'Clubes, deportes y usuarios de la plataforma.',
+        'image'    => \App\Support\Ui::sportCover('tenis'),
+    ])
+@endsection
 
 @section('content')
-<div class="page-head">
-    <h1>Clubes</h1>
-    <nav class="subnav">
-        <a class="active" href="{{ route('admin.clubs.index') }}">Clubes</a>
-        <a href="{{ route('admin.sports.index') }}">Deportes</a>
-        <a href="{{ route('admin.users.index') }}">Usuarios</a>
-    </nav>
-</div>
+@include('admin._nav')
 
-<form class="filters" method="GET" action="{{ route('admin.clubs.index') }}">
-    <input type="text" name="q" value="{{ request('q') }}" placeholder="Buscar club…">
+<form class="card filters" method="GET" action="{{ route('admin.clubs.index') }}">
+    <input type="search" name="q" value="{{ request('q') }}" placeholder="Buscar club…" aria-label="Buscar club">
     <button class="btn btn-ghost" type="submit">Buscar</button>
+    <span class="spacer"></span>
+    <span class="tiny">Los clubes se importan desde OpenStreetMap con <code class="mono">php artisan clubs:import</code></span>
 </form>
 
-<p class="muted">Los clubes se importan desde OpenStreetMap con <code>php artisan clubs:import</code>.</p>
-
 @forelse($clubs as $club)
-    <div class="card row-card">
-        <div>
-            <strong>{{ $club->name }}</strong>
-            <p class="muted">{{ $club->address }}@if($club->city), {{ $club->city }}@endif · {{ $club->courts_count }} pistas</p>
+    <article class="card row-card">
+        <div class="grow">
+            <h3>{{ $club->name }}</h3>
+            <p class="muted">{{ $club->address ?: 'Dirección pendiente' }}@if($club->city), {{ $club->city }}@endif</p>
         </div>
+
+        <span class="chip">{{ $club->courts_count }} {{ $club->courts_count === 1 ? 'pista' : 'pistas' }}</span>
+
         <div class="row-actions">
-            <form method="POST" action="{{ route('admin.clubs.update', $club) }}" class="inline-form">
+            <form method="POST" action="{{ route('admin.clubs.update', $club) }}" class="inline" style="gap:8px">
                 @csrf @method('PATCH')
-                <select name="manager_id">
+                <select name="manager_id" style="width:auto;min-width:170px;height:42px" aria-label="Gestor">
                     <option value="">Sin gestor</option>
                     @foreach($managers as $manager)
-                        <option value="{{ $manager->id }}" @selected($club->manager_id === $manager->id)>{{ $manager->name }}</option>
+                        <option value="{{ $manager->id }}" @selected($club->manager_id === $manager->id)>
+                            {{ $manager->name }}
+                        </option>
                     @endforeach
                 </select>
-                <button class="btn btn-ghost" type="submit">Asignar</button>
+                <button class="btn btn-ghost btn-sm" type="submit">Asignar</button>
             </form>
+
             <form method="POST" action="{{ route('admin.clubs.destroy', $club) }}"
-                  onsubmit="return confirm('¿Eliminar este club con sus pistas y reservas?')">
+                  onsubmit="return confirm('Se eliminará el club con sus pistas y reservas. ¿Seguro?')">
                 @csrf @method('DELETE')
-                <button class="btn btn-danger" type="submit">Eliminar</button>
+                <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
             </form>
         </div>
-    </div>
+    </article>
 @empty
-    <p class="muted">No hay clubes. Ejecuta <code>php artisan clubs:import</code>.</p>
+    <div class="empty">
+        <img src="{{ asset('img/empty.svg') }}" alt="">
+        <h3>No hay clubes</h3>
+        <p>Ejecuta <code class="mono">php artisan clubs:import</code> para traerlos de OpenStreetMap.</p>
+    </div>
 @endforelse
 
 {{ $clubs->links() }}

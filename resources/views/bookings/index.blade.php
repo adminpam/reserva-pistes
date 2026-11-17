@@ -1,38 +1,45 @@
-{{-- «Мои брони»: список обычных броней с отменой будущих. --}}
+{{-- Reservas del jugador, separadas en próximas y pasadas. --}}
 @extends('layouts.app')
 @section('title', 'Mis reservas — ReservaPistes')
 
-@section('content')
-<h1>Mis reservas</h1>
+@section('banner')
+    @include('partials.banner', [
+        'title'    => 'Mis reservas',
+        'subtitle' => 'Aquí tienes tus reservas actuales y pasadas.',
+        'image'    => \App\Support\Ui::sportCover('badminton'),
+    ])
+@endsection
 
-@forelse($bookings as $booking)
-    <div class="card row-card @if($booking->status === 'cancelled') is-cancelled @endif">
-        <div>
-            <strong>{{ $booking->court->club->name }}</strong> — {{ $booking->court->name }}
-            <p class="muted">
-                {{ $booking->court->sport->name }} ·
-                {{ $booking->starts_at->format('d/m/Y H:i') }}–{{ $booking->ends_at->format('H:i') }} ·
-                {{ number_format($booking->price_total / 100, 2, ',', '.') }} € (simulado)
-            </p>
-        </div>
-        <div class="row-actions">
-            @if($booking->status === 'cancelled')
-                <span class="badge badge-muted">Cancelada</span>
-            @elseif($booking->starts_at->isFuture())
-                <form method="POST" action="{{ route('bookings.cancel', $booking) }}"
-                      onsubmit="return confirm('¿Cancelar esta reserva?')">
-                    @csrf @method('PATCH')
-                    <button class="btn btn-danger" type="submit">Cancelar</button>
-                </form>
-            @else
-                <span class="badge">Jugada</span>
-            @endif
-        </div>
+@section('content')
+@php
+    $proximas = $bookings->filter(fn ($b) => $b->status !== 'cancelled' && $b->starts_at->isFuture());
+    $pasadas  = $bookings->reject(fn ($b) => $b->status !== 'cancelled' && $b->starts_at->isFuture());
+@endphp
+
+@if($proximas->isNotEmpty())
+    <h2 class="section-title">Próximas</h2>
+    <div class="stagger">
+        @foreach($proximas as $booking)
+            @include('bookings._row', ['booking' => $booking, 'pasada' => false])
+        @endforeach
     </div>
-@empty
-    <div class="empty-state">
-        <img src="{{ asset('img/empty.svg') }}" alt="" width="120">
-        <p>Todavía no tienes reservas. <a href="{{ route('home') }}">Busca un club en el mapa</a>.</p>
+@endif
+
+@if($pasadas->isNotEmpty())
+    <h2 class="section-title mt-xl">Pasadas</h2>
+    <div>
+        @foreach($pasadas as $booking)
+            @include('bookings._row', ['booking' => $booking, 'pasada' => true])
+        @endforeach
     </div>
-@endforelse
+@endif
+
+@if($bookings->isEmpty())
+    <div class="empty">
+        <img src="{{ asset('img/empty.svg') }}" alt="">
+        <h3>Todavía no tienes reservas</h3>
+        <p>Busca un club en el mapa y reserva tu pista en unos clics.</p>
+        <a class="btn btn-primary" href="{{ route('home') }}">Buscar un club</a>
+    </div>
+@endif
 @endsection

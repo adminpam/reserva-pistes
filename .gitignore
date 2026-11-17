@@ -21,3 +21,6 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Resultado reproducible de la entrada estática
+/loading-site/dist/

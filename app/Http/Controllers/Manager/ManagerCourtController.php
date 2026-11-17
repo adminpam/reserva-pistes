@@ -17,7 +17,7 @@ class ManagerCourtController extends Controller
     // Lista de pistas agrupadas por club del gestor.
     public function index(Request $request): View
     {
-        $clubs = $request->user()->managedClubs()->with('courts.sport')->get();
+        $clubs = $request->user()->managedClubs()->with('courts.sport', 'courts.bookings')->get();
 
         return view('manager.courts.index', ['clubs' => $clubs]);
     }

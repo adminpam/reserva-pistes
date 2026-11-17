@@ -1,1 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="#F59E0B"/><path d="M4 16 H28 M16 4 V28 M7 7 Q16 16 7 25 M25 7 Q16 16 25 25" fill="none" stroke="#1F2933" stroke-width="2"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke="#0B2E2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Baloncesto 3x3">
+  <circle cx="16" cy="16" r="11"/>
+  <path d="M5 16h22M16 5v22"/>
+  <path d="M8.3 8.3c4.3 4.3 4.3 11.1 0 15.4M23.7 8.3c-4.3 4.3-4.3 11.1 0 15.4" stroke="#E8A317"/>
+</svg>
