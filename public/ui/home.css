@@ -1,0 +1,144 @@
+/* Portada de escritorio basada en la referencia. Tablet y teléfono reorganizan
+   filtros, mapa y ficha de club en estructuras propias. */
+.rp-home-page { background: #f4f8f6; color: #002e29; }
+.rp-home-page .site-main { max-width: 1800px; margin: 0 auto; padding: 0 32px 8px; }
+.rp-home-hero {
+    display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr);
+    align-items: center; gap: 36px; min-height: 288px; padding: 36px 20px 32px;
+    position: relative; overflow: hidden;
+}
+.rp-home-hero h1 {
+    font-family: 'Manrope', system-ui, sans-serif; font-weight: 800;
+    font-size: clamp(54px, 5.35vw, 88px); letter-spacing: -.045em; line-height: .99;
+    max-width: 15ch; color: #002e29;
+}
+.rp-home-hero p { margin-top: 18px; max-width: 55ch; font-size: clamp(18px, 1.85vw, 29px); line-height: 1.35; letter-spacing: -.025em; color: #47665f; }
+.rp-home-heading-phone { display: none; }
+.rp-home-hero__art { display: block; width: 100%; height: auto; overflow: visible; }
+.rp-explorer { display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 16px; align-items: stretch; }
+.rp-sports {
+    min-width: 0; margin: 0; padding: 24px; background: #fff;
+    border: 1px solid #dce8e4; border-radius: 20px; box-shadow: 0 1px 2px #123b3303;
+    display: flex; flex-direction: column;
+}
+.rp-sports__heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.rp-sports h2 { font: 800 28px/1.2 'Manrope', system-ui, sans-serif; letter-spacing: -.025em; }
+.rp-sports__all { display: flex; position: relative; }
+.rp-sports input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.rp-sports__all label { display: flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 13px; border: 1px solid #dfe9e4; border-radius: 99px; color: #46675f; font-size: 13px; font-weight: 700; cursor: pointer; }
+.rp-sports__all input:checked + label { background: #fff4df; color: #63450e; border-color: #ffdc95; }
+.rp-sport-options { display: grid; gap: 8px; }
+.rp-sport-choice { position: relative; min-width: 0; }
+.rp-sport-choice label {
+    min-height: 52px; display: flex; align-items: center; gap: 14px; padding: 6px 14px;
+    border: 1px solid #e5ede9; border-radius: 99px; cursor: pointer;
+    font-size: 18px; font-weight: 600; color: #123e35;
+    transition: background 150ms ease, border-color 150ms ease;
+}
+.rp-sport-choice label:hover { border-color: #c2d8d0; background: #f4f8f6; }
+.rp-sport-choice input:checked + label { border-color: #fff0d8; background: #fff1d9; }
+.rp-sport-choice input:focus-visible + label, .rp-sports__all input:focus-visible + label { outline: 3px solid #007e6e; outline-offset: 3px; }
+.rp-sport-icon { width: 32px; height: 32px; flex: none; stroke: #00453b; }
+.rp-sport-choice__dot { margin-left: auto; width: 22px; height: 22px; flex: none; border: 2px solid #d0dfda; background: #fff; border-radius: 50%; }
+.rp-sport-choice input:checked + label .rp-sport-choice__dot { border: 6px solid #ffb21d; }
+.rp-sports__count { display: flex; align-items: center; gap: 14px; border-top: 1px solid #e1ebe6; padding-top: 21px; margin-top: auto; padding-bottom: 3px; }
+.rp-sports__count svg { width: 34px; height: 34px; flex: none; }
+.rp-sports__count span { font-size: 22px; font-weight: 800; letter-spacing: -.025em; }
+.rp-sports__empty { font-size: 15px; line-height: 1.6; color: #607971; padding: 18px 0; }
+.rp-map-frame { position: relative; min-width: 0; min-height: 536px; height: clamp(536px, 57vh, 680px); border: 1px solid #dce8e4; border-radius: 20px; overflow: hidden; background: #e2ece4; }
+#rp-club-map { height: 100%; width: 100%; z-index: 1; background: #e2ece4; font-family: 'Manrope', system-ui, sans-serif; }
+#rp-club-map .leaflet-tile-pane { filter: saturate(.63) brightness(1.06); }
+#rp-club-map .leaflet-control-zoom { margin: 0 20px 34px 0; border: 1px solid #d1e2dd; border-radius: 12px; box-shadow: 0 2px 8px #14433b1c; overflow: hidden; }
+#rp-club-map .leaflet-control-zoom a { width: 44px; height: 44px; line-height: 42px; color: #073b33; font-size: 29px; font-weight: 400; }
+#rp-club-map .leaflet-control-attribution { font-size: 10px; padding: 2px 6px; color: #395d55; background: #fffffff0; }
+#rp-club-map .leaflet-control-attribution a { color: #075f53; }
+.rp-map-marker { width: 24px; height: 24px; border-radius: 50%; background: #ffb21d; border: 3px solid #fff; box-shadow: 0 1px 6px #6f6c3c45; transition: box-shadow 150ms ease; }
+.rp-map-marker.is-selected { box-shadow: 0 0 0 11px #ffb21d45, 0 1px 8px #6f6c3c45; }
+.rp-map-marker:focus-visible { outline: 3px solid #006b5c; outline-offset: 5px; }
+.rp-map-marker-wrap:focus-visible .rp-map-marker { outline: 3px solid #006b5c; outline-offset: 5px; }
+.rp-club-popup .leaflet-popup-content-wrapper { border-radius: 18px; padding: 0; box-shadow: 0 8px 28px #183e3426; }
+.rp-club-popup .leaflet-popup-content { margin: 18px; width: 326px !important; line-height: 1.4; }
+.rp-club-popup .leaflet-popup-tip { box-shadow: 0 6px 8px #183e3412; }
+.rp-club-popup .leaflet-popup-close-button { top: 4px !important; right: 5px !important; width: 28px !important; height: 28px !important; font-size: 24px !important; }
+.rp-club-card { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 14px; color: #123d34; font-family: 'Manrope', system-ui, sans-serif; }
+.rp-club-card figure { margin: 0; position: relative; align-self: start; }
+.rp-club-card img { display: block; width: 84px; height: 90px; border-radius: 11px; object-fit: cover; background: #e6efe8; }
+.rp-club-card figcaption { position: absolute; left: 0; right: 0; bottom: 0; background: #002e29bb; color: #fff; text-align: center; font-size: 9px; line-height: 18px; border-radius: 0 0 11px 11px; }
+.rp-club-card h3 { margin: 0 10px 6px 0; font: 800 17px/1.3 'Manrope', system-ui, sans-serif; overflow-wrap: anywhere; letter-spacing: -.02em; }
+.rp-club-card p { margin: 0; font-size: 13px; line-height: 1.45; color: #5d776e; overflow-wrap: anywhere; }
+.rp-club-card__sports { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 9px; }
+.rp-club-card__sport { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 99px; background: #e1f1ed; color: #00685a; font-size: 12px; }
+.rp-club-card__link { display: inline-flex; min-height: 36px; align-items: center; gap: 8px; margin-top: 4px; font-size: 14px; font-weight: 800; text-decoration: none; color: #007866 !important; }
+.rp-club-card__link:focus-visible { outline: 3px solid #007e6e; outline-offset: 2px; border-radius: 3px; }
+.rp-map-state { position: absolute; z-index: 500; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(360px, calc(100% - 40px)); padding: 24px; border: 1px solid #d7e5dd; border-radius: 18px; background: #fffffff5; box-shadow: 0 8px 26px #123e3312; text-align: center; }
+.rp-map-state h3 { font: 800 20px/1.3 'Manrope', system-ui, sans-serif; margin-bottom: 8px; }
+.rp-map-state p { font-size: 14px; color: #60796f; line-height: 1.6; }
+.rp-map-state button { margin-top: 16px; min-height: 44px; border: 0; border-radius: 99px; padding: 0 22px; background: #ffb21d; color: #093a30; font: 700 14px 'Manrope', system-ui, sans-serif; cursor: pointer; }
+.rp-map-message { grid-column: 1 / -1; padding: 8px 4px 0; color: #60776d; font-size: 13px; }
+.rp-mobile-selection { display: none; }
+.rp-mobile-context { display: none; }
+.rp-home-page .site-footer { padding: 26px 24px; }
+
+/* Tablet: filtros en una banda de dos filas; el mapa conserva una ficha emergente. */
+@media (min-width: 721px) and (max-width: 1100px) {
+    .rp-home-page .site-main { padding: 0 24px 8px; }
+    .rp-home-hero { min-height: 250px; padding: 32px 8px; grid-template-columns: 1.5fr 1fr; gap: 20px; }
+    .rp-home-hero h1 { font-size: clamp(46px, 6.5vw, 66px); }
+    .rp-home-hero p { font-size: 18px; max-width: 33ch; }
+    .rp-explorer { grid-template-columns: 1fr; gap: 16px; }
+    .rp-sports { display: grid; grid-template-columns: 1fr auto; padding: 20px; gap: 16px 24px; }
+    .rp-sports__heading { margin: 0; }
+    .rp-sports h2 { font-size: 23px; }
+    .rp-sport-options { grid-column: 1 / -1; grid-row: 2; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .rp-sport-choice label { padding: 8px 10px; gap: 8px; font-size: 14px; }
+    .rp-sport-icon { width: 25px; height: 25px; }
+    .rp-sport-choice__dot { width: 18px; height: 18px; }
+    .rp-sport-choice input:checked + label .rp-sport-choice__dot { border-width: 5px; }
+    .rp-sports__count, .rp-sport-options + .rp-sports__count { grid-column: 2; grid-row: 1; border: 0; padding: 0; margin: 0; }
+    .rp-sports__count svg { width: 26px; height: 26px; }
+    .rp-sports__count span { font-size: 18px; }
+    .rp-sports__empty { grid-column: 1 / -1; }
+    .rp-map-frame { min-height: 520px; height: min(64vh, 700px); }
+}
+
+/* Teléfono: mapa como área principal, deportes en desplazamiento horizontal
+   y ficha seleccionada fuera del mapa; los controles mantienen tamaño táctil. */
+@media (max-width: 720px) {
+    .rp-home-page .site-main { padding: 0; }
+    .rp-home-hero { display: block; min-height: 0; padding: 20px 20px 16px; }
+    .rp-home-hero h1 { font-size: 32px; line-height: 1.06; max-width: none; letter-spacing: -.04em; }
+    .rp-home-heading-desktop { display: none; }
+    .rp-home-heading-phone { display: inline; }
+    .rp-home-hero p { display: none; }
+    .rp-home-hero__art { display: none; }
+    .rp-mobile-context { display: block; margin-top: 10px; color: #5f7b70; font-size: 13px; }
+    .rp-explorer { display: flex; flex-direction: column; gap: 0; }
+    .rp-sports { display: block; border: 0; border-radius: 0; box-shadow: none; padding: 0 0 12px; background: transparent; }
+    .rp-sports__heading { margin: 0; padding: 0 20px; }
+    .rp-sports h2 { font-size: 16px; }
+    .rp-sports__all label { min-height: 40px; padding: 0 14px; background: #fff; }
+    .rp-sport-options { display: flex; overflow-x: auto; gap: 8px; padding: 10px 20px 4px; scrollbar-width: thin; scroll-padding-inline: 20px; }
+    .rp-sport-choice { flex: none; }
+    .rp-sport-choice label { min-height: 48px; padding: 8px 14px; font-size: 14px; gap: 8px; background: #fff; }
+    .rp-sport-icon { width: 25px; height: 25px; }
+    .rp-sport-choice__dot { display: none; }
+    .rp-sports__count, .rp-sport-options + .rp-sports__count { padding: 10px 20px 0; margin: 0; border: 0; gap: 8px; }
+    .rp-sports__count svg { width: 22px; height: 22px; }
+    .rp-sports__count span { font-size: 14px; }
+    .rp-sports__empty { margin: 0; padding: 10px 20px; font-size: 14px; }
+    .rp-map-frame { margin: 0 12px; border-radius: 18px; min-height: 320px; height: clamp(320px, 42svh, 500px); }
+    #rp-club-map .leaflet-control-zoom { margin: 0 12px 30px 0; }
+    .rp-mobile-selection { display: block; margin: 12px; padding: 16px; min-height: 88px; background: #fff; border: 1px solid #dce8e4; border-radius: 18px; }
+    .rp-mobile-selection__hint { display: flex; gap: 12px; align-items: center; color: #607a70; font-size: 14px; line-height: 1.5; }
+    .rp-mobile-selection__hint svg { width: 30px; height: 30px; flex: none; color: #e7a31b; }
+    .rp-mobile-selection .rp-club-card { grid-template-columns: 70px minmax(0, 1fr); gap: 12px; }
+    .rp-mobile-selection .rp-club-card img { width: 70px; height: 80px; }
+    .rp-mobile-selection .rp-club-card h3 { font-size: 16px; }
+    .rp-mobile-selection .rp-club-card__link { min-height: 44px; }
+    .rp-map-message { padding: 0 20px 12px; }
+    .rp-home-page .site-footer { padding: 18px 20px 22px; }
+    .rp-map-state { padding: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .rp-sport-choice label, .rp-map-marker { transition: none; }
+}

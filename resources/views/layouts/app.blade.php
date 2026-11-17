@@ -12,6 +12,7 @@
     @stack('head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('brand/loading.css') }}">
+    <link rel="stylesheet" href="{{ asset('ui/shell.css') }}">
     <link rel="preload" href="{{ asset('brand/manrope-800.woff2') }}" as="font" type="font/woff2" crossorigin>
     {{-- Solo se oculta el contenido si JavaScript está disponible. El respaldo
          evita bloquear la página si el archivo del cargador no se descarga. --}}
@@ -42,8 +43,9 @@
         })();
     </script>
     <script src="{{ asset('brand/loading.js') }}" defer></script>
+    @stack('styles')
 </head>
-<body>
+<body @class(['rp-home-page' => request()->routeIs('home')])>
 
 {{-- Carga inicial: una vez por sesión; la entrada estática evita repetirla. --}}
 @include('partials.intro')
@@ -51,22 +53,11 @@
 <header class="site-header">
     <a class="brand" href="{{ route('home') }}">
         @include('partials.brand-mark')
-        <span>ReservaPistes</span>
+        <span>Reserva Pistes</span>
     </a>
 
     <nav class="main-nav" aria-label="Principal">
-        <a href="{{ route('home') }}" @class(['active' => request()->routeIs('home')])>Mapa</a>
-        @auth
-            <a href="{{ route('matches.index') }}" @class(['active' => request()->routeIs('matches.index')])>Partidos abiertos</a>
-            <a href="{{ route('bookings.index') }}" @class(['active' => request()->routeIs('bookings.*')])>Mis reservas</a>
-            <a href="{{ route('matches.mine') }}" @class(['active' => request()->routeIs('matches.mine')])>Mis partidos</a>
-            @if(auth()->user()->isManager())
-                <a href="{{ route('manager.courts.index') }}" @class(['active' => request()->routeIs('manager.*')])>Mi club</a>
-            @endif
-            @if(auth()->user()->isAdmin())
-                <a href="{{ route('admin.clubs.index') }}" @class(['active' => request()->routeIs('admin.*')])>Administración</a>
-            @endif
-        @endauth
+        @include('partials.navigation-links')
     </nav>
 
     <div class="header-actions">
@@ -95,6 +86,23 @@
             <a class="btn btn-ghost btn-sm" href="{{ route('login') }}">Entrar</a>
             <a class="btn btn-primary btn-sm" href="{{ route('register') }}">Crear cuenta</a>
         @endauth
+        <details class="nav-menu">
+            <summary aria-label="Menú principal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </summary>
+            <nav class="nav-menu__panel" aria-label="Menú de navegación">
+                @include('partials.navigation-links')
+                <div class="nav-menu__account">
+                    @auth
+                        <a href="{{ route('profile.edit') }}">Mi perfil</a>
+                        <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit">Salir</button></form>
+                    @else
+                        <a href="{{ route('login') }}">Entrar</a>
+                        <a href="{{ route('register') }}">Crear cuenta</a>
+                    @endauth
+                </div>
+            </nav>
+        </details>
     </div>
 </header>
 
@@ -108,7 +116,8 @@
 </main>
 
 <footer class="site-footer">
-    <p>ReservaPistes — proyecto educativo (M0617, IES Sabadell). Las reservas y los pagos son simulados.</p>
+    <p>Reserva Pistes · Barcelona, Sabadell y Terrassa</p>
+    <p class="footer-disclaimer">Proyecto educativo · Las reservas y los pagos son simulados.</p>
 </footer>
 
 {{-- Barra de navegacion inferior: solo en movil --}}

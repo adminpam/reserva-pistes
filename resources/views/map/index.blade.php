@@ -1,7 +1,7 @@
-{{-- Portada: hero breve y mapa de clubes con filtro por deporte.
-     Los marcadores los pide app.js al endpoint /api/clubs. --}}
+{{-- Portada: filtros y mapa reales. La disposición móvil usa una ficha inferior
+     en vez de comprimir la ventana emergente del escritorio. --}}
 @extends('layouts.app')
-@section('title', 'ReservaPistes — encuentra pista y rival')
+@section('title', 'Reserva Pistes — encuentra pista y rival')
 
 @push('head')
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -9,47 +9,89 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
 @endpush
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('ui/home.css') }}">
+    <script type="module" src="{{ asset('ui/home.js') }}"></script>
+@endpush
 
 @section('content')
-<section class="hero">
+<section class="rp-home-hero" aria-labelledby="home-heading">
     <div>
-        <h1>Tu pista, tu partido,<br>a un clic.</h1>
-        <p>Clubes reales de Sabadell, Terrassa y Barcelona. Reserva una hora o únete a un partido abierto de tu nivel.</p>
+        <h1 id="home-heading"><span class="rp-home-heading-desktop">Tu pista, tu partido,<br>a un clic.</span><span class="rp-home-heading-phone">¿Dónde jugamos?</span></h1>
+        <p>Clubes reales de Sabadell, Terrassa y Barcelona.</p>
+        <span class="rp-mobile-context">Sabadell · Terrassa · Barcelona</span>
     </div>
-    <img class="hero-art" src="{{ asset('img/hero.svg') }}" alt="" width="300" height="200">
+    {{-- Ilustración decorativa propia; el símbolo de marca está en la cabecera. --}}
+    <svg class="rp-home-hero__art" viewBox="0 0 540 250" fill="none" aria-hidden="true" focusable="false">
+        <defs>
+            <linearGradient id="home-court-fill" x1="110" y1="75" x2="420" y2="245" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#068675"/><stop offset="1" stop-color="#00594e"/>
+            </linearGradient>
+        </defs>
+        <ellipse cx="310" cy="127" rx="270" ry="220" stroke="#dcebe6" stroke-width="2"/>
+        <ellipse cx="334" cy="150" rx="218" ry="190" stroke="#a5ccc0" stroke-width="2"/>
+        <path d="m153 52 331 0 59 144H91Z" fill="#f4f8f6" stroke="#087567" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M196 69h244l37 103H157Z" fill="url(#home-court-fill)"/>
+        <path d="M146 70h346M99 173h435" stroke="#087567" stroke-width="4"/>
+        <path d="M317 69v103" stroke="#ffb21d" stroke-width="4"/>
+        <ellipse cx="317" cy="121" rx="35" ry="22" stroke="#ffb21d" stroke-width="4"/>
+    </svg>
 </section>
 
-<section class="map-layout" aria-label="Mapa de clubes">
-    <aside class="card filter-panel">
-        <h2>Deporte</h2>
-
-        <div class="sport-list">
-            <input type="radio" name="sport-filter" id="sp-all" value="" checked>
-            <label for="sp-all">
-                <img src="{{ asset('img/sports/icon-all.svg') }}" alt="">
-                Todos
-                <span class="dot"></span>
-            </label>
-
+<section class="rp-explorer" aria-label="Encuentra tu club" data-rp-explorer>
+    <aside class="rp-sports" aria-labelledby="sport-heading">
+        <div class="rp-sports__heading">
+            <h2 id="sport-heading">Deporte</h2>
+            <div class="rp-sports__all">
+                <input type="radio" name="sport-filter" id="sp-all" value="" checked>
+                <label for="sp-all">Todos</label>
+            </div>
+        </div>
+        <div class="rp-sport-options" role="group" aria-label="Filtrar por deporte">
             @foreach($sports as $sport)
-                <input type="radio" name="sport-filter" id="sp-{{ $sport->slug }}" value="{{ $sport->slug }}">
-                <label for="sp-{{ $sport->slug }}">
-                    <img src="{{ asset('img/sports/'.$sport->icon) }}" alt="">
-                    {{ $sport->name }}
-                    <span class="dot"></span>
-                </label>
+                <div class="rp-sport-choice">
+                    <input type="radio" name="sport-filter" id="sp-{{ $sport->slug }}" value="{{ $sport->slug }}">
+                    <label for="sp-{{ $sport->slug }}">
+                        @include('partials.sport-icon', ['slug' => $sport->slug])
+                        <span>{{ $sport->name }}</span>
+                        <span class="rp-sport-choice__dot" aria-hidden="true"></span>
+                    </label>
+                </div>
             @endforeach
         </div>
-
-        <p class="club-count">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/>
+        @if($sports->isEmpty())
+            <p class="rp-sports__empty">Todavía no hay deportes disponibles.</p>
+        @endif
+        <p class="rp-sports__count">
+            <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 29h26M6 29V10l12-6v25M25 29V14l-7-4M10 12v2m4-4v2m-4 6v2m4-4v2m-4 6v2m4-4v2M22 18v2m0 4v2"/>
             </svg>
-            <span id="club-count" aria-live="polite">Cargando…</span>
+            <span id="club-count" role="status" aria-live="polite">Buscando clubes…</span>
         </p>
     </aside>
 
-    {{-- data-clubs-url: app.js lee de aquí a dónde pedir los marcadores --}}
-    <div id="map" data-clubs-url="{{ route('api.clubs') }}"></div>
+    <div class="rp-map-frame">
+        <div id="rp-club-map" data-clubs-url="{{ route('api.clubs') }}"
+             data-tiles-url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+             role="region" aria-label="Mapa de clubes deportivos" aria-busy="true"></div>
+        <div class="rp-map-state" data-map-state role="status">
+            <h3 data-map-state-title>Preparando el mapa</h3>
+            <p data-map-state-text>Buscando clubes de la zona.</p>
+            <button type="button" data-map-retry hidden>Reintentar</button>
+        </div>
+    </div>
+
+    <div class="rp-mobile-selection" data-mobile-selection aria-label="Club seleccionado" aria-live="polite">
+        <p class="rp-mobile-selection__hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.7"/>
+            </svg>
+            <span>Toca un marcador para ver el club y sus pistas.</span>
+        </p>
+    </div>
+    <p class="rp-map-message" data-map-message hidden></p>
 </section>
+<noscript>
+    <p class="rp-map-message">Activa JavaScript para consultar el mapa y filtrar los clubes.</p>
+</noscript>
 @endsection

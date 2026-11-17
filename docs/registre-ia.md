@@ -113,3 +113,13 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 - Resultado: nombre con separación visible; segmento que atraviesa la barra en una sola dirección; estructura de teléfono con marca arriba, pista al centro y progreso abajo, variante horizontal y ajustes específicos de tablet. Se conservan la geometría de la pista y el bote aprobado.
 - Validación del paquete anterior en el ASUS de Denys: `npm run build` correcto, `php artisan view:clear` correcto y `BrandReadyTest` aprobado (1 test, 5 aserciones), según las salidas compartidas. El ajuste visual de esta entrada queda pendiente de revisar en el navegador del equipo.
 - Commit/PR: pendiente de sustituir por el enlace real del mismo PR de marca y carga.
+
+---
+
+**18 · 17/11/2026 — Denys (revisión e integración de la parte de Joy pendientes)**
+- Herramienta: ChatGPT (OpenAI).
+- Objetivo: adaptar la portada a la referencia facilitada, usando el logotipo original y composiciones propias para teléfono y tablet.
+- Prompt (resumen): «La página principal se ve mal. Hay que mejorarla como en la referencia y sustituir el dibujo que hace de logo por nuestro logo real». Después se compartió la versión local actual y se aclaró que todavía no estaba publicada.
+- Resultado: cabecera original ampliada, navegación completa, título e ilustración grandes, panel de deportes y mapa ancho; controles táctiles, ficha móvil inferior, estados vacíos y errores explícitos. API con miniatura ilustrativa, validación de datos y cancelación de peticiones obsoletas. Corregida la visibilidad de los dos SVG de sonido.
+- Validación: 5 pruebas Node de contrato y contenido del mapa aprobadas; sintaxis JS y comprobación del instalador. Pruebas PHP y revisión visual en Laravel pendientes. El navegador del entorno de revisión no pudo alcanzar el stand local; no se declara validación visual en dispositivos.
+- Commit/PR: pendiente de sustituir por el enlace real después de la revisión del equipo.

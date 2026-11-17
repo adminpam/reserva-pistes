@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Sin publicar] — 2026-11-17
+- Portada según la referencia: cabecera con símbolo original, panel de deportes y mapa ancho.
+- Estructuras de tablet y teléfono, ficha móvil inferior, estados de carga, vacío y error.
+- Validación del contenido de los marcadores y corrección de los SVG del sonido.
 - Marca con el PNG original y cargador basado en la referencia del equipo.
 - Entrada estática opcional que espera a Laravel antes de abrir la aplicación.
 - Accesibilidad con movimiento reducido, espera limitada y reintento.

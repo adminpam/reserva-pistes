@@ -1,0 +1,78 @@
+/* Marco compartido: identidad original, navegación y controles accesibles.
+   Los estilos de cada página se cargan después de este archivo. */
+[hidden] { display: none !important; }
+.site-header {
+    --header-h: 82px;
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center; gap: clamp(18px, 2.2vw, 42px);
+    height: var(--header-h); padding: 0 clamp(24px, 2.3vw, 44px);
+    background: #003c35; color: #fff; border-bottom: 1px solid #ffffff12;
+}
+.brand { gap: 12px; font: 800 clamp(21px, 1.65vw, 29px)/1 'Manrope', system-ui, sans-serif; white-space: nowrap; }
+.brand .rp-brand-mark { width: 72px; }
+.main-nav { justify-content: center; min-width: 0; margin: 0; gap: 8px; overflow-x: auto; scrollbar-width: thin; }
+.main-nav a { padding: 14px 12px; white-space: nowrap; font-size: 16px; color: #ffffffeb; }
+.main-nav a.active::after { left: 8px; right: 8px; bottom: -5px; height: 3px; background: #ffb21d; }
+.header-actions { gap: 14px; }
+.header-actions .divider { margin: 0 6px; height: 36px; }
+.header-actions .btn { height: 44px; padding: 0 23px; font-size: 15px; }
+.header-actions .btn-primary { background: #ffb21d; color: #00332e; border-color: #ffb21d; }
+.header-actions .btn-primary:hover { background: #ffc14b; }
+.header-actions .btn-ghost { border-color: #ffffffc4; }
+.header-actions .icon-btn { width: 44px; height: 44px; color: #e4f0ec; }
+.header-actions .icon-btn svg { width: 25px; height: 25px; }
+.header-actions .icon-btn svg[hidden] { display: none !important; }
+.header-actions form { margin: 0; }
+.brand:focus-visible, .site-header a:focus-visible, .site-header summary:focus-visible,
+.site-header button:focus-visible, .tabbar a:focus-visible {
+    outline: 3px solid #ffca64; outline-offset: 5px; border-radius: 6px;
+}
+.nav-menu { display: none; position: relative; }
+.nav-menu summary { list-style: none; cursor: pointer; width: 44px; height: 44px; display: grid; place-items: center; }
+.nav-menu summary::-webkit-details-marker { display: none; }
+.nav-menu summary svg { width: 25px; height: 25px; }
+.nav-menu[open] summary { background: #ffffff14; border-radius: 10px; }
+.nav-menu__panel {
+    position: absolute; right: 0; top: calc(100% + 14px); width: min(320px, calc(100vw - 32px));
+    max-height: calc(100svh - 100px); overflow-y: auto;
+    border: 1px solid #dce6e3; border-radius: 18px; padding: 10px;
+    background: #fff; color: #073b34; box-shadow: 0 18px 50px #002d2729;
+}
+.nav-menu__panel a { display: flex; min-height: 48px; align-items: center; padding: 10px 14px; border-radius: 10px; text-decoration: none; color: #123c35; font-weight: 600; }
+.nav-menu__panel a.active { background: #fff3db; color: #123c35; }
+.nav-menu__panel a:hover { background: #eef5f2; }
+.nav-menu__account { border-top: 1px solid #e3ebe8; margin-top: 8px; padding-top: 8px; }
+.nav-menu__account button { min-height: 48px; width: 100%; padding: 10px 14px; text-align: left; background: none; border: 0; font: inherit; font-weight: 600; color: #123c35; cursor: pointer; }
+.nav-menu__account form { width: 100%; }
+.site-footer { text-align: center; padding: 24px; color: #526e68; }
+.site-footer p { margin: 0 auto; }
+.site-footer .footer-disclaimer { margin-top: 6px; font-size: 12px; }
+
+@media (max-width: 1200px) {
+    .site-header { grid-template-columns: auto 1fr; height: 76px; gap: 20px; padding: 0 24px; }
+    .main-nav { display: none; }
+    .header-actions { justify-content: flex-end; }
+    .nav-menu { display: block; }
+    .brand .rp-brand-mark { width: 62px; }
+}
+/* Teléfono: cabecera breve y navegación inferior; la navegación completa está
+   en un menú desplegable nativo que también funciona sin JavaScript. */
+@media (max-width: 720px) {
+    body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+    .site-header { height: 68px; padding: 0 16px; gap: 8px; }
+    .brand { font-size: 18px; gap: 8px; }
+    .brand .rp-brand-mark { width: 44px; }
+    .header-actions { gap: 2px; }
+    .header-actions > .btn, .header-actions > .user-chip,
+    .header-actions > form, .header-actions .divider { display: none; }
+    .header-actions .icon-btn, .nav-menu summary { width: 44px; height: 44px; }
+    .tabbar {
+        height: calc(72px + env(safe-area-inset-bottom));
+        padding-bottom: env(safe-area-inset-bottom);
+        border-top: 1px solid #dce7e1; box-shadow: 0 -5px 24px #00352c08;
+    }
+    .tabbar a { min-height: 70px; color: #56716a; font-size: 11px; }
+    .tabbar a.active { color: #00685c; background: #f1f8f4; }
+    .tabbar a.active::before { background: #ffb21d; }
+    .site-footer { padding: 24px 20px; font-size: 13px; }
+}

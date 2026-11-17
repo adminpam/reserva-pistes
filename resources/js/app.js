@@ -1,15 +1,15 @@
+// El mapa de la portada se coordina en public/ui/home.js.
+
 /* =============================================================================
    ReservaPistes — comportamiento del front
-   Cuatro módulos, cada uno con una responsabilidad:
+   Tres módulos, cada uno con una responsabilidad:
      1. sonido   — tonos cortos sintetizados para clic, tecleo, éxito y error
-     2. mapa     — Leaflet con los clubes y el filtro por deporte
-     3. tiempo   — temperatura actual del club (Open-Meteo, sin clave)
-     4. detalles — las pequeñas reacciones que hacen que la página se sienta viva
+     2. tiempo   — temperatura actual del club (Open-Meteo, sin clave)
+     3. detalles — las pequeñas reacciones que hacen que la página se sienta viva
    ============================================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
     Sonido.init();
-    initMapa();
     initTiempo();
     initDetalles();
 });
@@ -49,8 +49,8 @@ const Sonido = {
     pintarBoton(boton) {
         boton.setAttribute('aria-pressed', String(this.activo));
         boton.setAttribute('aria-label', this.activo ? 'Desactivar sonidos' : 'Activar sonidos');
-        boton.querySelector('.snd-on').hidden  = !this.activo;
-        boton.querySelector('.snd-off').hidden = this.activo;
+        boton.querySelector('.snd-on')?.toggleAttribute('hidden', !this.activo);
+        boton.querySelector('.snd-off')?.toggleAttribute('hidden', this.activo);
     },
 
     // Cada acción tiene su timbre, para que el oído distinga qué ha pasado.
@@ -112,74 +112,7 @@ const Sonido = {
 };
 
 /* -----------------------------------------------------------------------------
-   2. Mapa de clubes
------------------------------------------------------------------------------ */
-function initMapa() {
-    const elMapa = document.getElementById('map');
-    if (!elMapa || typeof L === 'undefined') return;
-
-    const mapa = L.map(elMapa, { scrollWheelZoom: false }).setView([41.49, 2.13], 11);
-
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(mapa);
-
-    const capa    = L.layerGroup().addTo(mapa);
-    const contador = document.getElementById('club-count');
-    const filtros  = document.querySelectorAll('[name="sport-filter"]');
-
-    async function cargar(slug = '') {
-        const url = new URL(elMapa.dataset.clubsUrl, window.location.origin);
-        if (slug) url.searchParams.set('sport', slug);
-
-        try {
-            const res = await fetch(url);
-            const clubes = await res.json();
-
-            capa.clearLayers();
-            clubes.forEach((club) => {
-                const marcador = L.marker([club.lat, club.lng], {
-                    icon: L.divIcon({ className: '', html: '<div class="rp-marker"></div>', iconSize: [20, 20] }),
-                });
-
-                marcador.bindPopup(
-                    `<strong>${escapar(club.name)}</strong><br>` +
-                    `<span class="muted">${escapar(club.address || '')}</span><br>` +
-                    `<em>${club.sports.map(escapar).join(' · ')}</em><br>` +
-                    `<a href="${club.url}">Ver pistas y reservar →</a>`
-                );
-
-                // El marcador abierto respira, para señalar dónde se está mirando.
-                marcador.on('popupopen', (e) => e.target.getElement()
-                    ?.querySelector('.rp-marker')?.classList.add('is-active'));
-                marcador.on('popupclose', (e) => e.target.getElement()
-                    ?.querySelector('.rp-marker')?.classList.remove('is-active'));
-
-                capa.addLayer(marcador);
-            });
-
-            if (contador) {
-                contador.textContent = clubes.length === 1 ? '1 club' : `${clubes.length} clubes`;
-            }
-        } catch {
-            if (contador) contador.textContent = 'No se han podido cargar los clubes.';
-        }
-    }
-
-    filtros.forEach((f) => f.addEventListener('change', () => cargar(f.value)));
-    cargar();
-}
-
-// Evita inyectar HTML en los globos del mapa.
-function escapar(texto) {
-    const div = document.createElement('div');
-    div.textContent = texto ?? '';
-    return div.innerHTML;
-}
-
-/* -----------------------------------------------------------------------------
-   3. Tiempo actual (Open-Meteo, sin clave de API)
+   2. Tiempo actual (Open-Meteo, sin clave de API)
 ----------------------------------------------------------------------------- */
 function initTiempo() {
     const caja = document.getElementById('weather');
@@ -214,7 +147,7 @@ function emojiTiempo(codigo) {
 }
 
 /* -----------------------------------------------------------------------------
-   4. Detalles vivos
+   3. Detalles vivos
 ----------------------------------------------------------------------------- */
 function initDetalles() {
     // Las opciones de nivel solo aparecen si el partido es abierto.
