@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es" class="rp-standalone">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#00372e">
+    <meta name="robots" content="noindex">
+    <title>Reserva Pistes — vista previa de carga</title>
+    <link rel="stylesheet" href="./loading.css">
+    <link rel="preload" href="./manrope-800.woff2" as="font" type="font/woff2" crossorigin>
+    <script src="./loading.js" defer></script>
+    <style>body { margin: 0; background: #00372e; }</style>
+</head>
+<body>
+
+<section class="rp-loader" data-rp-loader data-mode="preview" aria-label="Cargando Reserva Pistes">
+    <div class="rp-loader__scene">
+        <svg class="rp-loader__court" viewBox="340 150 980 360" aria-hidden="true" focusable="false">
+            <defs>
+                <filter id="rp-ball-halo" x="-200%" y="-200%" width="500%" height="500%">
+                    <feGaussianBlur stdDeviation="18"/>
+                </filter>
+                <radialGradient id="rp-ball-fill">
+                    <stop offset="0" stop-color="#fff4cf"/>
+                    <stop offset="1" stop-color="#ffe0a2"/>
+                </radialGradient>
+                <linearGradient id="rp-court-line" x1="652" y1="360" x2="1014" y2="244" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#d68c19"/>
+                    <stop offset="1" stop-color="#ffb433"/>
+                </linearGradient>
+            </defs>
+            <path class="rp-loader__floor" d="M397 337 944 203 1253 262 729 453Z"/>
+            <g class="rp-loader__lines">
+                <path d="M500 312 830 414M890 217 1183 285"/>
+                <path d="M652 360 1014 244" style="stroke:url(#rp-court-line)"/>
+            </g>
+            <ellipse class="rp-loader__shadow" cx="842" cy="296" rx="35" ry="9" fill="#ffb433" opacity=".6" filter="url(#rp-ball-halo)"/>
+            <g class="rp-loader__ball">
+                <circle cx="842" cy="296" r="32" fill="#ffb326" opacity=".7" filter="url(#rp-ball-halo)"/>
+                <circle cx="842" cy="296" r="14" fill="url(#rp-ball-fill)" stroke="#ffb433" stroke-width="6"/>
+            </g>
+        </svg>
+        <div class="rp-loader__name" aria-hidden="true"><span>Reserva</span> <span>Pistes</span></div>
+        <div class="rp-loader__track" role="progressbar" aria-label="Preparando Reserva Pistes"></div>
+        <p class="rp-loader__notice" data-rp-notice hidden></p>
+        <div class="rp-loader__actions" data-rp-actions hidden>
+            <button class="rp-loader__button" type="button" data-rp-retry>Reintentar</button>
+            <a class="rp-loader__button" data-rp-direct href="https://reserva-pistes.onrender.com/">Abrir la aplicación</a>
+        </div>
+        <span class="rp-loader__sr" role="status" aria-live="polite" data-rp-status>Preparando Reserva Pistes.</span>
+    </div>
+</section>
+
+<noscript>
+    <style>.rp-loader { display: none !important; } body { color: white; padding: 32px; font-family: system-ui; }</style>
+    <p>Reserva Pistes necesita JavaScript para comprobar la carga.</p>
+    <p><a style="color: #ffb433" href="https://reserva-pistes.onrender.com/">Abrir Reserva Pistes</a></p>
+</noscript>
+</body>
+</html>

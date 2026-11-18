@@ -1,102 +1,67 @@
-{{-- Ficha del club: datos, tiempo (si hay pista exterior, via Open-Meteo
-     desde el navegador), y una tarjeta por pista con el selector de hora.
-     Las horas ocupadas llegan ya calculadas desde el controlador ($busy). --}}
+{{-- Disponibilidad real de una hora por pista. Las horas ocupadas o pasadas no
+     pueden elegirse y se conserva el contrato de BookingController. --}}
 @extends('layouts.app')
-@section('title', $club->name.' — ReservaPistes')
-
+@section('title', $club->name.' — Reserva Pistes')
+@section('banner')<div class="rp-club-cover" aria-hidden="true"></div>@endsection
 @section('content')
-<article class="club-page">
-    <header class="club-head">
-        <img class="club-cover" src="{{ asset('img/club-cover.svg') }}" alt="">
+<section class="rp-panel rp-club-summary" aria-labelledby="club-title">
+    <div class="rp-club-summary__info">
+        <h1 id="club-title">{{ $club->name }}</h1>
+        <p class="rp-club-address">@include('partials.ui-icon', ['name' => 'pin']) <span>{{ trim(($club->address ?? '').($club->city ? ', '.$club->city : ''), ', ') ?: 'Dirección no disponible' }}</span></p>
+        <div class="rp-tag-list">@foreach($club->sportList()->filter() as $sport)<span class="rp-sport-tag">@include('partials.sport-icon', ['slug' => $sport->slug]) {{ $sport->name }}</span>@endforeach</div>
+        @if($club->description)<p class="rp-small">{{ $club->description }}</p>@endif
+    </div>
+    @if($hasOutdoor)<div id="weather" class="weather" data-lat="{{ $club->lat }}" data-lng="{{ $club->lng }}" hidden></div>@endif
+</section>
+<form class="rp-filter-bar rp-filter-bar--date" method="GET" action="{{ route('clubs.show', $club) }}">
+    <div class="rp-field"><label for="booking-date">Día de la reserva</label><input id="booking-date" type="date" name="date" value="{{ $date }}" min="{{ now()->toDateString() }}" required></div>
+    <button class="btn btn-ghost" type="submit">@include('partials.ui-icon', ['name' => 'calendar']) Ver disponibilidad</button>
+</form>
+<p class="rp-notice">@include('partials.ui-icon', ['name' => 'info']) <span>Las pistas, los precios y las reservas son de demostración. No se realiza ningún cobro real.</span></p>
+<div class="rp-list">
+@forelse($club->courts as $court)
+    @php
+        $hours = range((int) $court->open_hour, (int) $court->close_hour - 1);
+        $available = collect($hours)->filter(fn ($hour) => !in_array($hour, $busy[$court->id] ?? []) && \Carbon\Carbon::parse($date)->setTime($hour, 0)->isFuture())->values();
+        $selectedHour = (string) old('court_id') === (string) $court->id ? old('hour', $available->first()) : $available->first();
+    @endphp
+    <section class="rp-panel rp-court" aria-labelledby="court-{{ $court->id }}-title">
+        @include('partials.sport-icon', ['slug' => $court->sport->slug])
         <div>
-            <h1>{{ $club->name }}</h1>
-            <p class="muted">
-                {{ $club->address ?: 'Dirección pendiente' }}@if($club->city), {{ $club->city }}@endif
-            </p>
-            @if($club->description)
-                <p>{{ $club->description }}</p>
-            @endif
-            <div class="chips">
-                @foreach($club->sportList() as $sport)
-                    <span class="chip">{{ $sport->name }}</span>
-                @endforeach
-            </div>
+            <h3 id="court-{{ $court->id }}-title">{{ $court->name }} — {{ $court->sport->name }}</h3>
+            <p>{{ \App\Support\Ui::euros($court->price_per_hour) }}/hora · {{ $court->is_outdoor ? 'Exterior' : 'Interior' }} · {{ sprintf('%02d:00', $court->open_hour) }}–{{ sprintf('%02d:00', $court->close_hour) }}</p>
         </div>
-        @if($hasOutdoor)
-            {{-- app.js rellena este bloque con la prevision de Open-Meteo (sin clave). --}}
-            <div id="weather" class="weather-card" data-lat="{{ $club->lat }}" data-lng="{{ $club->lng }}">
-                <span class="muted">Cargando el tiempo…</span>
-            </div>
-        @endif
-    </header>
-
-    <form class="date-picker" method="GET" action="{{ route('clubs.show', $club) }}">
-        <label for="date">Día de la reserva:</label>
-        <input type="date" id="date" name="date" value="{{ $date }}" min="{{ now()->toDateString() }}">
-        <button class="btn btn-ghost" type="submit">Ver disponibilidad</button>
-    </form>
-
-    <p class="sim-note">ℹ️ Las reservas de este proyecto son simuladas: no se cobra ningún pago real.</p>
-
-    @forelse($club->courts as $court)
-        <section class="card court-card">
-            <div class="court-info">
-                <img src="{{ asset('img/sports/'.$court->sport->icon) }}" alt="" width="30" height="30">
+        @auth
+            <form class="rp-booking-form" data-booking-form method="POST" action="{{ route('bookings.store') }}">
+                @csrf<input type="hidden" name="court_id" value="{{ $court->id }}"><input type="hidden" name="date" value="{{ $date }}">
                 <div>
-                    <h2>{{ $court->name }}</h2>
-                    <p class="muted">
-                        {{ $court->sport->name }} · {{ $court->priceEuros() }} €/hora ·
-                        {{ $court->is_outdoor ? 'Exterior' : 'Interior' }} ·
-                        {{ $court->open_hour }}:00–{{ $court->close_hour }}:00
-                    </p>
-                </div>
-            </div>
-
-            @auth
-                <form class="booking-form" method="POST" action="{{ route('bookings.store') }}">
-                    @csrf
-                    <input type="hidden" name="court_id" value="{{ $court->id }}">
-                    <input type="hidden" name="date" value="{{ $date }}">
-
-                    <label for="hour-{{ $court->id }}">Hora:</label>
-                    <select id="hour-{{ $court->id }}" name="hour" required>
-                        @for($h = $court->open_hour; $h < $court->close_hour; $h++)
-                            <option value="{{ $h }}" @disabled(in_array($h, $busy[$court->id] ?? []))>
-                                {{ sprintf('%02d:00', $h) }}{{ in_array($h, $busy[$court->id] ?? []) ? ' — ocupada' : '' }}
-                            </option>
-                        @endfor
-                    </select>
-
-                    {{-- Opciones de partido abierto: se muestran al marcar el checkbox (app.js). --}}
-                    <label class="check">
-                        <input type="checkbox" name="is_open" value="1" class="open-toggle"> Partido abierto
-                    </label>
-                    <div class="open-options" hidden>
-                        <label>Nivel mín.
-                            <select name="min_level">
-                                <option value="">—</option>
-                                @for($l = 1; $l <= 5; $l++)<option value="{{ $l }}">{{ $l }}</option>@endfor
-                            </select>
-                        </label>
-                        <label>Nivel máx.
-                            <select name="max_level">
-                                <option value="">—</option>
-                                @for($l = 1; $l <= 5; $l++)<option value="{{ $l }}">{{ $l }}</option>@endfor
-                            </select>
-                        </label>
+                    <div class="rp-slot-grid" role="group" aria-label="Horas de {{ $court->name }}">
+                    @foreach($hours as $hour)
+                        @php($unavailable = !$available->contains($hour))
+                        <div class="rp-slot-choice">
+                            <input type="radio" name="hour" id="court-{{ $court->id }}-hour-{{ $hour }}" value="{{ $hour }}" @disabled($unavailable) @checked(!$unavailable && (string) $selectedHour === (string) $hour) required>
+                            <label for="court-{{ $court->id }}-hour-{{ $hour }}">{{ sprintf('%02d:00', $hour) }}</label>
+                        </div>
+                    @endforeach
                     </div>
-
-                    <button class="btn btn-primary" type="submit">Reservar</button>
-                </form>
-            @else
-                <p class="muted"><a href="{{ route('login') }}">Entra</a> para reservar esta pista.</p>
-            @endauth
-        </section>
-    @empty
-        <div class="empty-state">
-            <img src="{{ asset('img/empty.svg') }}" alt="" width="120">
-            <p>Este club todavía no tiene pistas registradas.</p>
-        </div>
-    @endforelse
-</article>
+                    <div class="rp-booking-options">
+                        <label class="rp-toggle"><input type="checkbox" class="open-toggle" name="is_open" value="1"> Partido abierto @include('partials.ui-icon', ['name' => 'info'])</label>
+                        <div class="open-options rp-open-levels" hidden>
+                            <div class="rp-field"><label for="min-{{ $court->id }}">Nivel mínimo</label><select id="min-{{ $court->id }}" name="min_level"><option value="">Sin mínimo</option>@for($level = 1; $level <= 5; $level++)<option value="{{ $level }}">{{ $level }}</option>@endfor</select></div>
+                            <div class="rp-field"><label for="max-{{ $court->id }}">Nivel máximo</label><select id="max-{{ $court->id }}" name="max_level"><option value="">Sin máximo</option>@for($level = 1; $level <= 5; $level++)<option value="{{ $level }}">{{ $level }}</option>@endfor</select></div>
+                        </div>
+                    </div>
+                    <div class="rp-slot-summary" data-slot-summary aria-live="polite">Elige una hora disponible.</div>
+                    @if($available->isEmpty())<p class="rp-small">No quedan horas disponibles para este día.</p>@endif
+                </div>
+                <button class="btn btn-primary" type="submit" @disabled($available->isEmpty())>Reservar</button>
+            </form>
+        @else
+            <div class="rp-record__actions"><a class="btn btn-primary" href="{{ route('login') }}">Entra para reservar</a></div>
+        @endauth
+    </section>
+@empty
+    @include('partials.empty-state', ['title' => 'Este club todavía no tiene pistas', 'text' => 'Su gestor aún no ha publicado pistas disponibles.', 'href' => route('home'), 'label' => 'Ver otros clubes'])
+@endforelse
+</div>
 @endsection

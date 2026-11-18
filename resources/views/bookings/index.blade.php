@@ -1,38 +1,22 @@
-{{-- «Мои брони»: список обычных броней с отменой будущих. --}}
+{{-- Historial real: las canceladas se separan para no llamarlas jugadas. --}}
 @extends('layouts.app')
-@section('title', 'Mis reservas — ReservaPistes')
-
+@section('title', 'Mis reservas — Reserva Pistes')
+@section('banner')
+    @include('partials.banner', ['title' => 'Mis reservas', 'subtitle' => 'Aquí tienes tus reservas actuales y pasadas.'])
+@endsection
 @section('content')
-<h1>Mis reservas</h1>
-
-@forelse($bookings as $booking)
-    <div class="card row-card @if($booking->status === 'cancelled') is-cancelled @endif">
-        <div>
-            <strong>{{ $booking->court->club->name }}</strong> — {{ $booking->court->name }}
-            <p class="muted">
-                {{ $booking->court->sport->name }} ·
-                {{ $booking->starts_at->format('d/m/Y H:i') }}–{{ $booking->ends_at->format('H:i') }} ·
-                {{ number_format($booking->price_total / 100, 2, ',', '.') }} € (simulado)
-            </p>
-        </div>
-        <div class="row-actions">
-            @if($booking->status === 'cancelled')
-                <span class="badge badge-muted">Cancelada</span>
-            @elseif($booking->starts_at->isFuture())
-                <form method="POST" action="{{ route('bookings.cancel', $booking) }}"
-                      onsubmit="return confirm('¿Cancelar esta reserva?')">
-                    @csrf @method('PATCH')
-                    <button class="btn btn-danger" type="submit">Cancelar</button>
-                </form>
-            @else
-                <span class="badge">Jugada</span>
-            @endif
-        </div>
-    </div>
-@empty
-    <div class="empty-state">
-        <img src="{{ asset('img/empty.svg') }}" alt="" width="120">
-        <p>Todavía no tienes reservas. <a href="{{ route('home') }}">Busca un club en el mapa</a>.</p>
-    </div>
-@endforelse
+@php
+    $proximas = $bookings->filter(fn ($b) => $b->status !== 'cancelled' && $b->ends_at->isFuture())->sortBy('starts_at');
+    $pasadas = $bookings->filter(fn ($b) => $b->status !== 'cancelled' && $b->ends_at->isPast());
+    $canceladas = $bookings->where('status', 'cancelled');
+@endphp
+@foreach(['Próximas' => $proximas, 'Pasadas' => $pasadas, 'Canceladas' => $canceladas] as $heading => $items)
+    @if($items->isNotEmpty())
+        <h2 class="rp-section-heading">{{ $heading }}</h2>
+        <div class="rp-list">@foreach($items as $booking)@include('bookings._row', ['booking' => $booking, 'pasada' => $heading !== 'Próximas'])@endforeach</div>
+    @endif
+@endforeach
+@if($bookings->isEmpty())
+    @include('partials.empty-state', ['title' => 'Todavía no tienes reservas', 'text' => 'Busca un club y reserva tu pista en unos clics.', 'href' => route('home'), 'label' => 'Buscar un club'])
+@endif
 @endsection

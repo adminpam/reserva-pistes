@@ -1,52 +1,22 @@
-{{-- Админка клубов: поиск, назначение менеджера, удаление.
-     Новые клубы появляются через php artisan clubs:import. --}}
+{{-- Gestión visual de clubes; se conservan las acciones existentes. --}}
 @extends('layouts.app')
-@section('title', 'Admin · Clubes — ReservaPistes')
-
+@section('title', 'Administración · Clubes — Reserva Pistes')
+@section('banner')@include('partials.banner', ['title' => 'Administración', 'subtitle' => 'Gestiona los clubes, deportes y usuarios de la plataforma.'])@endsection
 @section('content')
-<div class="page-head">
-    <h1>Clubes</h1>
-    <nav class="subnav">
-        <a class="active" href="{{ route('admin.clubs.index') }}">Clubes</a>
-        <a href="{{ route('admin.sports.index') }}">Deportes</a>
-        <a href="{{ route('admin.users.index') }}">Usuarios</a>
-    </nav>
-</div>
-
-<form class="filters" method="GET" action="{{ route('admin.clubs.index') }}">
-    <input type="text" name="q" value="{{ request('q') }}" placeholder="Buscar club…">
-    <button class="btn btn-ghost" type="submit">Buscar</button>
-</form>
-
-<p class="muted">Los clubes se importan desde OpenStreetMap con <code>php artisan clubs:import</code>.</p>
-
+@include('admin._nav')
+<form class="rp-filter-bar rp-filter-bar--search" method="GET" action="{{ route('admin.clubs.index') }}"><input type="search" name="q" value="{{ request('q') }}" placeholder="Buscar club…" aria-label="Buscar club"><button class="btn btn-primary" type="submit">Buscar</button></form>
+<div class="rp-list">
 @forelse($clubs as $club)
-    <div class="card row-card">
-        <div>
-            <strong>{{ $club->name }}</strong>
-            <p class="muted">{{ $club->address }}@if($club->city), {{ $club->city }}@endif · {{ $club->courts_count }} pistas</p>
+    <article class="rp-panel rp-admin-row">
+        <div><h3>{{ $club->name }}</h3><p>{{ $club->address ?: 'Dirección no disponible' }}@if($club->city) · {{ $club->city }}@endif</p><p>{{ $club->courts_count }} {{ $club->courts_count === 1 ? 'pista' : 'pistas' }}</p></div>
+        <div class="rp-admin-actions">
+            <form method="POST" action="{{ route('admin.clubs.update', $club) }}">@csrf @method('PATCH')<div class="rp-field"><label for="manager-{{ $club->id }}">Gestor</label><select id="manager-{{ $club->id }}" name="manager_id"><option value="">Sin gestor</option>@foreach($managers as $manager)<option value="{{ $manager->id }}" @selected($club->manager_id === $manager->id)>{{ $manager->name }}</option>@endforeach</select></div><button class="btn btn-ghost btn-sm" type="submit">Asignar</button></form>
+            <form method="POST" action="{{ route('admin.clubs.destroy', $club) }}" data-confirm="Se eliminarán este club, sus pistas y sus reservas. ¿Continuar?">@csrf @method('DELETE')<button class="btn btn-danger btn-sm" type="submit">Eliminar</button></form>
         </div>
-        <div class="row-actions">
-            <form method="POST" action="{{ route('admin.clubs.update', $club) }}" class="inline-form">
-                @csrf @method('PATCH')
-                <select name="manager_id">
-                    <option value="">Sin gestor</option>
-                    @foreach($managers as $manager)
-                        <option value="{{ $manager->id }}" @selected($club->manager_id === $manager->id)>{{ $manager->name }}</option>
-                    @endforeach
-                </select>
-                <button class="btn btn-ghost" type="submit">Asignar</button>
-            </form>
-            <form method="POST" action="{{ route('admin.clubs.destroy', $club) }}"
-                  onsubmit="return confirm('¿Eliminar este club con sus pistas y reservas?')">
-                @csrf @method('DELETE')
-                <button class="btn btn-danger" type="submit">Eliminar</button>
-            </form>
-        </div>
-    </div>
+    </article>
 @empty
-    <p class="muted">No hay clubes. Ejecuta <code>php artisan clubs:import</code>.</p>
+    @include('partials.empty-state', ['title' => 'No hay clubes con esa búsqueda', 'text' => 'Los clubes publicados aparecerán aquí. Prueba otra búsqueda.'])
 @endforelse
-
-{{ $clubs->links() }}
+</div>
+{{ $clubs->links('partials.pagination') }}
 @endsection

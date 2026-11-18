@@ -1,1 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="#F7F7F5" stroke="#1F2933" stroke-width="2"/><polygon points="16,10 21,14 19,20 13,20 11,14" fill="#1F2933"/><path d="M16 4 V10 M27 12 L21 14 M24 25 L19 20 M8 25 L13 20 M5 12 L11 14" stroke="#1F2933" stroke-width="1.6"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke="#0B2E2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Fútbol sala">
+  <circle cx="16" cy="16" r="11"/>
+  <path d="M16 10.5 L20.8 14 19 19.6h-6L11.2 14z" fill="#E8A317" stroke="#E8A317"/>
+  <path d="M16 5v5.5M26.4 12.6 20.8 14M22.6 24.8 19 19.6M9.4 24.8 13 19.6M5.6 12.6 11.2 14" stroke-width="1.6"/>
+</svg>

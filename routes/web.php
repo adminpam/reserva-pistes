@@ -68,3 +68,14 @@ Route::middleware(["auth", "role:manager"])->prefix("manager")->name("manager.")
     Route::delete("/courts/{court}", [App\Http\Controllers\Manager\ManagerCourtController::class, "destroy"])->name("courts.destroy");
     Route::get("/bookings", [App\Http\Controllers\Manager\ManagerBookingController::class, "index"])->name("bookings.index");
 });
+
+// Comprobación pública para la entrada estática: no inicia sesiones ni crea cookies.
+Route::get('/brand/ready', \App\Http\Controllers\BrandReadyController::class)
+    ->withoutMiddleware([
+        \Illuminate\Cookie\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
+    ])
+    ->name('brand.ready');
