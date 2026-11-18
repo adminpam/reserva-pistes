@@ -1,45 +1,22 @@
-{{-- Partidos que organizo o en los que participo, separados en activos y jugados. --}}
+{{-- Los partidos activos, jugados y cancelados tienen estados distintos. --}}
 @extends('layouts.app')
-@section('title', 'Mis partidos — ReservaPistes')
-
+@section('title', 'Mis partidos — Reserva Pistes')
 @section('banner')
-    @include('partials.banner', [
-        'title'    => 'Mis partidos',
-        'subtitle' => 'Gestiona los partidos que organizas o en los que participas.',
-        'image'    => \App\Support\Ui::sportCover('voleibol'),
-    ])
+    @include('partials.banner', ['title' => 'Mis partidos', 'subtitle' => 'Gestiona los partidos que organizas o en los que participas.'])
 @endsection
-
 @section('content')
 @php
-    $activos = $matches->filter(fn ($m) => $m->status !== 'cancelled' && $m->starts_at->isFuture());
-    $pasados = $matches->reject(fn ($m) => $m->status !== 'cancelled' && $m->starts_at->isFuture());
+    $activos = $matches->filter(fn ($m) => $m->status !== 'cancelled' && $m->ends_at->isFuture())->sortBy('starts_at');
+    $pasados = $matches->filter(fn ($m) => $m->status !== 'cancelled' && $m->ends_at->isPast());
+    $cancelados = $matches->where('status', 'cancelled');
 @endphp
-
-@if($activos->isNotEmpty())
-    <h2 class="section-title">Mis partidos activos</h2>
-    <div class="stagger">
-        @foreach($activos as $match)
-            @include('matches._row', ['match' => $match, 'pasado' => false])
-        @endforeach
-    </div>
-@endif
-
-@if($pasados->isNotEmpty())
-    <h2 class="section-title mt-xl">Mis partidos pasados</h2>
-    <div>
-        @foreach($pasados as $match)
-            @include('matches._row', ['match' => $match, 'pasado' => true])
-        @endforeach
-    </div>
-@endif
-
+@foreach(['Mis partidos activos' => $activos, 'Mis partidos pasados' => $pasados, 'Partidos cancelados' => $cancelados] as $heading => $items)
+    @if($items->isNotEmpty())
+        <h2 class="rp-section-heading">{{ $heading }}</h2>
+        <div class="rp-list">@foreach($items as $match)@include('matches._row', ['match' => $match, 'pasado' => $heading !== 'Mis partidos activos'])@endforeach</div>
+    @endif
+@endforeach
 @if($matches->isEmpty())
-    <div class="empty">
-        <img src="{{ asset('img/empty.svg') }}" alt="">
-        <h3>Aún no tienes partidos</h3>
-        <p>Organiza un partido desde la ficha de un club o únete a alguno de los que hay abiertos.</p>
-        <a class="btn btn-primary" href="{{ route('matches.index') }}">Buscar partidos</a>
-    </div>
+    @include('partials.empty-state', ['title' => 'Aún no tienes partidos', 'text' => 'Organiza un partido o únete a alguno de los que hay abiertos.', 'href' => route('matches.index'), 'label' => 'Buscar partidos'])
 @endif
 @endsection

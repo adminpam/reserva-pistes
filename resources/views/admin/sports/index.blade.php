@@ -1,60 +1,19 @@
-{{-- Administración de deportes: jugadores por partido, alta y baja. --}}
+{{-- Catálogo y capacidad: los valores siempre proceden de la base de datos. --}}
 @extends('layouts.app')
-@section('title', 'Administración · Deportes — ReservaPistes')
-
-@section('banner')
-    @include('partials.banner', [
-        'title'    => 'Administración',
-        'subtitle' => 'Clubes, deportes y usuarios de la plataforma.',
-        'image'    => \App\Support\Ui::sportCover('voleibol'),
-    ])
-@endsection
-
+@section('title', 'Administración · Deportes — Reserva Pistes')
+@section('banner')@include('partials.banner', ['title' => 'Administración', 'subtitle' => 'Gestiona los clubes, deportes y usuarios de la plataforma.'])@endsection
 @section('content')
 @include('admin._nav')
-
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px" class="stagger">
-@foreach($sports as $sport)
-    <article class="card" style="text-align:center">
-        <div class="sport-circle" style="width:72px;height:72px;margin:4px auto 16px">
-            <img src="{{ asset('img/sports/'.$sport->icon) }}" alt="" style="width:40px;height:40px">
-        </div>
-
-        <h3 style="font-size:1.25rem">{{ $sport->name }}</h3>
-        <p class="tiny" style="margin-top:4px">
-            {{ $sport->courts_count }} {{ $sport->courts_count === 1 ? 'pista' : 'pistas' }}
-        </p>
-
-        <form method="POST" action="{{ route('admin.sports.update', $sport) }}"
-              class="inline" style="justify-content:center;margin-top:18px">
-            @csrf @method('PATCH')
-            <label class="tiny" for="ppm{{ $sport->id }}" style="font-weight:700">Jugadores</label>
-            <input id="ppm{{ $sport->id }}" type="number" name="players_per_match" min="2" max="30"
-                   value="{{ $sport->players_per_match }}" style="width:86px;height:42px;text-align:center">
-            <button class="btn btn-ghost btn-sm" type="submit">Guardar</button>
-        </form>
-
-        <form method="POST" action="{{ route('admin.sports.destroy', $sport) }}" style="margin-top:14px"
-              onsubmit="return confirm('¿Eliminar este deporte?')">
-            @csrf @method('DELETE')
-            <button type="submit" class="tiny"
-                    style="background:none;border:none;color:var(--clay);cursor:pointer;font-weight:600">
-                Eliminar
-            </button>
-        </form>
+<div class="rp-sport-admin-grid">
+@forelse($sports as $sport)
+    <article class="rp-panel rp-sport-admin">
+        <span class="rp-sport-disc">@include('partials.sport-icon', ['slug' => $sport->slug])</span><h3>{{ $sport->name }}</h3><p class="rp-small">{{ $sport->courts_count }} pistas asociadas</p>
+        <form method="POST" action="{{ route('admin.sports.update', $sport) }}">@csrf @method('PATCH')<div class="rp-field"><label for="capacity-{{ $sport->id }}">Jugadores</label><input id="capacity-{{ $sport->id }}" type="number" name="players_per_match" min="2" max="30" value="{{ $sport->players_per_match }}" required></div><button class="btn btn-ghost btn-sm" type="submit">Guardar</button></form>
+        @if($sport->courts_count === 0)<form method="POST" action="{{ route('admin.sports.destroy', $sport) }}" data-confirm="¿Eliminar este deporte?">@csrf @method('DELETE')<button class="btn btn-danger btn-sm" type="submit">Eliminar</button></form>@else<span class="rp-small">Tiene pistas asociadas</span>@endif
     </article>
-@endforeach
+@empty
+    <p class="rp-muted">Todavía no hay deportes en el catálogo.</p>
+@endforelse
 </div>
-
-<div class="card mt-xl" style="border-style:dashed">
-    <h2 class="section-title">Nuevo deporte</h2>
-    <form method="POST" action="{{ route('admin.sports.store') }}" class="inline">
-        @csrf
-        <input type="text" name="name" placeholder="Nombre del deporte" required maxlength="60"
-               style="flex:1;min-width:200px" aria-label="Nombre">
-        <input type="number" name="players_per_match" placeholder="Jugadores" min="2" max="30" required
-               style="width:150px" aria-label="Jugadores por partido">
-        <button class="btn btn-primary" type="submit">Crear deporte</button>
-    </form>
-</div>
+<section class="rp-panel rp-add-form"><h2>Nuevo deporte</h2><form class="rp-form-grid" method="POST" action="{{ route('admin.sports.store') }}">@csrf<div class="rp-field"><label for="sport-name">Nombre</label><input id="sport-name" name="name" maxlength="60" value="{{ old('name') }}" required></div><div class="rp-field"><label for="sport-capacity">Jugadores por partido</label><input id="sport-capacity" name="players_per_match" type="number" min="2" max="30" required></div><button class="btn btn-primary" type="submit">Crear deporte</button></form></section>
 @endsection

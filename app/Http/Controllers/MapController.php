@@ -43,6 +43,7 @@ class MapController extends Controller
                 'name' => $club->name,
                 'address' => $club->address,
                 'city' => $club->city,
+                'min_price_per_hour' => $club->courts->min('price_per_hour'),
                 'lat' => (float) $club->lat,
                 'lng' => (float) $club->lng,
                 'sports' => $sports->pluck('name')->all(),

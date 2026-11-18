@@ -1,0 +1,360 @@
+/* Sistema visual de las pantallas internas. Se carga fuera de login/registro.
+   Los bloques se reorganizan en móvil; no dependen de estilos en línea. */
+.rp-app { --rp-ink:#003c34; --rp-muted:#55736b; --rp-line:#dce7e2; --rp-amber:#ffb21d; background:#f4f8f6; color:var(--rp-ink); }
+.rp-app .site-main { max-width:1560px; margin:0 auto; padding:0 32px 48px; }
+.rp-app h1,.rp-app h2,.rp-app h3 { font-family:'Manrope',system-ui,sans-serif; font-weight:800; letter-spacing:-.035em; }
+.rp-app button,.rp-app input,.rp-app select { font-family:inherit; }
+.rp-app .btn { min-height:48px; height:auto; padding:12px 25px; font-weight:800; line-height:1.3; }
+.rp-app .btn-primary { color:#073a30; background:var(--rp-amber); }
+.rp-app .btn-primary:hover { background:#ffc147; }
+.rp-app .btn-ghost { border-color:#0c5b4e; color:#084d41; }
+.rp-app .btn-danger { border-color:#dc2626; color:#c61919; }
+.rp-app .btn-sm { min-height:44px; padding:10px 18px; font-size:14px; }
+.rp-app .site-header .btn-ghost { color:#fff; border-color:#ffffffc4; }
+.rp-app .site-header :is(a,button,summary):focus-visible { outline-color:#ffca64; }
+.rp-app .btn:disabled { opacity:.5; cursor:not-allowed; }
+.rp-app :is(a,button,input,select,summary):focus-visible { outline:3px solid #008775; outline-offset:3px; }
+.rp-page-banner { position:relative; min-height:220px; overflow:hidden; background:#f4f8f6; margin-bottom:32px; }
+.rp-page-banner::before { content:''; position:absolute; inset:0 0 0 30%; background-image:linear-gradient(#00726099,#003e35bb),var(--rp-banner-image); background-size:cover; background-position:center 68%; }
+.rp-page-banner::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,#f4f8f6 3%,#f4f8f6f7 30%,#f4f8f6b0 48%,#f4f8f600 72%); }
+.rp-page-banner__inner { max-width:1560px; margin:auto; position:relative; z-index:1; padding:42px 48px 34px; }
+.rp-page-banner h1 { font-size:clamp(44px,4.8vw,76px); line-height:1.02; max-width:22ch; overflow-wrap:anywhere; }
+.rp-page-banner p { margin-top:14px; color:#42665c; font-size:clamp(17px,1.7vw,25px); line-height:1.4; max-width:50ch; }
+.rp-section-heading { display:flex; align-items:center; gap:16px; margin:30px 0 18px; font-size:30px; line-height:1.2; }
+.rp-section-heading::before { content:''; width:6px; align-self:stretch; min-height:30px; background:var(--rp-amber); border-radius:4px; flex:none; }
+.rp-section-heading:first-child { margin-top:0; }
+.rp-panel { background:#fff; border:1px solid var(--rp-line); border-radius:22px; padding:30px; box-shadow:0 2px 5px #003c3404; min-width:0; }
+.rp-panel h2 { font-size:30px; line-height:1.2; }
+.rp-muted { color:var(--rp-muted); }
+.rp-small { font-size:13px; line-height:1.5; color:var(--rp-muted); }
+.rp-stack { display:grid; gap:16px; }
+.rp-list { display:grid; gap:16px; }
+.rp-record { display:grid; grid-template-columns:132px minmax(0,1fr) auto; align-items:center; gap:24px; min-width:0; padding:18px 22px; border:1px solid var(--rp-line); border-radius:20px; background:#fff; box-shadow:0 2px 4px #003c3403; }
+.rp-record h3 { font-size:22px; line-height:1.25; overflow-wrap:anywhere; }
+.rp-record__image { width:132px; height:104px; border-radius:13px; object-fit:cover; background:#e7efe9; }
+.rp-record__sub { margin-top:4px; color:#3f665a; font-size:16px; line-height:1.4; overflow-wrap:anywhere; }
+.rp-record__meta { display:flex; flex-wrap:wrap; align-items:center; gap:8px 20px; margin-top:10px; color:#527268; font-size:14px; }
+.rp-record__meta span { display:inline-flex; gap:7px; align-items:center; }
+.rp-ui-icon { width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex:none; vertical-align:middle; }
+.rp-sport-icon { width:32px; height:32px; flex:none; stroke:currentColor; }
+.rp-record__actions { display:flex; align-items:center; gap:20px; justify-content:flex-end; }
+.rp-record__actions form { margin:0; }
+.rp-record__actions .rp-btn-group { padding-left:22px; border-left:1px solid var(--rp-line); }
+.rp-badge { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:40px; padding:8px 18px; border-radius:99px; background:#ddf2eb; color:#07594b; font-size:14px; font-weight:800; white-space:nowrap; }
+.rp-badge--amber { background:#ffdf96; color:#61450a; }
+.rp-badge--muted { background:#eef0f0; color:#64766f; }
+.rp-badge--danger { background:#fff0ed; color:#b92924; }
+.rp-record--history { background:#fbfcfb; }
+.rp-record--history h3,.rp-record--history .rp-record__sub { color:#6e827a; }
+.rp-record--history .rp-record__image { filter:saturate(.65); opacity:.8; }
+.rp-record--match { grid-template-columns:132px minmax(0,1fr) minmax(180px,auto) auto; }
+.rp-players { display:flex; flex-wrap:wrap; gap:5px; align-items:center; }
+.rp-player { width:33px; height:33px; display:grid; place-items:center; border-radius:50%; background:#006653; color:#fff; font-size:11px; font-weight:800; }
+.rp-player--empty { background:transparent; border:1px dashed #b2c8be; color:#6f8d80; font-size:17px; }
+.rp-player-count { margin-top:8px; color:#577568; font-size:13px; }
+.rp-match-actions { display:grid; gap:10px; justify-items:stretch; min-width:154px; }
+.rp-match-actions .btn { width:100%; }
+.rp-match-offer { grid-template-columns:82px minmax(0,1fr) minmax(120px,.5fr) auto auto; gap:24px; padding:22px; transition:border-color 150ms ease,box-shadow 150ms ease; }
+.rp-match-offer:hover { border-color:#0cae98; box-shadow:0 6px 18px #00503b12; }
+.rp-sport-disc { width:80px; height:80px; border-radius:50%; display:grid; place-items:center; background:#e0f3ed; flex:none; }
+.rp-sport-disc .rp-sport-icon { width:48px; height:48px; }
+.rp-capacity { border-left:1px solid var(--rp-line); padding-left:24px; }
+.rp-capacity__dots { display:flex; flex-wrap:wrap; max-width:176px; gap:7px; }
+.rp-capacity__dots i { width:13px; height:13px; border-radius:50%; border:1px solid #a9c6ba; }
+.rp-capacity__dots i.is-filled { background:#006958; border-color:#006958; }
+.rp-filter-bar { display:grid; grid-template-columns:minmax(180px,.8fr) minmax(180px,1.6fr) auto auto; gap:16px; align-items:center; padding:18px; border:1px solid var(--rp-line); border-radius:20px; background:#fff; margin-bottom:22px; }
+.rp-field { display:grid; gap:7px; min-width:0; }
+.rp-field label,.rp-field>span { font-size:14px; font-weight:700; color:#426459; }
+.rp-field input,.rp-field select,.rp-field textarea,.rp-filter-bar input[type=search],.rp-filter-bar select { width:100%; min-width:0; height:52px; padding:0 16px; border:1px solid #cfdfd6; border-radius:12px; background:#fff; color:#164b3d; font:inherit; }
+.rp-field textarea { min-height:110px; padding:12px 16px; resize:vertical; }
+.rp-filter-bar input[type=search] { min-width:0; }
+.rp-toggle { display:flex; align-items:center; gap:11px; min-height:48px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap; }
+.rp-toggle input { width:20px; height:20px; accent-color:#008474; }
+.rp-filter-bar--search { grid-template-columns:minmax(0,1fr) auto; }
+.rp-filter-bar--date { grid-template-columns:minmax(0,1.5fr) minmax(200px,.8fr); margin:30px 0; padding:0; border:0; background:transparent; }
+.rp-notice { display:flex; gap:12px; align-items:flex-start; padding:15px 20px; border:1px solid #f3b53e; background:#fff6e4; border-radius:12px; font-size:14px; color:#68501c; margin-bottom:24px; }
+.rp-notice .rp-ui-icon { color:#e79e00; margin-top:1px; }
+.rp-empty { display:flex; flex-direction:column; align-items:center; text-align:center; padding:56px 24px; }
+.rp-empty svg.rp-empty-art { width:220px; max-width:80%; height:150px; margin-bottom:18px; }
+.rp-empty h2,.rp-empty h3 { font-size:30px; line-height:1.2; }
+.rp-empty p { margin:12px 0 22px; max-width:48ch; font-size:17px; line-height:1.6; color:#5d786c; }
+.rp-empty .btn { min-width:200px; }
+.rp-profile { display:grid; grid-template-columns:340px minmax(0,1fr); align-items:start; gap:24px; }
+.rp-profile-summary { text-align:center; padding:34px; }
+.rp-profile-avatar { display:grid; place-items:center; width:190px; height:190px; border-radius:50%; background:linear-gradient(145deg,#006958,#003c34); color:white; margin:0 auto 24px; font-size:66px; font-weight:800; }
+.rp-profile-summary h2 { font-size:28px; }
+.rp-profile-summary .rp-profile-email { margin:8px 0 24px; color:#57756b; overflow-wrap:anywhere; }
+.rp-profile-since { border-top:1px solid var(--rp-line); padding-top:22px; display:flex; gap:12px; align-items:center; text-align:left; color:#57756b; font-size:16px; line-height:1.5; }
+.rp-profile-since .rp-ui-icon { width:26px; height:26px; }
+.rp-profile-editor { padding:34px; }
+.rp-levels { display:grid; gap:18px; margin:24px 0; }
+.rp-level-field { padding:0; margin:0; border:0; min-width:0; }
+.rp-level-row { display:grid; grid-template-columns:minmax(150px,1fr) minmax(280px,1.4fr); align-items:center; gap:24px; }
+.rp-level-sport { display:flex; align-items:center; gap:16px; font-size:20px; font-weight:700; }
+.rp-level-sport .rp-sport-icon { width:36px; height:36px; }
+.rp-level-scale { display:grid; grid-template-columns:repeat(5,minmax(44px,1fr)); border:1px solid #d3e2d9; border-radius:99px; overflow:hidden; }
+.rp-level-scale input { position:absolute; width:1px; height:1px; opacity:0; }
+.rp-level-scale label { min-height:46px; display:grid; place-items:center; font-size:19px; font-weight:700; cursor:pointer; border-radius:99px; }
+.rp-level-scale input:checked+label { background:var(--rp-amber); color:#073f32; }
+.rp-level-scale input:focus-visible+label { outline:3px solid #008775; outline-offset:-3px; }
+.rp-level-unset { display:flex; gap:7px; align-items:center; justify-content:flex-end; min-height:32px; font-size:12px; color:#648174; cursor:pointer; }
+.rp-level-unset input { accent-color:#008474; }
+.rp-form-footer { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; border-top:1px solid var(--rp-line); padding-top:22px; margin-top:24px; }
+.rp-profile-name { border-top:1px solid var(--rp-line); padding-top:24px; margin-top:26px; display:grid; grid-template-columns:minmax(150px,1fr) minmax(280px,1.4fr); align-items:center; gap:24px; }
+.rp-profile-name label { font-size:17px; }
+.rp-club-cover { height:235px; background-image:linear-gradient(#00645266,#004d3d99),url('/img/sports/tenis-cover.jpg'); background-size:cover; background-position:center 65%; }
+.rp-club-summary { display:flex; align-items:center; gap:32px; margin-top:-80px; position:relative; margin-bottom:30px; min-height:180px; }
+.rp-club-summary__info { flex:1; min-width:0; }
+.rp-club-summary h1 { font-size:clamp(32px,3.3vw,52px); line-height:1.1; overflow-wrap:anywhere; }
+.rp-club-address { margin:14px 0 20px; color:#57776c; display:flex; align-items:flex-start; gap:9px; font-size:18px; }
+.rp-tag-list { display:flex; gap:10px; flex-wrap:wrap; }
+.rp-sport-tag { display:inline-flex; gap:8px; align-items:center; min-height:38px; padding:8px 14px; border-radius:99px; background:#e0f2ec; color:#066450; font-size:14px; font-weight:700; }
+.rp-sport-tag .rp-sport-icon { width:22px; height:22px; }
+.rp-club-summary .weather { min-width:185px; max-width:235px; margin-left:auto; }
+.rp-club-summary .weather .num { font:800 38px/1 'Manrope',system-ui,sans-serif; }
+.rp-court { display:grid; grid-template-columns:76px minmax(190px,1fr) minmax(370px,1.5fr); align-items:center; gap:24px; padding:24px; }
+.rp-court>.rp-sport-icon { width:68px; height:68px; }
+.rp-court h3 { font-size:23px; }
+.rp-court p { font-size:14px; color:#55746a; line-height:1.6; margin-top:7px; }
+.rp-booking-form { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:18px; padding-left:22px; border-left:1px solid var(--rp-line); align-items:center; }
+.rp-slot-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(62px,1fr)); gap:7px; }
+.rp-slot-choice { position:relative; }
+.rp-slot-choice input { position:absolute; width:1px; height:1px; opacity:0; }
+.rp-slot-choice label { display:grid; place-items:center; min-height:37px; border:1px solid #278875; border-radius:99px; color:#0b6754; font-size:13px; font-weight:700; cursor:pointer; }
+.rp-slot-choice input:checked+label { background:#006e59; color:#fff; border-color:#006e59; }
+.rp-slot-choice input:disabled+label { color:#91a298; background:#eef1ee; border-color:#eef1ee; text-decoration:line-through; cursor:not-allowed; }
+.rp-slot-choice input:focus-visible+label { outline:3px solid #008775; outline-offset:2px; }
+.rp-booking-options { margin-top:13px; }
+.rp-open-levels { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+.rp-open-levels .rp-field select { height:44px; }
+.rp-slot-summary { color:#4b7263; font-size:12px; margin-top:8px; min-height:18px; }
+.rp-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; }
+.rp-form-grid .rp-field--full { grid-column:1/-1; }
+.rp-form-narrow>h2 { margin-bottom:26px; }
+.rp-form-legend { font-size:14px; font-weight:700; margin-bottom:12px; color:#426459; }
+.rp-form-narrow { max-width:850px; margin:0 auto; }
+.rp-choice-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.rp-choice-grid label { display:flex; align-items:center; gap:8px; min-height:52px; border:1px solid var(--rp-line); border-radius:14px; padding:10px; cursor:pointer; font-size:14px; }
+.rp-choice-grid input { accent-color:#008474; }
+.rp-choice-grid .rp-sport-icon { width:25px; height:25px; }
+.rp-choice-grid label:has(input:checked) { background:#fff4df; border-color:#ffca6a; }
+.rp-tabs { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 26px; }
+.rp-tabs a { display:flex; min-height:48px; padding:12px 24px; border:1px solid #d6e5db; border-radius:99px; color:#476d5d; background:#fff; text-decoration:none; font-size:15px; font-weight:700; }
+.rp-tabs a.active { background:#005c49; border-color:#005c49; color:#fff; }
+.rp-stat-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; margin-bottom:30px; }
+.rp-stat { padding:24px; }
+.rp-stat strong { display:block; font-size:40px; line-height:1.15; font-weight:800; }
+.rp-stat span { display:block; margin-top:7px; color:#607c6f; font-size:14px; }
+.rp-page-toolbar { display:flex; align-items:center; gap:16px; justify-content:space-between; flex-wrap:wrap; margin:28px 0 18px; }
+.rp-page-toolbar h2 { font-size:26px; }
+.rp-admin-row { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:22px; }
+.rp-admin-row h3 { font-size:21px; line-height:1.3; overflow-wrap:anywhere; }
+.rp-admin-row p { color:#607d70; font-size:14px; margin-top:7px; overflow-wrap:anywhere; }
+.rp-admin-actions { display:flex; gap:12px; align-items:end; flex-wrap:wrap; justify-content:flex-end; }
+.rp-admin-actions form { display:flex; gap:8px; align-items:end; margin:0; }
+.rp-admin-actions .rp-field { min-width:150px; }
+.rp-admin-actions input,.rp-admin-actions select { height:46px; }
+.rp-sport-admin-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+.rp-sport-admin { display:flex; flex-direction:column; align-items:center; gap:16px; text-align:center; }
+.rp-sport-admin .rp-sport-disc { width:72px; height:72px; }
+.rp-sport-admin h3 { font-size:23px; }
+.rp-sport-admin form { display:flex; gap:10px; align-items:end; }
+.rp-sport-admin .rp-field { max-width:105px; }
+.rp-add-form { margin-top:28px; }
+.rp-add-form h2 { margin-bottom:22px; }
+.rp-user-info { display:flex; gap:16px; align-items:center; min-width:0; }
+.rp-user-info>div { min-width:0; }
+.rp-manager-booking { grid-template-columns:64px minmax(0,1fr) auto; }
+.rp-calendar-tile { display:grid; place-items:center; width:64px; height:70px; border-radius:14px; background:#e8f4ed; color:#17664f; }
+.rp-calendar-tile strong { font-size:26px; line-height:1; }
+.rp-calendar-tile span { font-size:12px; text-transform:uppercase; }
+.rp-pagination { list-style:none; display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin:28px 0 0; padding:0; }
+.rp-pagination a,.rp-pagination span { min-width:44px; min-height:44px; display:grid; place-items:center; padding:8px 14px; border:1px solid var(--rp-line); border-radius:11px; background:#fff; color:#416b58; text-decoration:none; }
+.rp-pagination [aria-current=page] { background:#ffb21d; color:#153d2a; border-color:#ffb21d; font-weight:800; }
+.rp-pagination [aria-disabled=true] { color:#9aae9f; background:transparent; }
+.rp-pagination-summary { text-align:center; font-size:13px; color:#6b8577; margin-top:12px; }
+.rp-confirm-dialog { width:min(460px,calc(100% - 40px)); padding:30px; border:1px solid var(--rp-line); border-radius:22px; color:#0b4c39; background:#fff; box-shadow:0 20px 100px #00332333; }
+.rp-confirm-dialog::backdrop { background:#002d26a6; backdrop-filter:blur(3px); }
+.rp-confirm-dialog h2 { font-size:25px; margin-bottom:14px; }
+.rp-confirm-dialog p { color:#5b7a69; font-size:15px; line-height:1.6; }
+.rp-confirm-dialog__actions { display:flex; justify-content:flex-end; gap:12px; margin-top:26px; flex-wrap:wrap; }
+.rp-sr { position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
+.rp-error-page { margin:0; padding:0; font-family:system-ui,sans-serif; }
+.rp-error-shell { min-height:100svh; display:grid; grid-template-rows:auto 1fr; }
+.rp-error-header { padding:22px 30px; background:#003c35; }
+.rp-error-header a { display:flex; align-items:center; gap:12px; width:max-content; color:#fff; text-decoration:none; font-size:21px; font-weight:800; }
+.rp-error-mark { width:68px; height:35px; display:block; overflow:hidden; position:relative; }
+.rp-error-mark img { width:271.8584%; height:auto; max-width:none; position:absolute; left:-81.4159%; top:-86.2069%; }
+.rp-error-main { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px 24px; }
+.rp-error-code { color:#d1e5d7; font-size:clamp(90px,18vw,180px); font-weight:800; line-height:1; letter-spacing:-.06em; }
+.rp-error-main h1 { font-size:clamp(26px,4vw,44px); line-height:1.15; margin:22px 0 14px; }
+.rp-error-main p { color:#5d7d6b; max-width:44ch; line-height:1.7; margin:0 0 24px; }
+.rp-error-main a { display:inline-flex; min-height:48px; align-items:center; padding:0 25px; border-radius:99px; background:#ffb21d; color:#06442f; font-weight:700; text-decoration:none; }
+
+@media (max-width:1200px) {
+    .rp-match-offer { grid-template-columns:64px minmax(0,1fr) auto; }
+    .rp-match-offer .rp-sport-disc { width:64px; height:64px; }
+    .rp-match-offer .rp-capacity { grid-column:2; border:0; padding:0; }
+    .rp-match-offer .rp-match-level { grid-column:3; grid-row:1; }
+    .rp-match-offer .rp-match-join { grid-column:3; grid-row:2; }
+    .rp-record--match { grid-template-columns:110px minmax(0,1fr) auto; }
+    .rp-record--match .rp-record__image { width:110px; }
+    .rp-record--match .rp-match-players { grid-column:2; }
+    .rp-record--match .rp-match-actions { grid-column:3; grid-row:1 / span 2; }
+    .rp-court { grid-template-columns:64px minmax(0,1fr); }
+    .rp-court>.rp-sport-icon { width:60px; height:60px; }
+    .rp-booking-form { grid-column:1/-1; border-left:0; border-top:1px solid var(--rp-line); padding:20px 0 0; }
+    .rp-profile { grid-template-columns:280px minmax(0,1fr); }
+    .rp-level-row,.rp-profile-name { grid-template-columns:1fr; gap:10px; }
+    .rp-level-control { min-width:0; }
+    .rp-sport-admin-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .rp-admin-row { grid-template-columns:1fr; }
+    .rp-admin-actions { justify-content:flex-start; border-top:1px solid var(--rp-line); padding-top:18px; }
+}
+@media (max-width:900px) {
+    .rp-filter-bar { grid-template-columns:1fr 1fr; }
+    .rp-profile { grid-template-columns:1fr; }
+    .rp-profile-summary { display:grid; grid-template-columns:120px 1fr; gap:16px 24px; text-align:left; align-items:center; }
+    .rp-profile-avatar { width:120px; height:120px; font-size:44px; grid-row:1 / span 3; margin:0; }
+    .rp-profile-summary .rp-profile-email { margin:0; }
+    .rp-profile-since { grid-column:2; border:0; padding:0; font-size:14px; }
+    .rp-stat-grid { gap:12px; }
+}
+@media (max-width:720px) {
+    .rp-app .site-main { padding:0 16px 30px; }
+    .rp-page-banner { min-height:0; margin-bottom:22px; }
+    .rp-page-banner::before { inset:0; opacity:.17; }
+    .rp-page-banner::after { background:linear-gradient(90deg,#f4f8f6 5%,#f4f8f6cc 75%,#f4f8f699); }
+    .rp-page-banner__inner { padding:26px 20px 24px; }
+    .rp-page-banner h1 { font-size:36px; line-height:1.08; }
+    .rp-page-banner p { font-size:15px; margin-top:10px; max-width:38ch; }
+    .rp-panel { padding:20px; border-radius:18px; }
+    .rp-panel h2 { font-size:24px; }
+    .rp-section-heading { margin-top:28px; gap:11px; font-size:24px; }
+    .rp-section-heading::before { width:5px; min-height:24px; }
+    .rp-record { grid-template-columns:78px minmax(0,1fr); gap:14px; padding:16px; border-radius:18px; align-items:start; }
+    .rp-record__image { width:78px; height:86px; }
+    .rp-record h3 { font-size:18px; }
+    .rp-record__sub { font-size:14px; }
+    .rp-record__meta { font-size:12px; gap:7px 12px; margin-top:8px; }
+    .rp-record__meta .rp-ui-icon { width:17px; height:17px; }
+    .rp-record__actions { grid-column:1/-1; justify-content:space-between; border-top:1px solid var(--rp-line); padding-top:14px; gap:12px; }
+    .rp-record__actions .rp-btn-group { padding:0; border:0; }
+    .rp-record--match { grid-template-columns:78px minmax(0,1fr); }
+    .rp-record--match .rp-record__image { width:78px; }
+    .rp-record--match .rp-match-players { grid-column:1/-1; border-top:1px solid var(--rp-line); padding-top:14px; }
+    .rp-record--match .rp-match-actions { grid-column:1/-1; grid-row:auto; display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; min-width:0; }
+    .rp-match-actions .btn { min-width:150px; width:auto; }
+    .rp-match-offer { grid-template-columns:54px minmax(0,1fr); padding:18px; gap:14px; }
+    .rp-match-offer .rp-sport-disc { width:54px; height:54px; }
+    .rp-match-offer .rp-sport-icon { width:34px; height:34px; }
+    .rp-match-offer .rp-capacity { grid-column:1/-1; border-top:1px solid var(--rp-line); padding:14px 0 0; }
+    .rp-match-offer .rp-match-level { grid-column:1/-1; grid-row:auto; }
+    .rp-match-offer .rp-match-join { grid-column:1/-1; grid-row:auto; }
+    .rp-match-join .btn { width:100%; }
+    .rp-badge { min-height:38px; font-size:12px; padding:8px 14px; }
+    .rp-filter-bar { grid-template-columns:1fr; padding:16px; gap:12px; }
+    .rp-filter-bar .btn { width:100%; }
+    .rp-filter-bar--date { grid-template-columns:1fr; margin:22px 0; padding:0; }
+    .rp-toggle { min-height:44px; }
+    .rp-empty { padding:40px 12px; }
+    .rp-empty h2,.rp-empty h3 { font-size:25px; }
+    .rp-empty p { font-size:15px; }
+    .rp-empty svg.rp-empty-art { width:190px; height:130px; }
+    .rp-profile-summary { display:grid; grid-template-columns:88px minmax(0,1fr); gap:8px 16px; padding:20px; }
+    .rp-profile-avatar { width:88px; height:88px; font-size:32px; }
+    .rp-profile-summary h2 { font-size:22px; }
+    .rp-profile-email { font-size:13px; }
+    .rp-profile-since { font-size:12px; }
+    .rp-profile-since .rp-ui-icon { display:none; }
+    .rp-profile-editor { padding:20px; }
+    .rp-levels { gap:22px; }
+    .rp-level-sport { font-size:17px; gap:10px; }
+    .rp-level-sport .rp-sport-icon { width:29px; height:29px; }
+    .rp-level-scale label { min-height:48px; font-size:17px; }
+    .rp-level-unset { min-height:44px; font-size:13px; }
+    .rp-form-footer .btn { width:100%; }
+    .rp-club-cover { height:180px; }
+    .rp-club-summary { display:block; margin-top:-54px; margin-bottom:20px; padding:22px; }
+    .rp-club-summary h1 { font-size:29px; }
+    .rp-club-address { font-size:14px; margin:12px 0 16px; }
+    .rp-sport-tag { padding:7px 11px; min-height:36px; font-size:12px; }
+    .rp-club-summary .weather { margin:20px 0 0; max-width:none; min-width:0; border-left:0; border-top:1px solid var(--rp-line); padding:16px 0 0; }
+    .rp-club-summary .weather .num { font-size:29px; }
+    .rp-court { grid-template-columns:46px minmax(0,1fr); gap:14px; padding:20px; }
+    .rp-court>.rp-sport-icon { width:44px; height:44px; }
+    .rp-court h3 { font-size:20px; }
+    .rp-court p { font-size:13px; }
+    .rp-booking-form { grid-template-columns:1fr; gap:16px; padding-top:18px; }
+    .rp-slot-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+    .rp-slot-choice label { min-height:44px; font-size:14px; }
+    .rp-booking-form>.btn { width:100%; }
+    .rp-form-grid { grid-template-columns:1fr; gap:18px; }
+    .rp-choice-grid { grid-template-columns:1fr 1fr; }
+    .rp-choice-grid label { flex-wrap:wrap; min-height:60px; font-size:12px; gap:6px; }
+    .rp-tabs { gap:6px; }
+    .rp-tabs a { flex:1; padding:12px 10px; justify-content:center; font-size:13px; }
+    .rp-stat-grid { grid-template-columns:1fr; }
+    .rp-stat { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:18px 20px; }
+    .rp-stat strong { font-size:30px; }
+    .rp-stat span { margin:0; text-align:right; }
+    .rp-page-toolbar { gap:14px; }
+    .rp-page-toolbar h2 { font-size:22px; }
+    .rp-page-toolbar .btn { width:100%; }
+    .rp-admin-row { gap:16px; }
+    .rp-admin-actions { display:grid; grid-template-columns:1fr; }
+    .rp-admin-actions form { width:100%; display:grid; grid-template-columns:minmax(0,1fr) auto; }
+    .rp-admin-actions .rp-field { min-width:0; }
+    .rp-admin-actions>form:only-child { grid-template-columns:1fr; }
+    .rp-sport-admin-grid { grid-template-columns:1fr; }
+    .rp-sport-admin form { width:100%; justify-content:center; }
+    .rp-manager-booking { grid-template-columns:54px minmax(0,1fr); }
+    .rp-calendar-tile { width:54px; height:62px; }
+    .rp-manager-booking .rp-record__actions { grid-column:1/-1; }
+    .rp-pagination { gap:4px; }
+    .rp-pagination a,.rp-pagination span { padding:8px 12px; }
+    .rp-pagination li.rp-pagination-page { display:none; }
+    .rp-confirm-dialog { padding:24px; }
+    .rp-confirm-dialog__actions { display:grid; grid-template-columns:1fr 1fr; }
+}
+@media (prefers-reduced-motion:reduce) { .rp-match-offer { transition:none; } }
+
+
+/* Movimiento breve para orientar la mirada, sin bloquear controles ni repetirlo.
+   Login, registro y carga mantienen sus animaciones aprobadas. */
+@media (prefers-reduced-motion:no-preference) {
+    .rp-app .rp-page-banner__inner {
+        animation:rp-content-arrives 340ms cubic-bezier(.2,.7,.2,1) backwards;
+    }
+    .rp-app .rp-list>.rp-record,
+    .rp-app .rp-profile>.rp-panel,
+    .rp-app .rp-stat-grid>.rp-stat {
+        animation:rp-content-arrives 320ms cubic-bezier(.2,.7,.2,1) backwards;
+    }
+    .rp-app .rp-list>.rp-record:nth-child(2),
+    .rp-app .rp-profile>.rp-panel:nth-child(2),
+    .rp-app .rp-stat-grid>.rp-stat:nth-child(2) { animation-delay:35ms; }
+    .rp-app .rp-list>.rp-record:nth-child(3),
+    .rp-app .rp-stat-grid>.rp-stat:nth-child(3) { animation-delay:70ms; }
+    .rp-app .rp-record {
+        transition:box-shadow 160ms ease,border-color 160ms ease;
+    }
+    .rp-app .rp-slot-choice label,
+    .rp-app .rp-level-scale label {
+        transition:background-color 140ms ease,color 140ms ease,border-color 140ms ease;
+    }
+    .rp-app .rp-confirm-dialog[open] {
+        animation:rp-content-arrives 180ms ease-out backwards;
+    }
+    .rp-app .btn:not(:disabled):active { transform:translateY(1px); }
+}
+@media (hover:hover) and (pointer:fine) {
+    .rp-app .rp-record:has(a,button):hover {
+        border-color:#9ec8bb; box-shadow:0 7px 22px #003c340c;
+    }
+}
+.rp-app .rp-record:focus-within { border-color:#3c9d85; }
+@keyframes rp-content-arrives {
+    from { opacity:.35; transform:translateY(6px); }
+    to { opacity:1; transform:none; }
+}

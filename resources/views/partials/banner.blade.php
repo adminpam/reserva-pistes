@@ -1,12 +1,7 @@
-{{-- Cabecera de pagina: foto de pista que se funde hacia el fondo claro.
-     $image es opcional; sin ella el banner queda liso. --}}
-@php($bannerImage = $image ?? asset('img/sports/tenis-cover.jpg'))
-<div class="page-banner" style="--banner-img:url('{{ $bannerImage }}')">
-    <div class="wrap">
+{{-- Cabecera compartida de las pantallas internas. La imagen es ilustrativa. --}}
+<section class="rp-page-banner" style="--rp-banner-image:url('{{ $image ?? asset('img/sports/tenis-cover.jpg') }}')">
+    <div class="rp-page-banner__inner">
         <h1>{{ $title }}</h1>
-        @isset($subtitle)
-            <p>{{ $subtitle }}</p>
-        @endisset
-        {{ $slot ?? '' }}
+        @isset($subtitle)<p>{{ $subtitle }}</p>@endisset
     </div>
-</div>
+</section>

@@ -81,14 +81,17 @@
         </div>
     </div>
 
-    <div class="rp-mobile-selection" data-mobile-selection aria-label="Club seleccionado" aria-live="polite">
-        <p class="rp-mobile-selection__hint">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="2.7"/>
-            </svg>
-            <span>Toca un marcador para ver el club y sus pistas.</span>
-        </p>
-    </div>
+    <section class="rp-mobile-sheet" data-club-sheet aria-label="Lista de clubes">
+        <button class="rp-mobile-sheet__handle" type="button" data-sheet-toggle aria-expanded="true" aria-controls="mobile-club-content">
+            <span class="rp-mobile-sheet__grip" aria-hidden="true"></span>
+            <span data-mobile-count>Buscando clubes…</span><span class="rp-small">Ver / ocultar</span>
+        </button>
+        <div id="mobile-club-content" class="rp-mobile-sheet__content" data-sheet-content>
+            <label class="rp-mobile-sort">Ordenar <select data-club-sort aria-label="Ordenar clubes"><option value="name">Por nombre</option><option value="price">Por precio</option></select></label>
+            <div class="rp-mobile-selection" data-mobile-selection aria-label="Club seleccionado" aria-live="polite"><p class="rp-mobile-selection__hint">Toca un marcador para ver el club y sus pistas.</p></div>
+            <div class="rp-mobile-club-list" data-mobile-club-list></div>
+        </div>
+    </section>
     <p class="rp-map-message" data-map-message hidden></p>
 </section>
 <noscript>

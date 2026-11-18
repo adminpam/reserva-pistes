@@ -1,46 +1,31 @@
-{{-- Una fila de partido. Se usa en "Mis partidos" para activos y pasados. --}}
+{{-- Una ficha de participación con aforo y jugadores obtenidos del modelo. --}}
 @php($soyOrganizador = $match->user_id === auth()->id())
-<article @class(['card', 'row-card', 'is-past' => $pasado])>
-    <img class="thumb" src="{{ \App\Support\Ui::sportThumb($match->court->sport->slug) }}" alt="" loading="lazy">
-
-    <div class="grow">
-        <h3>Partido de {{ mb_strtolower($match->court->sport->name) }}</h3>
-        <p class="muted">{{ $match->court->club->name }} · {{ $match->court->name }}</p>
-        <p class="tiny" style="margin-top:4px">
-            {{ $match->starts_at->translatedFormat('D, j M Y') }} ·
-            {{ $match->starts_at->format('H:i') }}–{{ $match->ends_at->format('H:i') }}
-        </p>
-    </div>
-
+<article @class(['rp-record', 'rp-record--match', 'rp-record--history' => $pasado])>
+    <img class="rp-record__image" src="{{ \App\Support\Ui::sportThumb($match->court->sport->slug) }}" alt="Imagen ilustrativa del deporte" loading="lazy">
     <div>
-        <div class="players">
-            @foreach($match->players->take(4) as $jugador)
-                <span class="avatar" title="{{ $jugador->name }}">{{ \App\Support\Ui::initials($jugador->name) }}</span>
-            @endforeach
-            @for($i = 0; $i < min(3, $match->freeSlots()); $i++)
-                <span class="slot">+</span>
-            @endfor
+        <h3>Partido de {{ mb_strtolower($match->court->sport->name) }}</h3>
+        <p class="rp-record__sub">{{ $match->court->club->name }}</p>
+        <div class="rp-record__meta">
+            <span>@include('partials.ui-icon', ['name' => 'calendar']) {{ $match->starts_at->translatedFormat('D, j M Y') }}</span>
+            <span>@include('partials.ui-icon', ['name' => 'clock']) {{ $match->starts_at->format('H:i') }}–{{ $match->ends_at->format('H:i') }}</span>
         </div>
-        <p class="tiny" style="margin-top:8px">
-            {{ $match->players->count() }}/{{ $match->court->sport->players_per_match }} jugadores
-        </p>
     </div>
-
-    <div class="row-actions">
-        @if($match->status === 'cancelled')
-            <span class="chip chip-muted">Cancelado</span>
-        @elseif($pasado)
-            <span class="chip chip-muted">Jugado</span>
+    <div class="rp-match-players">
+        <div class="rp-players" aria-hidden="true">
+            @foreach($match->players->take(4) as $player)<span class="rp-player" title="{{ $player->name }}">{{ \App\Support\Ui::initials($player->name) }}</span>@endforeach
+            @if($match->players->count() > 4)<span class="rp-player">+{{ $match->players->count() - 4 }}</span>@endif
+            @for($i = 0; $i < min(3, $match->freeSlots()); $i++)<span class="rp-player rp-player--empty">+</span>@endfor
+        </div>
+        <p class="rp-player-count">{{ $match->players->count() }}/{{ $match->court->sport->players_per_match }} jugadores</p>
+    </div>
+    <div class="rp-match-actions">
+        @if($match->status === 'cancelled')<span class="rp-badge rp-badge--muted">Cancelado</span>
+        @elseif($pasado)<span class="rp-badge rp-badge--muted">Jugado</span>
+        @elseif($match->starts_at->isPast())<span class="rp-badge rp-badge--amber">En curso</span>
         @else
-            @if($soyOrganizador)
-                <span class="chip chip-amber">Organizas tú</span>
-            @endif
-            <form method="POST" action="{{ route('matches.leave', $match) }}"
-                  onsubmit="return confirm('{{ $soyOrganizador ? 'Se cancelará el partido para todos. ¿Seguro?' : '¿Salir de este partido?' }}')">
-                @csrf @method('DELETE')
-                <button class="btn btn-danger" type="submit">
-                    {{ $soyOrganizador ? 'Cancelar partido' : 'Salir' }}
-                </button>
+            @if($soyOrganizador)<span class="rp-badge rp-badge--amber">Organizas tú</span>@endif
+            <form method="POST" action="{{ route('matches.leave', $match) }}" data-confirm="{{ $soyOrganizador ? 'Se cancelará el partido para todos los jugadores. ¿Continuar?' : '¿Quieres salir de este partido?' }}">
+                @csrf @method('DELETE')<button class="btn {{ $soyOrganizador ? 'btn-danger' : 'btn-ghost' }}" type="submit">{{ $soyOrganizador ? 'Cancelar partido' : 'Salir' }}</button>
             </form>
         @endif
     </div>

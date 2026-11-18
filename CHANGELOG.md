@@ -1,23 +1,25 @@
 # Changelog
 
-## [Sin publicar] — 2026-11-17
+## [Sin publicar] — actualización 2026-11-18
+- Microanimaciones breves con movimiento reducido y documentación de instalación/manual según AEA6.
+- Resultado confirmado de FrontendScreensTest: 6 tests, 58 aserciones; continuidad con Joy y pago al final.
+- Composición común de perfil, club, reservas, partidos, gestor y administrador.
+- Cabecera fija sin scroll interior; mapa móvil con lista inferior y ordenación.
+- Confirmaciones accesibles, paginación propia, vacíos y errores 403/404/419/500/503.
+- Plan de continuidad para Joy y simulación de pago pendiente de la fase de backend.
 - Portada según la referencia: cabecera con símbolo original, panel de deportes y mapa ancho.
 - Estructuras de tablet y teléfono, ficha móvil inferior, estados de carga, vacío y error.
 - Validación del contenido de los marcadores y corrección de los SVG del sonido.
 - Marca con el PNG original y cargador basado en la referencia del equipo.
 - Entrada estática opcional que espera a Laravel antes de abrir la aplicación.
 - Accesibilidad con movimiento reducido, espera limitada y reintento.
-- Nota: el bloque v1.0 inferior era un plan del registro anterior y debe revisarse antes de etiquetar la versión final; el despliegue actual es Render.
 
-## [v1.0] — 2026-12-04
-Primera versión completa, desplegada en producción.
-- Partidos abiertos: plazas por deporte, rango de nivel, unirse/salir, «Mis partidos».
-- Perfil del jugador con nivel 1–5 por deporte.
-- Panel de gestor: CRUD de pistas y reservas del club.
-- Panel de admin: clubes (asignación de gestor), deportes y usuarios.
-- Importación de clubes reales desde OpenStreetMap (`clubs:import`) y tiempo con Open-Meteo.
-- Pruebas automáticas (solapamiento y roles) y documentación 01–06 completa.
-- Despliegue en Laravel Cloud con PostgreSQL.
+## [v1.0] — Pendiente de publicar
+
+Fecha y etiqueta por confirmar después de la revisión del backend, el pago de
+prueba, el despliegue final y la documentación. La anotación anterior con fecha
+04/12/2026 era una previsión; no acredita una versión publicada. El servicio
+existente utiliza Render, no Laravel Cloud.
 
 ## [v0.1] — 2026-11-14
 Esqueleto funcional del proyecto.

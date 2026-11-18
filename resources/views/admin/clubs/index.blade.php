@@ -1,62 +1,22 @@
-{{-- Administración de clubes: buscar, asignar gestor y eliminar. --}}
+{{-- Gestión visual de clubes; se conservan las acciones existentes. --}}
 @extends('layouts.app')
-@section('title', 'Administración · Clubes — ReservaPistes')
-
-@section('banner')
-    @include('partials.banner', [
-        'title'    => 'Administración',
-        'subtitle' => 'Clubes, deportes y usuarios de la plataforma.',
-        'image'    => \App\Support\Ui::sportCover('tenis'),
-    ])
-@endsection
-
+@section('title', 'Administración · Clubes — Reserva Pistes')
+@section('banner')@include('partials.banner', ['title' => 'Administración', 'subtitle' => 'Gestiona los clubes, deportes y usuarios de la plataforma.'])@endsection
 @section('content')
 @include('admin._nav')
-
-<form class="card filters" method="GET" action="{{ route('admin.clubs.index') }}">
-    <input type="search" name="q" value="{{ request('q') }}" placeholder="Buscar club…" aria-label="Buscar club">
-    <button class="btn btn-ghost" type="submit">Buscar</button>
-    <span class="spacer"></span>
-    <span class="tiny">Los clubes se importan desde OpenStreetMap con <code class="mono">php artisan clubs:import</code></span>
-</form>
-
+<form class="rp-filter-bar rp-filter-bar--search" method="GET" action="{{ route('admin.clubs.index') }}"><input type="search" name="q" value="{{ request('q') }}" placeholder="Buscar club…" aria-label="Buscar club"><button class="btn btn-primary" type="submit">Buscar</button></form>
+<div class="rp-list">
 @forelse($clubs as $club)
-    <article class="card row-card">
-        <div class="grow">
-            <h3>{{ $club->name }}</h3>
-            <p class="muted">{{ $club->address ?: 'Dirección pendiente' }}@if($club->city), {{ $club->city }}@endif</p>
-        </div>
-
-        <span class="chip">{{ $club->courts_count }} {{ $club->courts_count === 1 ? 'pista' : 'pistas' }}</span>
-
-        <div class="row-actions">
-            <form method="POST" action="{{ route('admin.clubs.update', $club) }}" class="inline" style="gap:8px">
-                @csrf @method('PATCH')
-                <select name="manager_id" style="width:auto;min-width:170px;height:42px" aria-label="Gestor">
-                    <option value="">Sin gestor</option>
-                    @foreach($managers as $manager)
-                        <option value="{{ $manager->id }}" @selected($club->manager_id === $manager->id)>
-                            {{ $manager->name }}
-                        </option>
-                    @endforeach
-                </select>
-                <button class="btn btn-ghost btn-sm" type="submit">Asignar</button>
-            </form>
-
-            <form method="POST" action="{{ route('admin.clubs.destroy', $club) }}"
-                  onsubmit="return confirm('Se eliminará el club con sus pistas y reservas. ¿Seguro?')">
-                @csrf @method('DELETE')
-                <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
-            </form>
+    <article class="rp-panel rp-admin-row">
+        <div><h3>{{ $club->name }}</h3><p>{{ $club->address ?: 'Dirección no disponible' }}@if($club->city) · {{ $club->city }}@endif</p><p>{{ $club->courts_count }} {{ $club->courts_count === 1 ? 'pista' : 'pistas' }}</p></div>
+        <div class="rp-admin-actions">
+            <form method="POST" action="{{ route('admin.clubs.update', $club) }}">@csrf @method('PATCH')<div class="rp-field"><label for="manager-{{ $club->id }}">Gestor</label><select id="manager-{{ $club->id }}" name="manager_id"><option value="">Sin gestor</option>@foreach($managers as $manager)<option value="{{ $manager->id }}" @selected($club->manager_id === $manager->id)>{{ $manager->name }}</option>@endforeach</select></div><button class="btn btn-ghost btn-sm" type="submit">Asignar</button></form>
+            <form method="POST" action="{{ route('admin.clubs.destroy', $club) }}" data-confirm="Se eliminarán este club, sus pistas y sus reservas. ¿Continuar?">@csrf @method('DELETE')<button class="btn btn-danger btn-sm" type="submit">Eliminar</button></form>
         </div>
     </article>
 @empty
-    <div class="empty">
-        <img src="{{ asset('img/empty.svg') }}" alt="">
-        <h3>No hay clubes</h3>
-        <p>Ejecuta <code class="mono">php artisan clubs:import</code> para traerlos de OpenStreetMap.</p>
-    </div>
+    @include('partials.empty-state', ['title' => 'No hay clubes con esa búsqueda', 'text' => 'Los clubes publicados aparecerán aquí. Prueba otra búsqueda.'])
 @endforelse
-
-{{ $clubs->links() }}
+</div>
+{{ $clubs->links('partials.pagination') }}
 @endsection

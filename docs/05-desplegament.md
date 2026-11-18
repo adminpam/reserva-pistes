@@ -1,25 +1,40 @@
-# 05 · Despliegue
+# Documento adicional · Despliegue en Render
 
-## Plataforma elegida: Laravel Cloud (plan gratuito)
+Este archivo conserva su nombre para no romper referencias antiguas. El documento
+obligatorio número 05 de la práctica es [`05-manual-usuari.md`](05-manual-usuari.md).
 
-Comparadas las opciones gratuitas **sin tarjeta de crédito**, elegimos **Laravel Cloud**:
-- Registro sin tarjeta con 5 $ de crédito inicial (documentación oficial: cloud.laravel.com/docs/free-trial).
-- Soporte nativo de Laravel 12 y base de datos PostgreSQL gestionada.
-- Dominio gratuito `*.free.laravel.cloud` para la demo.
-- Con la **hibernación activada**, una app pequeña consume muy poco; desplegaremos cerca de la fecha de presentación para que el crédito cubra la demo.
+## Estado real comunicado
 
-Alternativa evaluada: Render (requiere Dockerfile para PHP y su PostgreSQL gratuito caduca a los 30 días).
+- URL existente: https://reserva-pistes.onrender.com/.
+- El panel compartido por Denys muestra un servicio Docker en Frankfurt.
+- El frontend nuevo se ha instalado y probado parcialmente en su ASUS. Su
+  publicación en Render no se ha confirmado.
+- El despliegue final lo realizará Denys, después de cerrar el backend con Joy.
 
-## Pasos
-1. Crear cuenta en cloud.laravel.com (correo, sin tarjeta) y conectar GitHub.
-2. Importar el repositorio `adminpam/reserva-pistes`, rama `main`.
-3. Añadir una base de datos PostgreSQL del propio panel (las variables `DB_*` se inyectan solas).
-4. Variables de entorno: `APP_ENV=production`, `APP_DEBUG=false`, `APP_KEY` (generada), `SEED_PASSWORD` (solo si se siembran usuarios demo).
-5. Comando de build: `npm ci && npm run build`. Tras el primer deploy: `php artisan migrate --force --seed` y `php artisan clubs:import`.
-6. Activar hibernación y anotar la URL final aquí:
+El plan anterior de Laravel Cloud no describe el servicio utilizado y no debe
+ejecutarse como si fuese la configuración actual. Para la revisión final se
+contrastarán el `Dockerfile`, los scripts de `docker/`, la rama conectada y el
+commit realmente desplegado.
 
-**URL de producción:** _pendiente_
+## Decisiones y comprobaciones pendientes
 
-## Seguridad
-- `.env` nunca se sube (está en `.gitignore`); las claves solo viven en el panel de la plataforma.
-- `APP_DEBUG=false` en producción.
+1. Confirmar cómo se inicia el contenedor, se compilan assets y se ejecutan
+   migraciones sin borrar la base ni sembrar contraseñas demo en cada arranque.
+2. Confirmar base persistente, modalidad gratuita sin tarjeta y disponibilidad
+   durante la presentación. El filesystem del servicio Free es efímero y el
+   Postgres Free de Render expira a los 30 días; no basta con que el sitio abra hoy.
+3. Comprobar variables de producción en Render sin copiarlas al chat o al repositorio:
+   entorno de producción, depuración desactivada, URL HTTPS y conexión de base.
+4. Coordinar merge y despliegue con Denys, observar logs y probar los tres roles,
+   reserva, conflicto, partido y pago simulado en la URL final.
+5. Registrar fecha, commit desplegado y resultados en `06-proves.md`; completar
+   README, capturas y v1.0 solo después de verificarlo.
+
+La entrada estática del cargador es opcional y está descrita en
+[`07-marca-y-carga.md`](07-marca-y-carga.md). Instalar sus archivos no despliega
+automáticamente un segundo servicio.
+
+Fuentes oficiales revisadas el 18/11/2026:
+
+- https://render.com/docs/free
+- https://render.com/docs/deploys

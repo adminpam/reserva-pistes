@@ -88,10 +88,10 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 - Resultado: `ImportClubs.php` idempotente (probado: 10 clubes reales importados), `RoleAccessTest`, `02-requisits.md`, `03-disseny.md` y `assets-pendientes.md`.
 - Commits: [2b5bf92](https://github.com/adminpam/reserva-pistes/commit/2b5bf92), [45b6abc](https://github.com/adminpam/reserva-pistes/commit/45b6abc), [7fe0b59](https://github.com/adminpam/reserva-pistes/commit/7fe0b59) · PR #10
 
-**15 · __/12/2026 — Denys**
+**15 · Plan anterior de despliegue — sin ejecución acreditada (no cuenta como uso realizado)**
 - Objetivo: despliegue en producción.
 - Prompt: «Pasos para desplegar en Laravel Cloud con PostgreSQL: build de Vite, migrate --force --seed, clubs:import y variables de entorno seguras».
-- Resultado: _pendiente_ — app publicada en la URL de `docs/05-desplegament.md`; etiqueta v1.0.
+- Resultado: no realizado según este registro. El plan citaba Laravel Cloud, pero el servicio existente es Render. No acredita una publicación ni una etiqueta v1.0.
 - Commit: _pendiente_
 
 ---
@@ -101,8 +101,8 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 - Objetivo: revisar el código existente y adaptar la marca y la carga a las referencias aportadas por el equipo.
 - Prompt (resumen): «La página no me gusta como se ve. Usa el logo original y una pantalla de carga con la misma pista de la referencia y una pelota luminosa que bote. Entrega archivos por paquetes con comandos para instalarlos desde Downloads». Se facilitó el ZIP del código y la URL de Render.
 - Resultado: PNG original conservado, pista SVG basada en la referencia, pelota animada, barra indeterminada, carga ligada al documento, entrada estática con comprobación de Laravel y límite de espera, e instalador con comprobación de versiones y copia de seguridad.
-- Validación: ver `docs/07-marca-y-carga.md`. Las comprobaciones en PHP/Laravel, la aprobación visual del equipo y la publicación de la entrada estática siguen pendientes.
-- Commit/PR: pendiente de crear por el equipo y sustituir esta línea por el enlace real.
+- Validación posterior comunicada por Denys: build y limpieza correctos; `BrandReadyTest`: 1 test, 5 aserciones. Pista y pelota aprobadas; el nombre/barra se ajustaron en 01b. Entrada estática sin despliegue confirmado.
+- Git: incluido en el commit local `82806d1`; enlace y PR pendientes de publicar y revisar.
 
 ---
 
@@ -112,7 +112,7 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 - Prompt (resumen): «En móvil no queremos reducir la página de escritorio: queremos una estructura propia. Falta el espacio entre Reserva y Pistes; el segmento de carga debe desaparecer al final y volver a entrar desde el inicio. La pista y la pelota están bien».
 - Resultado: nombre con separación visible; segmento que atraviesa la barra en una sola dirección; estructura de teléfono con marca arriba, pista al centro y progreso abajo, variante horizontal y ajustes específicos de tablet. Se conservan la geometría de la pista y el bote aprobado.
 - Validación del paquete anterior en el ASUS de Denys: `npm run build` correcto, `php artisan view:clear` correcto y `BrandReadyTest` aprobado (1 test, 5 aserciones), según las salidas compartidas. El ajuste visual de esta entrada queda pendiente de revisar en el navegador del equipo.
-- Commit/PR: pendiente de sustituir por el enlace real del mismo PR de marca y carga.
+- Git: incluido en el commit local `82806d1`; enlace y PR pendientes de publicar y revisar.
 
 ---
 
@@ -122,4 +122,43 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 - Prompt (resumen): «La página principal se ve mal. Hay que mejorarla como en la referencia y sustituir el dibujo que hace de logo por nuestro logo real». Después se compartió la versión local actual y se aclaró que todavía no estaba publicada.
 - Resultado: cabecera original ampliada, navegación completa, título e ilustración grandes, panel de deportes y mapa ancho; controles táctiles, ficha móvil inferior, estados vacíos y errores explícitos. API con miniatura ilustrativa, validación de datos y cancelación de peticiones obsoletas. Corregida la visibilidad de los dos SVG de sonido.
 - Validación: 5 pruebas Node de contrato y contenido del mapa aprobadas; sintaxis JS y comprobación del instalador. Pruebas PHP y revisión visual en Laravel pendientes. El navegador del entorno de revisión no pudo alcanzar el stand local; no se declara validación visual en dispositivos.
-- Commit/PR: pendiente de sustituir por el enlace real después de la revisión del equipo.
+- Git: commit local `b505a4a` en `feat/portada-mapa`; enlace y PR pendientes de publicar y revisar. Validación posterior: `MapPageTest`, 2 tests y 15 aserciones aprobados en el ASUS.
+
+---
+
+**19 · 17/11/2026 — Denys (continuación posterior con Joy)**
+- Herramienta: ChatGPT (OpenAI).
+- Objetivo: completar las pantallas restantes de la interfaz según las referencias, sin modificar las plantillas aprobadas de acceso y registro.
+- Prompt (resumen): «Quita el scroll del header y déjalo fijo. Haz todas las demás pantallas, también las que no tienen referencia, con nuestro estilo. Seguiré en español con Joy para backend, admin y un pago de prueba; el despliegue en Render lo acabamos conmigo».
+- Resultado: pantallas de perfil, club/horarios, reservas, partidos, gestor, administrador y errores; componentes comunes, confirmación y paginación. Cabecera fija y mapa móvil con hoja inferior. Archivo de traspaso a Joy con backend, sincronización GitHub y pago de prueba pendiente.
+- Validación comunicada por Denys del paquete 02: build correcto; limpieza de vistas correcta; `MapPageTest`: 2 tests aprobados, 15 aserciones. La portada local se aprobó con la petición de corregir el scroll y fijar la cabecera, incluida en 03.
+- Validación del paquete 03: sintaxis JS y pruebas Node al preparar el código. Después Denys ejecutó `FrontendScreensTest` en el ASUS: 6 tests, 58 aserciones, aprobados en 1,31 s. Da la interfaz por terminada preliminarmente; revisión completa por tamaños y despliegue pendientes. Las pantallas de error no dependen de sesión ni de Vite.
+- Git: existe el commit local `82806d1` del estado anterior a la portada. Enlace al commit/PR de este paquete: pendiente de la publicación y revisión reales.
+
+
+---
+
+**20 · 18/11/2026 — Denys**
+- Herramienta: ChatGPT (OpenAI).
+- Objetivo: preparar la continuidad con Joy, cerrar la documentación pendiente y
+  añadir movimiento discreto sin rehacer el frontend aprobado.
+- Prompt (fragmentos literales del mensaje de Denys):
+
+  > With joy you finish payment method implementation at the end.
+  > in general fill the page, make it working and dynamic in general!
+  > host it with me!
+  > And if you still can make the page more alive, it could be even better (on level of animations, transitions, make elements more alive and crete some originality where it would be convenient.)
+
+  Denys adjuntó también los requisitos completos de AEA6: nombres obligatorios de
+  documentos, capturas, registro IA, versiones y reglas de GitHub.
+- Resultado: ajuste 03b de microanimaciones CSS respetando movimiento reducido;
+  instalación y manual con los nombres exigidos; estado real de tests y commits;
+  handoff de Joy con datos, permisos, concurrencia, pago al final y cierre con
+  Denys. Se corrige la antigua v1.0 presentada prematuramente como publicada.
+- Validación: usar los resultados PHP compartidos por Denys, sin inventar una
+  suite global ni un despliegue. Instalación y observación de 03b en el ASUS
+  pendientes hasta que Denys las realice. Capturas finales por rol pendientes.
+- Commit/PR: pendiente de crear, publicar y sustituir por el enlace real.
+
+Las entradas con enlaces pendientes se completarán al publicar. La entrada 15 es
+un plan sin ejecución y no se cuenta para el mínimo de 15 usos significativos.

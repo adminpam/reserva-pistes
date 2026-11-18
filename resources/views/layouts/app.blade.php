@@ -43,9 +43,13 @@
         })();
     </script>
     <script src="{{ asset('brand/loading.js') }}" defer></script>
+    @if(!request()->routeIs('login', 'register'))
+        <link rel="stylesheet" href="{{ asset('ui/screens.css') }}">
+        <script type="module" src="{{ asset('ui/screens.js') }}"></script>
+    @endif
     @stack('styles')
 </head>
-<body @class(['rp-home-page' => request()->routeIs('home')])>
+<body @class(['rp-home-page' => request()->routeIs('home'), 'rp-app' => !request()->routeIs('login', 'register')])>
 
 {{-- Carga inicial: una vez por sesión; la entrada estática evita repetirla. --}}
 @include('partials.intro')
@@ -122,6 +126,7 @@
 
 {{-- Barra de navegacion inferior: solo en movil --}}
 @include('partials.tabbar')
+@if(!request()->routeIs('login', 'register')) @include('partials.confirm-dialog') @endif
 
 </body>
 </html>

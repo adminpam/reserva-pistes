@@ -21,6 +21,7 @@ export function normalizeClubs(payload, origin) {
         if (seen.has(url)) continue;
         seen.add(url);
         result.push({
+            price: Number.isInteger(raw.min_price_per_hour) && raw.min_price_per_hour >= 0 ? raw.min_price_per_hour : null,
             id: String(raw.id ?? url), name: raw.name.trim().slice(0, 180),
             address: typeof raw.address === 'string' ? raw.address.slice(0, 240) : '',
             city: typeof raw.city === 'string' ? raw.city.slice(0, 100) : '', lat, lng, url,

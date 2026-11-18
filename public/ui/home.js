@@ -14,6 +14,13 @@ function initClubMap() {
     const selection = document.querySelector('[data-mobile-selection]');
     const initialHint = selection?.firstElementChild?.cloneNode(true);
     const filters = document.querySelectorAll('[name="sport-filter"]');
+    const sheet = document.querySelector('[data-club-sheet]');
+    const sheetContent = document.querySelector('[data-sheet-content]');
+    const sheetToggle = document.querySelector('[data-sheet-toggle]');
+    const mobileCount = document.querySelector('[data-mobile-count]');
+    const clubList = document.querySelector('[data-mobile-club-list]');
+    const sort = document.querySelector('[data-club-sort]');
+    let currentClubs = [];
     const phone = window.matchMedia('(max-width: 720px)');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -56,6 +63,35 @@ function initClubMap() {
         message.hidden = false;
     });
 
+    function updateInsets() {
+        const height = phone.matches && sheet ? Math.ceil(sheet.getBoundingClientRect().height) : 0;
+        element.style.setProperty('--rp-sheet-height', `${height}px`);
+    }
+    function renderList() {
+        if (!clubList) return;
+        const ordered = [...currentClubs].sort((a, b) => sort?.value === 'price'
+            ? (a.price ?? Infinity) - (b.price ?? Infinity) || a.name.localeCompare(b.name, 'es')
+            : a.name.localeCompare(b.name, 'es'));
+        clubList.replaceChildren(...ordered.map((club) => {
+            const card = createClubCard(club);
+            const price = document.createElement('div'); price.className = 'rp-club-card__price';
+            if (club.price !== null) {
+                const prefix = document.createElement('span'); prefix.textContent = 'desde';
+                const amount = document.createTextNode(new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 }).format(club.price / 100));
+                const unit = document.createElement('span'); unit.textContent = '/hora'; price.append(prefix, amount, unit);
+            } else { const note = document.createElement('span'); note.textContent = 'Sin pistas'; price.append(note); }
+            card.append(price); return card;
+        }));
+        updateInsets();
+    }
+    sort?.addEventListener('change', renderList);
+    sheetToggle?.addEventListener('click', () => {
+        sheetContent.hidden = !sheetContent.hidden;
+        sheetToggle.setAttribute('aria-expanded', String(!sheetContent.hidden));
+        updateInsets();
+        map.invalidateSize({ pan: false });
+    });
+
     function clearSelection() {
         selected = null;
         map.closePopup();
@@ -69,7 +105,7 @@ function initClubMap() {
         if (selection) selection.replaceChildren(createClubCard(club));
         if (phone.matches) {
             map.closePopup();
-            map.panInside([club.lat, club.lng], { padding: [38, 38], animate: !reduced.matches });
+            map.panInside([club.lat, club.lng], { paddingTopLeft: [32, 100], paddingBottomRight: [32, sheet ? sheet.getBoundingClientRect().height + 24 : 38], animate: !reduced.matches });
             selection?.scrollIntoView({ block: 'nearest', behavior: reduced.matches ? 'auto' : 'smooth' });
         } else {
             L.popup({ className: 'rp-club-popup', maxWidth: 370, minWidth: 326, offset: [0, -12], autoPanPadding: [24, 24] })
@@ -86,6 +122,8 @@ function initClubMap() {
         let timedOut = false;
         requestTimeout = window.setTimeout(() => { timedOut = true; controller.abort(); }, 15000);
         clearSelection();
+        currentClubs = []; renderList();
+        if (mobileCount) mobileCount.textContent = 'Buscando clubes…';
         markers.clear(); layer.clearLayers();
         element.setAttribute('aria-busy', 'true');
         if (count) count.textContent = 'Buscando clubes…';
@@ -101,6 +139,8 @@ function initClubMap() {
             if (current !== sequence) return;
             if (payload.length && !clubs.length) throw new Error('Coordenadas no disponibles.');
             if (count) count.textContent = clubCount(clubs.length);
+            if (mobileCount) mobileCount.textContent = clubCount(clubs.length);
+            currentClubs = clubs; renderList();
 
             for (const club of clubs) {
                 const marker = L.marker([club.lat, club.lng], {
@@ -114,7 +154,7 @@ function initClubMap() {
             if (clubs.length) {
                 state.hidden = true;
                 map.fitBounds(L.latLngBounds(clubs.map((club) => [club.lat, club.lng])), {
-                    padding: phone.matches ? [34, 34] : [48, 48], maxZoom: 12, animate: false,
+                    paddingTopLeft: phone.matches ? [32, 100] : [48, 48], paddingBottomRight: phone.matches ? [32, (sheet?.getBoundingClientRect().height || 0) + 24] : [48, 48], maxZoom: 12, animate: false,
                 });
             } else {
                 showState(slug ? 'Sin clubes para este deporte' : 'Todavía no hay clubes disponibles',
@@ -128,6 +168,7 @@ function initClubMap() {
         } catch (error) {
             if (current !== sequence || (error.name === 'AbortError' && !timedOut)) return;
             if (count) count.textContent = 'Clubes no disponibles';
+            if (mobileCount) mobileCount.textContent = 'Sin conexión';
             showState('No se han podido cargar los clubes',
                 timedOut ? 'La consulta está tardando demasiado. Vuelve a intentarlo.' : 'Comprueba tu conexión y vuelve a intentarlo.', true);
         } finally {
@@ -141,15 +182,16 @@ function initClubMap() {
     filters.forEach((filter) => filter.addEventListener('change', () => loadClubs(filter.value)));
     retry.addEventListener('click', () => loadClubs(document.querySelector('[name="sport-filter"]:checked')?.value || ''));
     phone.addEventListener('change', () => {
-        map.invalidateSize({ pan: false });
+        updateInsets(); map.invalidateSize({ pan: false });
         if (selected) showClub(selected);
     });
     const resize = () => {
         window.cancelAnimationFrame(resizeFrame);
-        resizeFrame = window.requestAnimationFrame(() => map.invalidateSize({ pan: false }));
+        resizeFrame = window.requestAnimationFrame(() => { updateInsets(); map.invalidateSize({ pan: false }); });
     };
     const observer = typeof ResizeObserver === 'function' ? new ResizeObserver(resize) : null;
     observer?.observe(element);
+    if (sheet) observer?.observe(sheet);
     window.addEventListener('resize', resize);
     window.addEventListener('pagehide', (event) => {
         if (event.persisted) return;

@@ -10,7 +10,7 @@
 }
 .brand { gap: 12px; font: 800 clamp(21px, 1.65vw, 29px)/1 'Manrope', system-ui, sans-serif; white-space: nowrap; }
 .brand .rp-brand-mark { width: 72px; }
-.main-nav { justify-content: center; min-width: 0; margin: 0; gap: 8px; overflow-x: auto; scrollbar-width: thin; }
+.main-nav { justify-content: center; min-width: 0; margin: 0; gap: 8px; overflow: visible; }
 .main-nav a { padding: 14px 12px; white-space: nowrap; font-size: 16px; color: #ffffffeb; }
 .main-nav a.active::after { left: 8px; right: 8px; bottom: -5px; height: 3px; background: #ffb21d; }
 .header-actions { gap: 14px; }
@@ -48,7 +48,7 @@
 .site-footer p { margin: 0 auto; }
 .site-footer .footer-disclaimer { margin-top: 6px; font-size: 12px; }
 
-@media (max-width: 1200px) {
+@media (max-width: 1380px) {
     .site-header { grid-template-columns: auto 1fr; height: 76px; gap: 20px; padding: 0 24px; }
     .main-nav { display: none; }
     .header-actions { justify-content: flex-end; }
@@ -76,3 +76,12 @@
     .tabbar a.active::before { background: #ffb21d; }
     .site-footer { padding: 24px 20px; font-size: 13px; }
 }
+
+/* La cabecera ocupa siempre el mismo hueco que deja el documento. Se elimina
+   el scroll del nav: el menú compacto recoge las opciones en anchos menores. */
+:root { --rp-header-h:82px; }
+body { padding-top:var(--rp-header-h); }
+.site-header { position:fixed; inset:0 0 auto; z-index:1000; height:var(--rp-header-h); --header-h:var(--rp-header-h); }
+.main-nav { overflow:visible; align-items:center; }
+@media (max-width:1380px) { :root { --rp-header-h:76px; } }
+@media (max-width:720px) { :root { --rp-header-h:68px; } }
