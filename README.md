@@ -40,6 +40,11 @@ en `database/seeders/UserSeeder.php`; no ejecutar el seeder de usuarios
 automáticamente sobre producción.
 
 ## Producción
+
+El frontend del PR #16 fue fusionado y publicado según la confirmación del equipo.
+Los ajustes de interfaz 05 y su entrada estática se publicarán en su propio PR.
+La configuración del acceso durante el arranque está en [`loading-site/README.md`](loading-site/README.md);
+su URL se añadirá aquí después de crear y comprobar el Static Site.
 Desplegado en **Render** con Docker: https://reserva-pistes.onrender.com/.
 
 La pantalla de carga y la entrada estática opcional están documentadas en [`docs/07-marca-y-carga.md`](docs/07-marca-y-carga.md). El despliegue de la versión nueva, la rama de Render y la persistencia de la base se verificarán con Denys. El documento adicional `docs/05-desplegament.md` indica ese estado; no se presenta un plan como despliegue realizado.

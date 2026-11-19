@@ -4,7 +4,7 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#00372e">
     <title>@yield('title', 'ReservaPistes')</title>
@@ -78,7 +78,7 @@
         <div class="divider"></div>
 
         @auth
-            <a class="user-chip" href="{{ route('profile.edit') }}">
+            <a class="user-chip" aria-label="Mi perfil" href="{{ route('profile.edit') }}">
                 <span class="avatar">{{ \App\Support\Ui::initials(auth()->user()->name) }}</span>
                 <span class="hide-sm">{{ \Illuminate\Support\Str::before(auth()->user()->name, ' ') }}</span>
             </a>
