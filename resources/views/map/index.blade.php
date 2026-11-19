@@ -10,8 +10,8 @@
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
 @endpush
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('ui/home.css') }}">
-    <script type="module" src="{{ asset('ui/home.js') }}"></script>
+    <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/home.css') }}">
+    <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/club-explorer.js') }}"></script>
 @endpush
 
 @section('content')
@@ -38,7 +38,7 @@
     </svg>
 </section>
 
-<section class="rp-explorer" aria-label="Encuentra tu club" data-rp-explorer data-sheet-state="split">
+<section class="rp-explorer" aria-label="Encuentra tu club" data-rp-explorer data-drawer-state="map">
     <aside class="rp-sports" aria-labelledby="sport-heading">
         <div class="rp-sports__heading">
             <h2 id="sport-heading">Deporte</h2>
@@ -85,25 +85,22 @@
         </div>
     </div>
 
-    <section class="rp-mobile-sheet" data-club-sheet aria-label="Lista de clubes">
-        <div class="rp-sheet-header" data-sheet-header>
-            <span class="rp-sheet-grip" aria-hidden="true"></span>
-            <div class="rp-sheet-header__row">
-                <button class="rp-mobile-sheet__handle" type="button" data-sheet-toggle aria-expanded="true" aria-controls="mobile-club-content" aria-label="Ampliar la lista de clubes">
-                    <span data-mobile-count role="status" aria-live="polite">Buscando clubes…</span>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
-                </button>
-                <div class="rp-sheet-views" role="group" aria-label="Vista de clubes">
-                    <button type="button" data-sheet-view="map" aria-pressed="false">Mapa</button>
-                    <button type="button" data-sheet-view="split" aria-pressed="true">Ambos</button>
-                    <button type="button" data-sheet-view="list" aria-pressed="false">Lista</button>
-                </div>
-            </div>
+    <section class="rp-club-drawer" data-club-drawer aria-label="Clubes de la zona">
+        <div class="rp-drawer-heading">
+            <button class="rp-drawer-handle" type="button" data-drawer-handle aria-expanded="false" aria-controls="mobile-club-list" aria-label="Abrir la lista de clubes">
+                <span class="rp-drawer-grip" aria-hidden="true"></span>
+                <span class="rp-drawer-count" data-mobile-count role="status" aria-live="polite">Buscando clubes…</span>
+                <span class="rp-drawer-action" data-drawer-action>Ver lista</span>
+            </button>
+            <button type="button" class="rp-drawer-map" data-drawer-map hidden>Mapa</button>
         </div>
-        <div id="mobile-club-content" class="rp-mobile-sheet__content" data-sheet-content>
+        <div class="rp-selected-club" data-mobile-selection hidden>
+            <button type="button" class="rp-selection-close" data-selection-close aria-label="Cerrar la ficha del club">×</button>
+            <div data-selected-card aria-live="polite"></div>
+        </div>
+        <div id="mobile-club-list" class="rp-drawer-list" data-drawer-list hidden>
             <p class="rp-map-message" data-map-message role="status" hidden></p>
             <label class="rp-mobile-sort">Ordenar <select data-club-sort aria-label="Ordenar clubes"><option value="name">Por nombre</option><option value="price">Por precio</option></select></label>
-            <div class="rp-mobile-selection" data-mobile-selection aria-label="Club seleccionado" aria-live="polite"><p class="rp-mobile-selection__hint">Toca un marcador para ver el club y sus pistas.</p></div>
             <div class="rp-mobile-club-list" data-mobile-club-list></div>
         </div>
     </section>

@@ -79,98 +79,88 @@
 .rp-mobile-context { display: none; }
 .rp-home-page .site-footer { padding: 26px 24px; }
 
-/* Tablet: filtros en una banda de dos filas; el mapa conserva una ficha emergente. */
 
-
-/* Todos участвует в той же строке фильтров, что и остальные виды спорта. */
-.rp-sport-choice input { position:absolute; width:1px; height:1px; opacity:0; }
-.rp-sport-choice label { min-width:0; }
-.rp-sports__heading { margin-bottom:14px; }
-.rp-sports__count { margin-top:auto; padding-top:16px; }
-.rp-mobile-sheet { display:none; }
-.rp-mobile-sheet__content[hidden] { display:none !important; }
-.rp-sheet-header { flex:none; }
-.rp-sheet-grip { display:block; width:38px; height:4px; margin:8px auto 0; border-radius:99px; background:#a8bcb2; }
-.rp-sheet-header__row { display:flex; align-items:center; gap:8px; padding:6px 12px 8px; }
-.rp-mobile-sheet__handle { min-width:0; flex:1; min-height:48px; display:flex; align-items:center; gap:8px; padding:0 2px; border:0; background:none; color:#073f32; font:800 16px/1.2 'Manrope',system-ui,sans-serif; text-align:left; cursor:grab; touch-action:none; }
-.rp-mobile-sheet__handle span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.rp-mobile-sheet__handle svg { width:20px; height:20px; flex:none; }
-.rp-explorer[data-sheet-state=list] .rp-mobile-sheet__handle svg { transform:rotate(180deg); }
-.rp-sheet-views { display:flex; flex:none; padding:3px; gap:2px; border-radius:99px; background:#eef5f1; }
-.rp-sheet-views button { min-height:44px; min-width:44px; padding:8px 10px; border:0; border-radius:99px; background:transparent; color:#376354; font:700 14px/1.1 'Manrope',system-ui,sans-serif; cursor:pointer; }
-.rp-sheet-views button[aria-pressed=true] { background:#005b49; color:#fff; box-shadow:0 1px 4px #003e3026; }
-.rp-sheet-views button:disabled { opacity:.4; cursor:not-allowed; }
-.rp-mobile-sheet__content { min-height:0; overflow-y:auto; overscroll-behavior-y:contain; padding:0 16px 16px; -webkit-overflow-scrolling:touch; }
-.rp-mobile-sort { display:flex; justify-content:space-between; gap:12px; align-items:center; margin:0 0 12px; font-size:14px; color:#527466; }
-.rp-mobile-sort select { width:auto; max-width:180px; height:44px; font:600 16px 'Manrope',system-ui,sans-serif; border:1px solid #d5e5dd; border-radius:99px; padding:0 12px; background:#f5faf7; color:#174f3b; }
-.rp-mobile-selection { padding:12px; margin-bottom:8px; background:#f2f8f4; border:1px solid #dce9df; border-radius:14px; }
-.rp-mobile-selection__hint { font-size:14px; color:#557465; line-height:1.5; }
-.rp-mobile-selection__hint+.btn { margin-top:12px; }
-.rp-mobile-club-list .rp-club-card { grid-template-columns:64px minmax(0,1fr) 84px; gap:12px; padding:16px 0; border-top:1px solid #e0eae4; }
+/* Новый мобильный экран: фильтры в потоке, неподвижная карта и независимая панель. */
+.rp-club-drawer { display:none; }
+.rp-club-drawer [hidden] { display:none !important; }
+.rp-selected-club { position:relative; min-width:0; padding:4px 16px 16px; overflow-y:auto; }
+.rp-selected-club .rp-club-card { grid-template-columns:72px minmax(0,1fr); gap:12px; padding:12px; border:1px solid #d7e8df; border-radius:16px; background:#f4faf7; }
+.rp-selected-club .rp-club-card img { width:72px; height:88px; }
+.rp-selected-club .rp-club-card h3 { padding-right:28px; margin-right:0; font-size:16px; }
+.rp-selected-club .rp-club-card__link { min-height:44px; }
+.rp-selection-close { position:absolute; top:14px; right:22px; z-index:2; display:grid; place-items:center; width:44px; height:44px; border:0; border-radius:50%; background:#e3efea; color:#174b40; font:400 28px/1 system-ui; cursor:pointer; }
+.rp-drawer-heading { position:relative; display:flex; align-items:stretch; min-height:64px; flex:none; padding:0 12px; }
+.rp-drawer-handle { position:relative; display:flex; flex:1; min-width:0; min-height:64px; align-items:center; gap:12px; padding:16px 4px 0; border:0; margin:0; background:transparent; color:#073e32; font:800 18px/1.2 'Manrope',system-ui,sans-serif; text-align:left; cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; }
+.rp-drawer-grip { position:absolute; top:8px; left:50%; margin-left:-18px; width:36px; height:4px; border-radius:4px; background:#a7bcb3; pointer-events:none; }
+.rp-drawer-count { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rp-drawer-action { margin-left:auto; flex:none; font:600 13px/1.2 'Manrope',system-ui,sans-serif; color:#526f64; }
+.rp-drawer-map { flex:none; align-self:center; min-height:44px; padding:0 14px; margin:12px 0 0 10px; border:1px solid #cadfd4; border-radius:99px; background:#edf6f0; color:#075744; font:700 14px 'Manrope',system-ui,sans-serif; cursor:pointer; }
+.rp-drawer-map:disabled { opacity:.45; }
+.rp-club-drawer button:focus-visible,.rp-club-drawer a:focus-visible { outline:3px solid #efad16; outline-offset:2px; }
+.rp-drawer-list { flex:1; min-height:0; overflow-y:auto; overscroll-behavior-y:contain; -webkit-overflow-scrolling:touch; padding:0 16px 20px; touch-action:pan-y; }
+.rp-mobile-sort { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 4px; color:#567569; font-size:14px; }
+.rp-mobile-sort select { width:auto; max-width:180px; min-height:44px; padding:0 12px; border:1px solid #d5e5dc; border-radius:99px; background:#f7faf8; color:#174f3b; font:600 16px 'Manrope',system-ui,sans-serif; }
+.rp-mobile-club-list .rp-club-card { grid-template-columns:64px minmax(0,1fr) 84px; gap:10px; padding:16px 0; border-top:1px solid #e0eae4; }
 .rp-mobile-club-list .rp-club-card img { width:64px; height:86px; }
-.rp-mobile-club-list .rp-club-card h3 { font-size:16px; margin-right:0; overflow-wrap:anywhere; }
+.rp-mobile-club-list .rp-club-card h3 { font-size:16px; margin-right:0; }
 .rp-mobile-club-list .rp-club-card p { font-size:13px; }
 .rp-mobile-club-list .rp-club-card__sports { gap:4px; margin-top:6px; }
 .rp-mobile-club-list .rp-club-card__sport { font-size:12px; padding:4px 8px; }
 .rp-mobile-club-list .rp-club-card__link { min-height:44px; font-size:14px; }
-.rp-club-card__price { min-width:0; align-self:center; padding-left:8px; border-left:1px solid #dce8e0; font-size:17px; font-weight:800; color:#0b4d36; text-align:center; white-space:nowrap; }
+.rp-club-card__price { align-self:center; min-width:0; border-left:1px solid #dce8e0; padding-left:6px; font-size:17px; font-weight:800; color:#0b4d36; text-align:center; white-space:nowrap; }
 .rp-club-card__price span { display:block; color:#5c786a; font-size:12px; font-weight:400; }
-.rp-mobile-selection .rp-club-card { grid-template-columns:64px minmax(0,1fr); }
-.rp-mobile-selection .rp-club-card img { width:64px; height:82px; }
-.rp-mobile-selection .rp-club-card h3 { font-size:16px; }
 .rp-map-message { color:#5e756b; font-size:14px; line-height:1.5; margin:8px 0 12px; }
 .rp-explorer.is-map-unavailable .rp-map-frame { display:none; }
-.rp-explorer.is-map-unavailable .rp-mobile-sheet { display:flex; flex-direction:column; border:1px solid #dce8e2; border-radius:20px; background:white; min-width:0; }
-.rp-explorer.is-map-unavailable .rp-sheet-views { display:none; }
-
-@media (max-width:1100px) {
+.rp-explorer.is-map-unavailable .rp-club-drawer { display:flex; flex-direction:column; min-width:0; background:white; border:1px solid #dce8e2; border-radius:20px; }
+.rp-explorer.is-map-unavailable .rp-drawer-heading { display:none; }
+@media(max-width:1100px) {
     .rp-home-page .site-main { padding-inline:24px; }
-    .rp-home-hero { grid-template-columns:minmax(0,1.5fr) minmax(220px,1fr); padding:28px 0; min-height:240px; gap:20px; }
+    .rp-home-hero { grid-template-columns:minmax(0,1.5fr) minmax(220px,1fr); min-height:240px; padding:28px 0; gap:20px; }
     .rp-home-hero h1 { font-size:clamp(40px,5.3vw,60px); }
     .rp-home-hero p { font-size:21px; }
     .rp-explorer { grid-template-columns:minmax(0,1fr); gap:12px; }
-    .rp-sports { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:14px; padding:12px; border-radius:16px; }
+    .rp-sports { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; align-items:center; padding:12px; border-radius:16px; }
     .rp-sports__heading { display:none; }
-    .rp-sport-options { display:flex; min-width:0; gap:8px; overflow-x:auto; padding:3px; scrollbar-width:thin; scroll-padding-inline:3px; }
+    .rp-sport-options { display:flex; overflow-x:auto; min-width:0; gap:8px; padding:2px; }
     .rp-sport-choice { flex:none; }
-    .rp-sport-choice label { min-height:44px; white-space:nowrap; font-size:14px; gap:8px; }
+    .rp-sport-choice label { min-height:46px; padding:8px 13px; gap:8px; font-size:14px; white-space:nowrap; }
     .rp-sport-choice__dot { display:none; }
-    .rp-sport-choice .rp-sport-icon { width:24px; height:24px; }
-    .rp-sports__count { margin:0; padding:0; border:0; gap:6px; }
-    .rp-sports__count svg { width:24px; height:24px; }
+    .rp-sport-icon { width:24px; height:24px; }
+    .rp-sports__count { margin:0; padding:0 0 0 14px; border-top:0; border-left:1px solid #e0eae4; gap:8px; }
+    .rp-sports__count svg { width:25px; height:25px; }
     .rp-sports__count span { font-size:16px; white-space:nowrap; }
-    .rp-map-frame { min-height:460px; height:62vh; }
 }
-@media (max-width:720px) {
-    .rp-home-page .site-main { padding:0; }
-    .rp-home-page .rp-home-hero,.rp-home-page .site-footer { display:none; }
-    .rp-explorer { position:relative; display:grid; grid-template-columns:minmax(0,1fr); grid-template-rows:auto minmax(0,1fr); gap:0; height:calc(100svh - var(--rp-header-h) - 72px - env(safe-area-inset-bottom)); height:calc(100dvh - var(--rp-header-h) - 72px - env(safe-area-inset-bottom)); min-height:0; overflow:hidden; background:#edf5ef; }
-    .rp-sports { display:block; grid-row:1; padding:0; margin:0; border:0; border-bottom:1px solid #dce8e1; border-radius:0; background:white; box-shadow:none; min-width:0; }
-    .rp-sport-options { display:flex; padding:9px 12px; gap:8px; scrollbar-width:none; }
+@media(max-width:720px) {
+    .rp-home-page { overflow:hidden; }
+    .rp-home-page .site-main { padding:0; margin:0; max-width:none; }
+    .rp-home-page .site-footer,.rp-home-hero { display:none; }
+    .rp-explorer { position:relative; isolation:isolate; display:grid; grid-template-columns:minmax(0,1fr); grid-template-rows:auto minmax(0,1fr); gap:0; width:100%; height:calc(100svh - var(--rp-header-h) - 72px - env(safe-area-inset-bottom)); height:calc(100dvh - var(--rp-header-h) - 72px - env(safe-area-inset-bottom)); min-height:0; overflow:hidden; overflow:clip; }
+    .rp-sports { display:block; grid-row:1; min-width:0; border:0; border-radius:0; padding:0; background:#fff; z-index:3; }
+    .rp-sport-options { display:flex; overflow-x:auto; overflow-y:hidden; padding:9px 12px; gap:8px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
     .rp-sport-options::-webkit-scrollbar { display:none; }
-    .rp-sport-choice label { flex-direction:row; min-height:44px; min-width:0; max-width:none; padding:9px 13px; font-size:14px; white-space:nowrap; background:#f5faf6; border-color:#d9e7de; }
+    .rp-sport-choice label { flex-direction:row; min-width:0; min-height:44px; max-width:none; font-size:14px; white-space:nowrap; padding:9px 13px; background:#f5faf6; border-color:#d9e7de; }
     .rp-sport-choice input:checked+label { background:#005c49; border-color:#005c49; color:#fff; }
     .rp-sport-choice input:checked+label .rp-sport-icon { stroke:currentColor; }
     .rp-sports__heading,.rp-sports__count,.rp-sports__empty { display:none; }
-    .rp-map-frame { grid-row:2; width:100%; height:100%; min-height:0; margin:0; border:0; border-radius:0; }
-    .rp-mobile-sheet,.rp-explorer.is-map-unavailable .rp-mobile-sheet { position:absolute; z-index:500; inset:auto 0 0; display:flex; flex-direction:column; height:var(--rp-sheet-size,48%); max-height:calc(100% - var(--rp-filter-height,64px)); min-height:0; border:1px solid #dae7df; border-bottom:0; border-radius:22px 22px 0 0; background:#fff; box-shadow:0 -5px 24px #00372b12; transition:height 180ms ease; }
-    .rp-mobile-sheet[data-dragging] { transition:none; }
-    .rp-explorer[data-sheet-state=list] .rp-mobile-sheet { border-radius:0; box-shadow:none; }
-    .rp-explorer[data-sheet-state=list] .rp-map-frame { visibility:hidden; }
+    .rp-map-frame { grid-row:2; min-height:0; height:100%; width:100%; margin:0; border:0; border-radius:0; }
+    .rp-club-drawer,.rp-explorer.is-map-unavailable .rp-club-drawer { position:absolute; z-index:5; inset:auto 0 0; display:flex; flex-direction:column; height:var(--rp-drawer-maximum,calc(100% - 64px)); min-height:0; min-width:0; border:1px solid #d9e7df; border-bottom:0; border-radius:22px 22px 0 0; background:#fff; box-shadow:0 -5px 24px #00372b12; transform:translateY(calc(100% - var(--rp-drawer-visible,64px))); transition:transform 180ms ease; }
+    .rp-club-drawer[data-dragging] { transition:none; }
+    .rp-explorer[data-drawer-state=list] .rp-club-drawer { border-radius:0; box-shadow:none; }
+    .rp-explorer[data-drawer-state=list] .rp-map-frame { visibility:hidden; }
     .rp-explorer.is-map-unavailable .rp-map-frame { display:block; visibility:hidden; }
-    .rp-explorer.is-map-unavailable .rp-sheet-views { display:flex; }
-    .rp-mobile-sheet__content { padding:0 12px 16px; }
-    .rp-club-popup .leaflet-popup-content { width:240px !important; }
-    #rp-club-map .leaflet-bottom { bottom:calc(var(--rp-sheet-overlap,80px) + 8px); }
+    .rp-explorer.is-map-unavailable .rp-drawer-heading { display:flex; }
+    .rp-explorer[data-drawer-state=list] .rp-drawer-action { display:none; }
+    .rp-selected-club { flex:none; min-height:0; height:calc(var(--rp-drawer-visible,64px) - 64px); }
+    #rp-club-map .leaflet-bottom { bottom:calc(var(--rp-sheet-overlap,64px) + 4px); }
     #rp-club-map .leaflet-control-zoom { margin:0 12px 22px 0; }
     #rp-club-map .leaflet-control-attribution { font-size:10px; max-width:100%; }
 }
-@media (max-width:360px) {
+@media(max-width:360px) {
     .rp-mobile-club-list .rp-club-card { grid-template-columns:52px minmax(0,1fr) 76px; gap:8px; }
-    .rp-club-card__price { font-size:16px; }
     .rp-mobile-club-list .rp-club-card img { width:52px; height:76px; }
-    .rp-sheet-views button { padding-inline:8px; }
+    .rp-club-card__price { font-size:16px; }
+    .rp-selected-club { padding-inline:12px; }
+    .rp-selected-club .rp-club-card { grid-template-columns:54px minmax(0,1fr); padding:10px; gap:10px; }
+    .rp-selected-club .rp-club-card img { width:54px; height:72px; }
 }
-@media (prefers-reduced-motion:reduce) {
-    .rp-mobile-sheet,.rp-sport-choice label,.rp-map-marker { transition:none; }
-}
+@media(prefers-reduced-motion:reduce) { .rp-club-drawer,.rp-map-marker,.rp-sport-choice label { transition:none; } }

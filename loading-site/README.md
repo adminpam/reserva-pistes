@@ -58,8 +58,10 @@ la comprobación de Laravel tiene éxito.
 5. Revisar teléfono, movimiento reducido y el caso sin JavaScript.
 6. Añadir la URL estática al README cuando realmente exista y esté verificada.
 
-Estado del paquete: archivos preparados. El Static Site todavía no se ha creado
-ni se declara desplegado por generar este ZIP.
+Estado observado el 19/11/2026: Static Site publicado con estado Live desde el
+merge 9fda7bf del PR #17. URL: https://reserva-pistes-inicio.onrender.com/.
+Se comprobó la redirección a Laravel y la carga de 41 clubes con el servicio
+despierto. La aceptación del arranque desde reposo sigue pendiente.
 
 Fuentes oficiales revisadas el 19/11/2026:
 
