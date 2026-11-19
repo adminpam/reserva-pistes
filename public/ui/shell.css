@@ -85,3 +85,25 @@ body { padding-top:var(--rp-header-h); }
 .main-nav { overflow:visible; align-items:center; }
 @media (max-width:1380px) { :root { --rp-header-h:76px; } }
 @media (max-width:720px) { :root { --rp-header-h:68px; } }
+
+
+/* Фиксированная шапка оставляет место содержимому при любом размере окна. */
+html { scroll-padding-top:calc(var(--rp-header-h) + 12px); }
+.site-header,.header-actions,.brand { min-width:0; }
+.brand>span { min-width:0; }
+.site-main>.split[style] { margin-inline:-32px !important; }
+.split,.split-light,.split-light .card { min-width:0; }
+@media (max-width:1024px) { .site-main>.split[style] { margin-inline:-24px !important; } }
+.header-actions .user-chip .hide-sm { max-width:11rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+@media (max-width:950px) and (min-width:721px) {
+    .header-actions .user-chip .hide-sm,.header-actions .divider { display:none; }
+    .header-actions { gap:10px; }
+}
+@media (max-width:720px) {
+    .site-main>.split[style] { margin-inline:-16px !important; }
+    .split input { font-size:16px; }
+    .site-header { grid-template-columns:minmax(0,1fr) auto; padding-inline:max(12px,env(safe-area-inset-left)) max(12px,env(safe-area-inset-right)); }
+    .brand { overflow:hidden; }
+    .brand>span { white-space:normal; line-height:1.1; }
+    .tabbar { padding-inline:env(safe-area-inset-left) env(safe-area-inset-right); }
+}

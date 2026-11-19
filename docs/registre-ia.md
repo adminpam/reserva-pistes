@@ -4,6 +4,28 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 
 ---
 
+**19/11/2026 — Denys · Adaptación y entrada de Render**
+- Herramienta: ChatGPT (OpenAI).
+- Objetivo: corregir roturas de interfaz descubiertas al reducir la ventana,
+  reorganizar mapa/lista en teléfono y preparar la página de entrada estática.
+- Prompt (fragmentos literales): «al reducir las dimenciones de la pantalla en
+  unos momentos se rompe la estructura de los elementos» y «al nivel de telefono
+  mejora los botones que tapan la mapa y haz que sea accesible esta pantalla que
+  nos enseña los clubs y o podemos subir la que la mapa desaparece at all o bajamos
+  y solo tenemos la mapa, haz lo logico!».
+- Resultado preparado: acciones de pistas y formularios alineados; una fila de
+  filtros fuera del mapa; vistas Mapa/Ambos/Lista con arrastre y teclado; lista
+  disponible si falla la biblioteca del mapa; margen adaptable de login y precios
+  sin cortar el símbolo €. Guía de Static Site con destino fijo a Laravel.
+- Validación: revisión Chrome de 54 combinaciones de página/ancho, sin overflow
+  horizontal ni botones fuera de sus tarjetas; estados, arrastre y teclado
+  comprobados; 6 clubes accesibles sin Leaflet; 13 pruebas Node y constructor
+  estático correctos. Son fixtures HTML con datos ficticios, no una ejecución PHP.
+  Instalación, feature tests en ASUS, Safari y despliegue del Static Site pendientes.
+- Commit/PR: pendiente de publicar por Denys y revisar por Joy.
+
+---
+
 **1 · 10/11/2026 — Denys**
 - Objetivo: definir el plan de trabajo y fijar PHP 8.2 para compatibilidad entre los dos equipos.
 - Prompt (resumen): «Tenemos Laravel 12 con herd-lite y XAMPP 8.2; cómo fijamos la plataforma y en qué paquetes dividimos el desarrollo».

@@ -60,6 +60,7 @@ export function createClubCard(club, doc = document) {
     content.append(sports);
     const link = node('a', 'rp-club-card__link', 'Ver detalles');
     link.href = club.url;
+    link.setAttribute('aria-label', `Ver detalles de ${club.name}`);
     const arrow = node('span', '', '→');
     arrow.setAttribute('aria-hidden', 'true');
     link.append(arrow);

@@ -38,16 +38,20 @@
     </svg>
 </section>
 
-<section class="rp-explorer" aria-label="Encuentra tu club" data-rp-explorer>
+<section class="rp-explorer" aria-label="Encuentra tu club" data-rp-explorer data-sheet-state="split">
     <aside class="rp-sports" aria-labelledby="sport-heading">
         <div class="rp-sports__heading">
             <h2 id="sport-heading">Deporte</h2>
-            <div class="rp-sports__all">
-                <input type="radio" name="sport-filter" id="sp-all" value="" checked>
-                <label for="sp-all">Todos</label>
-            </div>
+
         </div>
         <div class="rp-sport-options" role="group" aria-label="Filtrar por deporte">
+            <div class="rp-sport-choice rp-sport-choice--all">
+                <input type="radio" name="sport-filter" id="sp-all" value="" checked>
+                <label for="sp-all">
+                    @include('partials.sport-icon', ['slug' => 'generic'])
+                    <span>Todos</span><span class="rp-sport-choice__dot" aria-hidden="true"></span>
+                </label>
+            </div>
             @foreach($sports as $sport)
                 <div class="rp-sport-choice">
                     <input type="radio" name="sport-filter" id="sp-{{ $sport->slug }}" value="{{ $sport->slug }}">
@@ -82,17 +86,27 @@
     </div>
 
     <section class="rp-mobile-sheet" data-club-sheet aria-label="Lista de clubes">
-        <button class="rp-mobile-sheet__handle" type="button" data-sheet-toggle aria-expanded="true" aria-controls="mobile-club-content">
-            <span class="rp-mobile-sheet__grip" aria-hidden="true"></span>
-            <span data-mobile-count>Buscando clubes…</span><span class="rp-small">Ver / ocultar</span>
-        </button>
+        <div class="rp-sheet-header" data-sheet-header>
+            <span class="rp-sheet-grip" aria-hidden="true"></span>
+            <div class="rp-sheet-header__row">
+                <button class="rp-mobile-sheet__handle" type="button" data-sheet-toggle aria-expanded="true" aria-controls="mobile-club-content" aria-label="Ampliar la lista de clubes">
+                    <span data-mobile-count role="status" aria-live="polite">Buscando clubes…</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+                </button>
+                <div class="rp-sheet-views" role="group" aria-label="Vista de clubes">
+                    <button type="button" data-sheet-view="map" aria-pressed="false">Mapa</button>
+                    <button type="button" data-sheet-view="split" aria-pressed="true">Ambos</button>
+                    <button type="button" data-sheet-view="list" aria-pressed="false">Lista</button>
+                </div>
+            </div>
+        </div>
         <div id="mobile-club-content" class="rp-mobile-sheet__content" data-sheet-content>
+            <p class="rp-map-message" data-map-message role="status" hidden></p>
             <label class="rp-mobile-sort">Ordenar <select data-club-sort aria-label="Ordenar clubes"><option value="name">Por nombre</option><option value="price">Por precio</option></select></label>
             <div class="rp-mobile-selection" data-mobile-selection aria-label="Club seleccionado" aria-live="polite"><p class="rp-mobile-selection__hint">Toca un marcador para ver el club y sus pistas.</p></div>
             <div class="rp-mobile-club-list" data-mobile-club-list></div>
         </div>
     </section>
-    <p class="rp-map-message" data-map-message hidden></p>
 </section>
 <noscript>
     <p class="rp-map-message">Activa JavaScript para consultar el mapa y filtrar los clubes.</p>

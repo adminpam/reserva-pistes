@@ -14,6 +14,12 @@
 - Entrada estática opcional que espera a Laravel antes de abrir la aplicación.
 - Accesibilidad con movimiento reducido, espera limitada y reintento.
 
+## [Sin publicar · frontend 05] — 2026-11-19
+- Cuadrículas adaptables de pistas, acciones, fecha y disponibilidad.
+- Mapa móvil con filtros en una fila y panel Mapa/Ambos/Lista, arrastre y teclado.
+- Conservación del acceso a clubes si falla Leaflet; precios legibles y margen de login.
+- Validaciones del constructor estático y guía de configuración de Render.
+
 ## [v1.0] — Pendiente de publicar
 
 Fecha y etiqueta por confirmar después de la revisión del backend, el pago de
