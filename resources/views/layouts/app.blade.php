@@ -11,8 +11,8 @@
     <link rel="icon" href="{{ asset('brand/logo-original.png') }}" type="image/png">
     @stack('head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="{{ asset('brand/loading.css') }}">
-    <link rel="stylesheet" href="{{ asset('ui/shell.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('brand/loading.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/shell.css') }}">
     <link rel="preload" href="{{ asset('brand/manrope-800.woff2') }}" as="font" type="font/woff2" crossorigin>
     {{-- Solo se oculta el contenido si JavaScript está disponible. El respaldo
          evita bloquear la página si el archivo del cargador no se descarga. --}}
@@ -42,10 +42,10 @@
             }, 15000);
         })();
     </script>
-    <script src="{{ asset('brand/loading.js') }}" defer></script>
+    <script src="{{ \App\Support\FrontendAsset::url('brand/loading.js') }}" defer></script>
     @if(!request()->routeIs('login', 'register'))
-        <link rel="stylesheet" href="{{ asset('ui/screens.css') }}">
-        <script type="module" src="{{ asset('ui/screens.js') }}"></script>
+        <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/screens.css') }}">
+        <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/screens.js') }}"></script>
     @endif
     @stack('styles')
 </head>

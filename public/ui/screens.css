@@ -380,3 +380,17 @@
     .rp-admin-actions .btn { width:100%; }
     .rp-confirm-dialog__actions { grid-template-columns:minmax(0,1fr); }
 }
+
+/* Гость: отдельная область действий всегда занимает целую строку карточки. */
+.rp-court > .rp-court-guest {
+    grid-column:1 / -1; position:static; display:flex; justify-content:flex-end;
+    min-width:0; width:100%; padding:16px 0 0; margin:0;
+    border-top:1px solid var(--rp-line); transform:none;
+}
+.rp-court > .rp-court-guest > .btn {
+    position:static; transform:none; float:none; margin:0; min-width:0;
+    max-width:100%; white-space:normal; text-align:center;
+}
+@media(max-width:720px) {
+    .rp-court > .rp-court-guest > .btn { width:100%; min-height:48px; }
+}

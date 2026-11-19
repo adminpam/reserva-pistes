@@ -4,6 +4,26 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 
 ---
 
+**19/11/2026 — Denys · Reparar mapa móvil y caché**
+- Herramienta: ChatGPT (OpenAI).
+- Objetivo: corregir defectos comunicados en Safari/iPhone y en la vista de invitado.
+- Prompt original (fragmentos): «Когда это телефонная версия, при клике на точки
+  теряеться эта самая маленькая карточка самого клуба по которой мы переходим»;
+  «единственное что оставим это листающий список спортов сверху, этот фикс норм!»;
+  «когда нет кнопки все еще херачат влево, полностью ломая интерфейс!».
+- Resultado: ficha visible al tocar marcador, hoja nueva de mapa/ficha/listado,
+  gestos sobre cabecera, botones de respaldo y acción de invitado en su propia fila.
+  Versionado de recursos CSS/JS para evitar mezclar vistas nuevas con archivos cacheados.
+- Validación: revisión Chrome de 54 combinaciones de página/ancho; ficha y enlace
+  en anchos 320/390 px; clic normal al club ficticio; arrastre arriba/abajo y lista
+  disponible sin Leaflet. Son plantillas representativas, no un servidor Laravel.
+  16 pruebas Node correctas; instalador CRLF, repetición y rechazo de cambios propios
+  comprobados. PHP, iPhone físico y despliegue de 06 pendientes. Resultados en
+  docs/13-mapa-movil.md.
+- Commit/PR: pendiente de publicar por Denys y revisar por Joy.
+
+---
+
 **19/11/2026 — Denys · Adaptación y entrada de Render**
 - Herramienta: ChatGPT (OpenAI).
 - Objetivo: corregir roturas de interfaz descubiertas al reducir la ventana,
@@ -22,7 +42,7 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
   comprobados; 6 clubes accesibles sin Leaflet; 13 pruebas Node y constructor
   estático correctos. Son fixtures HTML con datos ficticios, no una ejecución PHP.
   Instalación, feature tests en ASUS, Safari y despliegue del Static Site pendientes.
-- Commit/PR: pendiente de publicar por Denys y revisar por Joy.
+- Commit/PR: [64294c1](https://github.com/adminpam/reserva-pistes/commit/64294c1) · [PR #17](https://github.com/adminpam/reserva-pistes/pull/17), fusionado según confirmación de Denys.
 
 ---
 
