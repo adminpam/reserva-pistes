@@ -2,10 +2,18 @@
 
 ## Pruebas automáticas (PHPUnit)
 
-Antes de ejecutar toda la suite con `php artisan test`, fijar una base exclusiva
-de pruebas y revisar los tests heredados. No ejecutar `RefreshDatabase` contra una
-base de desarrollo con datos que deban conservarse. Los nuevos `MapPageTest` y
-`FrontendScreensTest` preparan expresamente SQLite en memoria.
+El paquete 07 fija SQLite en memoria en phpunit.xml y Tests/TestCase, antes de
+que RefreshDatabase ejecute migraciones. Las pruebas de datos usan el mismo
+mecanismo y no dependen de la base local. Primero limpiar configuración y después
+ejecutar la suite completa en el Lenovo:
+
+```powershell
+php artisan config:clear
+php artisan test
+```
+
+Se han preparado 28 casos nuevos de reservas/partidos. Resultado de 07: pendiente
+de ejecución real. Los apartados fechados anteriores se conservan como histórico.
 
 | Test | Qué comprueba |
 |---|---|
@@ -145,3 +153,30 @@ php vendor/phpunit/phpunit/phpunit --filter=ClubAvailabilityTest --display-depre
 
 Resultado después del ajuste: pendiente de la ejecución de Joy. No marcar los
 avisos como solucionados hasta observar la nueva salida.
+
+
+## Integración confirmada con Joy · 23/11/2026
+
+- ZIP de referencia: commit fbbf879fbf56967ccd07e716a224799205455ac9.
+- Main dd20e67 incorporado a feat/backend-datos sin conflictos. Denys revisó el PR
+  según la confirmación de Joy; no se ha recibido aquí su URL ni una confirmación
+  separada del merge de ese PR.
+- Lenovo: ClubAvailabilityTest, FrontendAssetTest, FrontendScreensTest y MapPageTest:
+  **17 pruebas, 123 aserciones, sin fallos**, duración 1,87 s.
+- availability.test.mjs: **6 pruebas correctas**, duración 97,8 ms.
+- Joy comprobó la cancelación y que la hora vuelve a estar disponible al regresar
+  a la ficha del club durante la prueba entre pestañas.
+- Denys confirmó la publicación del frontend 06 y la corrección de los errores.
+
+## Regresión de reservas y partidos · 07
+
+| Archivo | Casos | Alcance |
+| --- | --- | --- |
+| BookingRulesTest | 15 | Precio/propietario, duración, límites opcionales, organizador, fechas/horas, solapamiento, cancelación y acceso |
+| MatchRulesTest | 13 | Última plaza, aforo del deporte, repetición, nivel, alta/baja, cancelación, historial, búsqueda y permisos |
+
+Estado de ejecución de 07: **pendiente**. No se declara aprobado por estar escrito.
+El entorno de preparación no tiene PHP/Composer; se ejecutará la suite completa
+en Lenovo. SQLite comprueba reglas y transacciones secuenciales, pero no acredita
+la prueba simultánea con bloqueo de filas de PostgreSQL/MySQL. Esa comprobación
+se documentará al preparar el despliegue con Denys.

@@ -6,14 +6,16 @@ use App\Models\Booking;
 use App\Models\Court;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
-// Создание и отмена броней. Оплата имитируется: price_total просто
-// фиксирует цену площадки на момент брони, об этом есть пометка в интерфейсе.
+// Reserva una hora y conserva el precio de la pista en ese momento.
+// Las cancelaciones cambian el estado: nunca borran el historial.
 class BookingController extends Controller
 {
-    // «Мои брони»: обычные брони пользователя, без открытых матчей
-    // (матчи показываются отдельно в «Мои партидos»).
     public function index(Request $request): View
     {
         $bookings = $request->user()->bookings()
@@ -25,91 +27,88 @@ class BookingController extends Controller
         return view('bookings.index', ['bookings' => $bookings]);
     }
 
-    // Создаёт бронь часового слота. Транзакция + lockForUpdate защищают
-    // от гонки: два игрока не смогут занять один слот одновременно.
-    // Если отмечен чекбокс is_open — создаётся открытый матч, и создатель
-    // сразу записывается в booking_players.
     public function store(Request $request): RedirectResponse
     {
+        $isOpen = $request->boolean('is_open');
         $data = $request->validate([
-            'court_id' => ['required', 'exists:courts,id'],
-            'date' => ['required', 'date', 'after_or_equal:today'],
+            'court_id' => ['required', 'integer', 'exists:courts,id'],
+            'date' => ['required', 'date_format:Y-m-d', 'after_or_equal:today'],
             'hour' => ['required', 'integer', 'min:0', 'max:23'],
             'is_open' => ['sometimes', 'boolean'],
-            'min_level' => ['nullable', 'integer', 'min:1', 'max:5'],
-            'max_level' => ['nullable', 'integer', 'min:1', 'max:5', 'gte:min_level'],
+            'min_level' => [Rule::excludeIf(! $isOpen), 'nullable', 'integer', 'min:1', 'max:5'],
+            'max_level' => [Rule::excludeIf(! $isOpen), 'nullable', 'integer', 'min:1', 'max:5'],
         ]);
-
-        $court = Court::with('club', 'sport')->findOrFail($data['court_id']);
-
-        // Слот должен попадать в часы работы площадки.
-        if ($data['hour'] < $court->open_hour || $data['hour'] >= $court->close_hour) {
-            return back()->withErrors(['hour' => 'La pista está cerrada a esa hora.']);
+        $minimum = $data['min_level'] ?? null;
+        $maximum = $data['max_level'] ?? null;
+        if ($minimum !== null && $maximum !== null && $minimum > $maximum) {
+            throw ValidationException::withMessages(['max_level' => 'El nivel máximo debe ser igual o superior al mínimo.']);
         }
 
-        $startsAt = \Carbon\Carbon::parse($data['date'])->setTime((int) $data['hour'], 0);
-        $endsAt = $startsAt->copy()->addHour();
+        // La pista siempre existe aunque aún no haya reservas. Bloquearla hace
+        // que dos solicitudes de la misma pista comprueben el solapamiento por turno.
+        $booking = DB::transaction(function () use ($request, $data, $isOpen, $minimum, $maximum): Booking {
+            $court = Court::query()->lockForUpdate()->findOrFail($data['court_id']);
+            $hour = (int) $data['hour'];
+            if ($hour < $court->open_hour || $hour >= $court->close_hour) {
+                throw ValidationException::withMessages(['hour' => 'La pista está cerrada a esa hora.']);
+            }
 
-        if ($startsAt->isPast()) {
-            return back()->withErrors(['hour' => 'No se puede reservar en el pasado.']);
-        }
+            $startsAt = Carbon::parse($data['date'])->setTime($hour, 0);
+            if (! $startsAt->isFuture()) {
+                throw ValidationException::withMessages(['hour' => 'No se puede reservar en el pasado.']);
+            }
+            $endsAt = $startsAt->copy()->addHour();
+            if (Booking::overlaps($court->id, $startsAt, $endsAt)) {
+                throw ValidationException::withMessages(['hour' => 'Ese horario acaba de ser reservado. Elige otro.']);
+            }
 
-        $isOpen = $request->boolean('is_open');
+            // El importe y el propietario salen del servidor, no del formulario.
+            // Los límites son opcionales: admitimos mínimo, máximo o ambos.
+            $booking = new Booking([
+                'court_id' => $court->id,
+                'user_id' => $request->user()->id,
+                'starts_at' => $startsAt,
+                'ends_at' => $endsAt,
+                'status' => 'confirmed',
+                'is_open' => $isOpen,
+                'min_level' => $minimum,
+                'max_level' => $maximum,
+                'price_total' => $court->price_per_hour,
+            ]);
+            if ($isOpen && ! $booking->levelFits($request->user()->levelFor($court->sport_id))) {
+                throw ValidationException::withMessages(['min_level' => 'Elige un rango que incluya tu nivel. Puedes indicar tu nivel en el perfil.']);
+            }
 
-        $booking = null;
-        try {
-            \DB::transaction(function () use (&$booking, $court, $startsAt, $endsAt, $isOpen, $data, $request) {
-                // Блокируем пересекающиеся брони этой площадки до конца транзакции.
-                $conflict = Booking::where('court_id', $court->id)
-                    ->where('status', 'confirmed')
-                    ->where('starts_at', '<', $endsAt)
-                    ->where('ends_at', '>', $startsAt)
-                    ->lockForUpdate()
-                    ->exists();
+            $booking->save();
+            if ($isOpen) {
+                $booking->players()->attach($request->user()->id);
+            }
 
-                if ($conflict) {
-                    throw new \RuntimeException('slot-taken');
-                }
+            return $booking;
+        }, 3);
 
-                $booking = Booking::create([
-                    'court_id' => $court->id,
-                    'user_id' => $request->user()->id,
-                    'starts_at' => $startsAt,
-                    'ends_at' => $endsAt,
-                    'status' => 'confirmed',
-                    'is_open' => $isOpen,
-                    'min_level' => $isOpen ? $data['min_level'] : null,
-                    'max_level' => $isOpen ? $data['max_level'] : null,
-                    'price_total' => $court->price_per_hour,
-                ]);
-
-                if ($isOpen) {
-                    $booking->players()->attach($request->user()->id);
-                }
-            });
-        } catch (\RuntimeException $e) {
-            return back()->withErrors(['hour' => 'Ese horario acaba de ser reservado. Elige otro.']);
-        }
-
-        $msg = $isOpen
+        $message = $booking->is_open
             ? 'Partido abierto creado. ¡Ya estás apuntado!'
             : 'Reserva confirmada (pago simulado).';
 
-        return redirect()->route($isOpen ? 'matches.mine' : 'bookings.index')->with('ok', $msg);
+        return redirect()->route($booking->is_open ? 'matches.mine' : 'bookings.index')->with('ok', $message);
     }
 
-    // Отмена своей брони. Статус меняется на cancelled (не удаляем запись —
-    // история остаётся, а слот снова становится свободным).
     public function cancel(Request $request, Booking $booking): RedirectResponse
     {
-        if ($booking->user_id !== $request->user()->id) {
-            abort(403);
-        }
-        if ($booking->starts_at->isPast()) {
-            return back()->withErrors(['booking' => 'No se puede cancelar una reserva pasada.']);
-        }
-
-        $booking->update(['status' => 'cancelled']);
+        // El mismo bloqueo se usa al entrar o salir de un partido. Una cancelación
+        // y una incorporación no pueden comprobar estados distintos a la vez.
+        DB::transaction(function () use ($request, $booking): void {
+            $current = Booking::query()->lockForUpdate()->findOrFail($booking->id);
+            abort_unless($current->user_id === $request->user()->id, 403);
+            if ($current->status === 'cancelled') {
+                return;
+            }
+            if (! $current->starts_at->isFuture()) {
+                throw ValidationException::withMessages(['booking' => 'No se puede cancelar una reserva pasada o en curso.']);
+            }
+            $current->update(['status' => 'cancelled']);
+        }, 3);
 
         return back()->with('ok', 'Reserva cancelada.');
     }

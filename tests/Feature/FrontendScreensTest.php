@@ -7,12 +7,14 @@ use App\Models\Club;
 use App\Models\Court;
 use App\Models\Sport;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 // Renderiza las pantallas con datos ficticios aislados. Nunca migra la base local.
 class FrontendScreensTest extends TestCase
 {
+    use RefreshDatabase;
+
     private User $player;
     private User $manager;
     private User $admin;
@@ -23,14 +25,6 @@ class FrontendScreensTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config([
-            'database.default' => 'sqlite',
-            'database.connections.sqlite.url' => null,
-            'database.connections.sqlite.database' => ':memory:',
-        ]);
-        DB::purge('sqlite');
-        $this->withoutVite();
-        $this->artisan('migrate', ['--force' => true])->assertExitCode(0);
         $this->player = User::create(['name' => 'Persona Prueba', 'email' => 'player@frontend.test', 'password' => 'password1234', 'role' => 'player']);
         $this->manager = User::create(['name' => 'Gestor Prueba', 'email' => 'manager@frontend.test', 'password' => 'password1234', 'role' => 'manager']);
         $this->admin = User::create(['name' => 'Admin Prueba', 'email' => 'admin@frontend.test', 'password' => 'password1234', 'role' => 'admin']);
