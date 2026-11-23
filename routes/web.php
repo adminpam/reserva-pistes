@@ -12,10 +12,10 @@ Route::middleware("guest")->group(function () {
     Route::post("/login", [AuthController::class, "login"]);
 });
 
-Route::post("/logout", [AuthController::class, "logout"])->middleware("auth")->name("logout");
+Route::post("/logout", [AuthController::class, "logout"])->middleware(["auth", "auth.session"])->name("logout");
 
 // --- Partidos abiertos ---
-Route::middleware("auth")->group(function () {
+Route::middleware(["auth", "auth.session"])->group(function () {
     Route::get("/matches", [App\Http\Controllers\MatchController::class, "index"])->name("matches.index");
     Route::get("/my/matches", [App\Http\Controllers\MatchController::class, "mine"])->name("matches.mine");
     Route::post("/matches/{booking}/join", [App\Http\Controllers\MatchController::class, "join"])->name("matches.join");
@@ -23,14 +23,14 @@ Route::middleware("auth")->group(function () {
 });
 
 // --- Reservas ---
-Route::middleware("auth")->group(function () {
+Route::middleware(["auth", "auth.session"])->group(function () {
     Route::post("/bookings", [App\Http\Controllers\BookingController::class, "store"])->name("bookings.store");
     Route::get("/my/bookings", [App\Http\Controllers\BookingController::class, "index"])->name("bookings.index");
     Route::patch("/bookings/{booking}/cancel", [App\Http\Controllers\BookingController::class, "cancel"])->name("bookings.cancel");
 });
 
 // --- Panel de administración ---
-Route::middleware(["auth", "role:admin"])->prefix("admin")->name("admin.")->group(function () {
+Route::middleware(["auth", "auth.session", "role:admin"])->prefix("admin")->name("admin.")->group(function () {
     Route::get("/clubs", [App\Http\Controllers\Admin\AdminClubController::class, "index"])->name("clubs.index");
     Route::patch("/clubs/{club}", [App\Http\Controllers\Admin\AdminClubController::class, "update"])->name("clubs.update");
     Route::delete("/clubs/{club}", [App\Http\Controllers\Admin\AdminClubController::class, "destroy"])->name("clubs.destroy");
@@ -52,13 +52,17 @@ Route::get("/clubs/{club}", [App\Http\Controllers\ClubController::class, "show"]
 Route::get("/clubs/{club}/availability", [App\Http\Controllers\ClubController::class, "availability"])->name("clubs.availability");
 
 // --- Perfil del jugador ---
-Route::middleware("auth")->group(function () {
+Route::middleware(["auth", "auth.session"])->group(function () {
     Route::get("/profile", [App\Http\Controllers\ProfileController::class, "edit"])->name("profile.edit");
     Route::patch("/profile", [App\Http\Controllers\ProfileController::class, "update"])->name("profile.update");
+    Route::patch('/profile/password', [App\Http\Controllers\PasswordController::class, 'update'])->name('profile.password');
+    Route::post('/profile/avatar', [App\Http\Controllers\AvatarController::class, 'store'])->name('profile.avatar.store');
+    Route::delete('/profile/avatar', [App\Http\Controllers\AvatarController::class, 'destroy'])->name('profile.avatar.destroy');
+    Route::get('/users/{user}/avatar', [App\Http\Controllers\AvatarController::class, 'show'])->whereNumber('user')->name('users.avatar');
 });
 
 // --- Panel del gestor de club ---
-Route::middleware(["auth", "role:manager"])->prefix("manager")->name("manager.")->group(function () {
+Route::middleware(["auth", "auth.session", "role:manager"])->prefix("manager")->name("manager.")->group(function () {
     Route::get("/courts", [App\Http\Controllers\Manager\ManagerCourtController::class, "index"])->name("courts.index");
     Route::get("/courts/create", [App\Http\Controllers\Manager\ManagerCourtController::class, "create"])->name("courts.create");
     Route::post("/courts", [App\Http\Controllers\Manager\ManagerCourtController::class, "store"])->name("courts.store");

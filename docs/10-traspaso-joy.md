@@ -4,22 +4,23 @@ Documento de continuidad para Joy Liliana Castro Valencia. Denys seguirá en rus
 cuando Joy escriba como «Joy:», se continúa con ella en español. Código y documentos
 de su parte: comentarios y explicaciones en español.
 
-## Actualización · 23/11/2026 · después de 07
+## Actualización · 23/11/2026 · después de administración
 
-Joy confirmó instalación de 07, batería global de **53 pruebas y 262 aserciones**
-correctas y recorrido crear/unirse/salir con dos cuentas ficticias. Commit
-ecbebfd revisado por Denys y merge confirmado por Joy. El ZIP actual identifica
-main cf811246e619e52108bee341e8a8735e0acb1491. Rama nueva: feat/admin-gestion.
+Joy confirmó 08 con 83 pruebas/534 aserciones y las pruebas manuales de gestor,
+precio histórico y borrado protegido tras cancelar. Commit 25b3ccc revisado por
+Denys e integrado mediante PR #21 en main b2a8895. Rama activa: feat/perfil-cuentas,
+limpia según salida de Joy. El ZIP de referencia de 09 contiene exactamente 25b3ccc.
 
-08 prepara reglas de administración y gestor: asignación exclusiva a manager,
-borrados que conservan historial, cambios de horario compatibles con reservas y
-aforo estable después del primer partido. Añade 30 casos nuevos; su ejecución en
-Lenovo y la revisión de Denys están pendientes. Guía: 15-administracion-y-gestor.md.
-La interfaz de Denys sigue aceptada y el rediseño continúa pausado.
+09 prepara validación atómica del perfil, fotografía pequeña persistida en DB,
+cambio de contraseña con revocación de otras sesiones y límites de intentos.
+Añade una migración y 37 casos PHP pendientes en Lenovo; ocho casos Node aprobados.
+La aceptación manual/visual no está hecha. Las plantillas de login/registro siguen
+iguales y la composición aprobada se amplía solo para foto y contraseña del perfil.
+Guía: 16-perfil-cuentas-y-foto.md. Integrar origin/main antes de instalar si falta.
 
-Después de aceptar 08, continuar con perfil/cuentas, IDs válidos de deportes y foto
-persistente. El pago simulado sigue al final. Denys gestiona despliegue y debe
-confirmar el commit publicado y la persistencia; merge no equivale a despliegue.
+Después de aceptar 09, terminar el pago de prueba con Joy. Con Denys se verifican
+concurrencia real, base persistente/vigencia, migraciones, foto tras redespliegue,
+HTTPS y commit publicado. La captura de GitHub no acredita un despliegue en Render.
 
 ## Estado y acuerdos
 

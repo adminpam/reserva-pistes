@@ -1,12 +1,22 @@
 # Changelog
 
+## [Sin publicar · backend 09] — 2026-11-23
+- Perfil y niveles guardados juntos, con validación de los IDs de deportes.
+- Subida, sustitución y eliminación de avatar pequeño en la base de datos.
+- Vista previa y preparación de miniatura; fotos en cabecera, perfil, admin y Mis partidos.
+- Cambio de contraseña, rotación de token y control de sesiones privadas.
+- Normalización de correo y límites de intentos en acceso, registro y cambios de cuenta.
+- Una migración aditiva; 37 pruebas PHP pendientes en Lenovo y 8 pruebas Node aprobadas.
+- Diseño de acceso/registro conservado; aceptación visual de 09 pendiente.
+
 ## [Sin publicar · backend 08] — 2026-11-23
 - Asignación exclusiva a gestores; protección de clubes asignados al cambiar roles.
 - Borrados condicionados para conservar reservas y participaciones de cualquier fecha/estado.
 - Conservación de club/deporte de pistas con reservas y de horarios ya comprometidos.
 - Aforo estable desde el primer partido; validación de slugs, búsquedas y precios.
 - Bloqueos compartidos entre administración, gestión, reservas y altas a partidos.
-- 30 regresiones HTTP nuevas preparadas; ejecución en Lenovo pendiente.
+- 30 regresiones HTTP añadidas; Joy confirmó batería global de 83 pruebas/534 aserciones y el recorrido manual de gestor/historial.
+- Revisado por Denys e integrado en PR #21 / main b2a8895.
 
 ## [Sin publicar · backend 07] — 2026-11-23
 - Bloqueo de la pista al reservar y del partido al entrar, salir o cancelar.

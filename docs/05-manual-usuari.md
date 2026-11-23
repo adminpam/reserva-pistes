@@ -159,3 +159,25 @@ mantiene para conservar plazas e historial. Un deporte con pistas o niveles de
 jugadores no se elimina. Ver la guía [15](15-administracion-y-gestor.md).
 
 Resultado manual de 08: pendiente de confirmación de Joy después de instalar.
+
+
+## Perfil con fotografía y contraseña · 09
+
+Abrir Perfil desde el nombre/avatar de la cabecera o la barra inferior. El formulario
+de niveles conserva las opciones 1–5 y No juego; Guardar cambios aplica nombre y
+niveles conjuntamente. Si algún deporte cambió, recargar y volver a elegir.
+
+Para la foto, pulsar el selector, elegir un JPG/PNG/WebP y comprobar la vista previa.
+Guardar foto la aplica al perfil y cabecera; Quitar foto devuelve las iniciales.
+La vista previa no guarda nada hasta enviar. Probar con una imagen ficticia local;
+no hace falta adjuntar una fotografía personal al chat. Otros usuarios autenticados
+pueden ver la foto como parte de tu identidad en la plataforma.
+
+Cambiar contraseña es un formulario independiente: introducir la actual y dos
+veces la nueva. Después de guardar, la sesión actual permanece y las anteriores
+deben volver a entrar al abrir una sección privada. El correo se muestra como dato
+de la cuenta; este paquete no añade cambio de correo ni recuperación por email.
+Un mensaje de demasiados intentos indica cuánto esperar antes de repetir el acceso.
+
+Resultado manual de 09: pendiente de confirmación de Joy. El apartado de cierre
+de 08 conserva sus resultados anteriores y no acredita el perfil nuevo.

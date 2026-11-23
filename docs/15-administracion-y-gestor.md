@@ -146,3 +146,17 @@ Fuentes oficiales revisadas el 23/11/2026:
 - La reserva conserva 12 euros aunque la tarifa cambie a 15 euros.
 - El borrado de la pista queda bloqueado antes y después de cancelar la reserva.
 - Revisión de Denys y prueba de concurrencia en PostgreSQL pendientes.
+
+
+## Cierre e integración confirmados
+
+Los resultados pendientes en la preparación de 08 quedaron cerrados por Joy:
+83 pruebas/534 aserciones, 3,33 s; asignación de gestor, crear/editar pista, reserva
+a 12 euros conservada tras subir tarifa a 15 y borrado bloqueado antes/después de
+cancelar. Son los casos manuales confirmados; no se atribuye una ejecución manual
+a los demás pasos de la guía. Denys revisó y el PR #21 se integró en main b2a8895.
+- [Commit 25b3ccc](https://github.com/adminpam/reserva-pistes/commit/25b3cccfb92368e30e235e1011b59cafe14f1c43).
+- [PR #21](https://github.com/adminpam/reserva-pistes/pull/21).
+- [Integración b2a8895](https://github.com/adminpam/reserva-pistes/commit/b2a8895).
+
+La concurrencia PostgreSQL y el despliegue siguen pendientes con Denys.

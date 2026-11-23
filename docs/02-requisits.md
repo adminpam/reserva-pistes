@@ -53,3 +53,16 @@ Valoración de compañeros, notificaciones por correo, estadísticas del club, p
   asociados no se elimina.
 - Aceptación nueva pendiente de ejecutar con Joy. Detalle y casos:
   [Administración y gestor](15-administracion-y-gestor.md).
+
+
+## Perfil y cuentas · 09
+
+- El usuario modifica solo su nombre y sus niveles; IDs de deportes desconocidos
+  no guardan cambios parciales. No juego elimina únicamente el nivel elegido.
+- Puede subir, sustituir y quitar su foto. JPEG/PNG/WebP; servidor hasta 512 KB.
+  La foto es visible a usuarios autenticados y se guarda junto con la base de datos.
+- Puede cambiar contraseña confirmando la actual y la nueva; la sesión actual
+  sigue abierta y las otras requieren acceso de nuevo en su siguiente ruta privada.
+- El registro público crea jugadores, conserva contraseñas con hash y valida
+  correos duplicados. Se limitan intentos de registro/acceso/cambio de contraseña.
+- Criterios preparados en 09; la aceptación PHP, visual y manual sigue pendiente.

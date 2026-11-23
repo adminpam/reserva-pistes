@@ -4,6 +4,22 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 
 ---
 
+**23/11/2026 — Joy · Perfil, cuentas y foto**
+- Herramienta: ChatGPT (OpenAI).
+- Objetivo: continuar con perfil/cuentas y la foto solicitada por Denys, conservando
+  el estilo y la persistencia entre despliegues.
+- Prompt (resumen): «seguimos, aun tengo que esperar a que haga revision»;
+  continuar el bloque de perfil sobre el ZIP actual y la rama feat/perfil-cuentas.
+- Resultado preparado: nombre/niveles en transacción, validación de IDs, avatar
+  pequeño en DB con vista previa, cambio de contraseña y límites de intentos.
+  Se conservan las plantillas de login/registro. Hay una migración aditiva.
+- Validación: ocho pruebas Node aprobadas; 37 casos PHP nuevos pendientes de Lenovo.
+  No hay PHP/Composer ni un Chromium ejecutable funcional en la preparación; no se
+  afirman pruebas PHP, compresión real en navegador o aceptación visual realizadas.
+- Commit/PR de 09: pendiente del commit de Joy y revisión de Denys.
+
+---
+
 **23/11/2026 — Joy · Administración y gestor**
 - Herramienta: ChatGPT (OpenAI).
 - Objetivo: revisar permisos, gestión de clubes/pistas y preservación de reservas.
@@ -285,3 +301,20 @@ un plan sin ejecución y no se cuenta para el mínimo de 15 usos significativos.
 - La reserva conserva 12 euros aunque la tarifa cambie a 15 euros.
 - El borrado de la pista queda bloqueado antes y después de cancelar la reserva.
 - Revisión de Denys y prueba de concurrencia en PostgreSQL pendientes.
+
+
+Actualización de la entrada de administración (08): Joy confirmó 83 pruebas y
+534 aserciones y el recorrido manual registrado en el cierre anterior. Denys revisó
+y el PR #21 se integró en main b2a8895. Commit: [25b3ccc](https://github.com/adminpam/reserva-pistes/commit/25b3cccfb92368e30e235e1011b59cafe14f1c43).
+PR: https://github.com/adminpam/reserva-pistes/pull/21. No acredita ejecución de 09.
+
+## Cierre de validación del paquete 09 — Joy — 24/11/2026
+- Migración de avatares aplicada correctamente.
+- Batería PHP: 120 pruebas y 872 aserciones correctas, en 13,43 s.
+- JavaScript del perfil: 8 pruebas correctas.
+- Nombre, niveles y foto se guardan y se conservan tras cerrar sesión.
+- Sustituir y quitar la foto funciona.
+- La contraseña actual incorrecta se rechaza; la correcta permite cambiarla.
+- La sesión actual continúa y las otras requieren volver a entrar.
+- La contraseña anterior falla y la nueva permite acceder.
+- Revisión de Denys, persistencia tras redesplegar y concurrencia PostgreSQL pendientes.
