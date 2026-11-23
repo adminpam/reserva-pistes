@@ -3,37 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Models\Club;
+use App\Services\ClubAvailability;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
-// Ficha del club: pistas agrupadas, precios y formulario de reserva.
-// Con ?date=YYYY-MM-DD se recalculan las horas ocupadas de cada pista
-// para marcar los slots no disponibles en el selector.
+// La ficha y su endpoint consultan el mismo servicio para no discrepar al cancelar.
 class ClubController extends Controller
 {
+    public function __construct(private ClubAvailability $availability) {}
+
     public function show(Request $request, Club $club): View
     {
-        $date = $request->query('date', now()->toDateString());
-
-        // Si la fecha que llega no es valida, volvemos a hoy sin romper la pagina.
-        try {
-            $date = \Carbon\Carbon::parse($date)->toDateString();
-        } catch (\Exception) {
-            $date = now()->toDateString();
-        }
-
+        $input = ['date' => $request->query('date', now()->toDateString())];
+        $validator = Validator::make($input, ['date' => ['required', 'date_format:Y-m-d']]);
+        $date = $validator->fails() ? now()->toDateString() : $input['date'];
         $club->load('courts.sport');
-
-        $busy = [];
-        foreach ($club->courts as $court) {
-            $busy[$court->id] = $court->busyHoursOn($date);
-        }
 
         return view('clubs.show', [
             'club' => $club,
             'date' => $date,
-            'busy' => $busy,
+            'availability' => $this->availability->forDate($club, $date),
             'hasOutdoor' => $club->courts->contains('is_outdoor', true),
         ]);
+    }
+
+    // Lectura pública de horas, sin importes ni datos de quienes han reservado.
+    public function availability(Request $request, Club $club): JsonResponse
+    {
+        $data = $request->validate(['date' => ['required', 'date_format:Y-m-d']]);
+
+        return response()->json($this->availability->forDate($club, $data['date']))
+            ->header('Cache-Control', 'private, no-store')
+            ->header('Pragma', 'no-cache');
     }
 }

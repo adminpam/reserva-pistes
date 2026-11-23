@@ -100,3 +100,48 @@ en el navegador del equipo, sin declarar pruebas visuales que no se han observad
 
 Anotar fecha, autor y commit desplegado al completar cada caso. La última ejecución
 global y las capturas por rol siguen pendientes, aunque existan tests parciales verdes.
+
+
+## Backend con Joy · 18/11/2026
+
+| Comprobación en Lenovo | Resultado comunicado |
+| --- | --- |
+| Actualizar main desde GitHub | Correcto: fast-forward a `8a8b39c` |
+| Composer y requisitos de PHP | Correctos; PHP CLI 8.5.11 |
+| npm ci y npm run build | Correctos; aviso de postinstall de esbuild bloqueado, build funcional |
+| Estado de migraciones | Todas aplicadas en SQLite local |
+| Datos antes de completar pistas | 6 deportes, 11 clubes, 4 pistas, 0 reservas |
+| CourtSeeder | 29 pistas; 0 clubes sin pistas después de ejecutarlo |
+| Registro/acceso usado en prueba | Sin error comunicado; sesión iniciada observada en la captura |
+| Ficha de club | Pistas, precios y horarios visibles |
+| Importe de la reserva | Visible en Mis reservas, confirmado por Joy |
+| Cancelación de reserva futura | Cancelada; la hora queda libre al consultar la ficha de nuevo |
+| Actualización automática entre pestañas | Paquete 04 preparado; instalación/prueba manual nueva pendientes |
+| ClubAvailabilityTest | Ejecutados en Lenovo: 7 tests, 45 aserciones, sin fallos; 2 avisos de PHP 8.5 en config/database.php |
+| Regresión Node del paquete 04 | 14 pruebas aprobadas al preparar el código: 6 nuevas, 8 anteriores |
+
+Las comprobaciones manuales anteriores no acreditan los casos negativos de registro,
+los permisos, las reservas simultáneas, el aforo o el pago. Se revisarán por separado.
+Detalle y explicación de 04: `11-datos-y-disponibilidad.md`.
+
+
+## Compatibilidad PHP · ajuste 04a
+
+Joy ejecutó `ClubAvailabilityTest` con PHP 8.5.11 y PHPUnit 11.5.57:
+7 tests, 45 aserciones. PHPUnit identificó dos avisos de deprecación del mismo
+símbolo `PDO::MYSQL_ATTR_SSL_CA`, en `config/database.php`, líneas 61 y 81 de la
+versión anterior. Las aserciones se completaron, pero la ejecución no estaba limpia.
+
+04a usa `Pdo\Mysql::ATTR_SSL_CA` cuando está definida, y la constante anterior
+como alternativa para PHP 8.2. Conserva el valor de la opción SSL y el control de
+extensión disponible. No desactiva los avisos del runner ni modifica `vendor/`.
+
+Repetir después de aplicar 04a, en el Lenovo dentro del proyecto:
+
+```powershell
+php artisan config:clear
+php vendor/phpunit/phpunit/phpunit --filter=ClubAvailabilityTest --display-deprecations
+```
+
+Resultado después del ajuste: pendiente de la ejecución de Joy. No marcar los
+avisos como solucionados hasta observar la nueva salida.

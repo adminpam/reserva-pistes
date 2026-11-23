@@ -28,3 +28,23 @@
 3. Partidos abiertos (búsqueda) / Mis partidos / Mis reservas.
 4. Perfil con niveles.
 5. Panel de gestor (pistas + reservas) y panel de admin (clubes, deportes, usuarios).
+
+
+## Lectura de disponibilidad · paquete 04
+
+`GET /clubs/{club}/availability?date=YYYY-MM-DD` es una lectura pública de huecos.
+Un club inexistente responde 404; una fecha ausente o inválida, 422 en JSON.
+Responde sin caché compartida y no publica los usuarios de las reservas.
+
+```json
+{
+  "date": "2026-11-19",
+  "checked_at": "2026-11-18T12:30:00+01:00",
+  "courts": [{"id": 1, "hours": [{"hour": 10, "available": true}]}]
+}
+```
+
+El ejemplo es ilustrativo. `ClubAvailability` concentra el cálculo utilizado
+también por Blade; `availability.js` actualiza los inputs de hora al volver a la
+pestaña. Consultar un hueco no lo bloquea ni lo reserva: escribir la reserva
+sigue siendo responsabilidad de `BookingController` y sus reglas transaccionales.

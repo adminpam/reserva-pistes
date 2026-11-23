@@ -102,7 +102,7 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 - Prompt (resumen): «La página no me gusta como se ve. Usa el logo original y una pantalla de carga con la misma pista de la referencia y una pelota luminosa que bote. Entrega archivos por paquetes con comandos para instalarlos desde Downloads». Se facilitó el ZIP del código y la URL de Render.
 - Resultado: PNG original conservado, pista SVG basada en la referencia, pelota animada, barra indeterminada, carga ligada al documento, entrada estática con comprobación de Laravel y límite de espera, e instalador con comprobación de versiones y copia de seguridad.
 - Validación posterior comunicada por Denys: build y limpieza correctos; `BrandReadyTest`: 1 test, 5 aserciones. Pista y pelota aprobadas; el nombre/barra se ajustaron en 01b. Entrada estática sin despliegue confirmado.
-- Git: incluido en el commit local `82806d1`; enlace y PR pendientes de publicar y revisar.
+- Commit/PR: [82806d1](https://github.com/adminpam/reserva-pistes/commit/82806d1), integrado junto al frontend en [PR #16](https://github.com/adminpam/reserva-pistes/pull/16). Joy confirmó su merge el 18/11.
 
 ---
 
@@ -112,7 +112,7 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 - Prompt (resumen): «En móvil no queremos reducir la página de escritorio: queremos una estructura propia. Falta el espacio entre Reserva y Pistes; el segmento de carga debe desaparecer al final y volver a entrar desde el inicio. La pista y la pelota están bien».
 - Resultado: nombre con separación visible; segmento que atraviesa la barra en una sola dirección; estructura de teléfono con marca arriba, pista al centro y progreso abajo, variante horizontal y ajustes específicos de tablet. Se conservan la geometría de la pista y el bote aprobado.
 - Validación del paquete anterior en el ASUS de Denys: `npm run build` correcto, `php artisan view:clear` correcto y `BrandReadyTest` aprobado (1 test, 5 aserciones), según las salidas compartidas. El ajuste visual de esta entrada queda pendiente de revisar en el navegador del equipo.
-- Git: incluido en el commit local `82806d1`; enlace y PR pendientes de publicar y revisar.
+- Commit/PR: [82806d1](https://github.com/adminpam/reserva-pistes/commit/82806d1), integrado junto al frontend en [PR #16](https://github.com/adminpam/reserva-pistes/pull/16). Joy confirmó su merge el 18/11.
 
 ---
 
@@ -122,7 +122,7 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 - Prompt (resumen): «La página principal se ve mal. Hay que mejorarla como en la referencia y sustituir el dibujo que hace de logo por nuestro logo real». Después se compartió la versión local actual y se aclaró que todavía no estaba publicada.
 - Resultado: cabecera original ampliada, navegación completa, título e ilustración grandes, panel de deportes y mapa ancho; controles táctiles, ficha móvil inferior, estados vacíos y errores explícitos. API con miniatura ilustrativa, validación de datos y cancelación de peticiones obsoletas. Corregida la visibilidad de los dos SVG de sonido.
 - Validación: 5 pruebas Node de contrato y contenido del mapa aprobadas; sintaxis JS y comprobación del instalador. Pruebas PHP y revisión visual en Laravel pendientes. El navegador del entorno de revisión no pudo alcanzar el stand local; no se declara validación visual en dispositivos.
-- Git: commit local `b505a4a` en `feat/portada-mapa`; enlace y PR pendientes de publicar y revisar. Validación posterior: `MapPageTest`, 2 tests y 15 aserciones aprobados en el ASUS.
+- Commit/PR: [b505a4a](https://github.com/adminpam/reserva-pistes/commit/b505a4a), integrado en [PR #16](https://github.com/adminpam/reserva-pistes/pull/16). Validación posterior: `MapPageTest`, 2 tests y 15 aserciones aprobados en el ASUS.
 
 ---
 
@@ -133,7 +133,7 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 - Resultado: pantallas de perfil, club/horarios, reservas, partidos, gestor, administrador y errores; componentes comunes, confirmación y paginación. Cabecera fija y mapa móvil con hoja inferior. Archivo de traspaso a Joy con backend, sincronización GitHub y pago de prueba pendiente.
 - Validación comunicada por Denys del paquete 02: build correcto; limpieza de vistas correcta; `MapPageTest`: 2 tests aprobados, 15 aserciones. La portada local se aprobó con la petición de corregir el scroll y fijar la cabecera, incluida en 03.
 - Validación del paquete 03: sintaxis JS y pruebas Node al preparar el código. Después Denys ejecutó `FrontendScreensTest` en el ASUS: 6 tests, 58 aserciones, aprobados en 1,31 s. Da la interfaz por terminada preliminarmente; revisión completa por tamaños y despliegue pendientes. Las pantallas de error no dependen de sesión ni de Vite.
-- Git: existe el commit local `82806d1` del estado anterior a la portada. Enlace al commit/PR de este paquete: pendiente de la publicación y revisión reales.
+- Commit/PR: [e7a6f65](https://github.com/adminpam/reserva-pistes/commit/e7a6f65), [PR #16](https://github.com/adminpam/reserva-pistes/pull/16); merge confirmado por Joy y main `8a8b39c` descargado en su Lenovo.
 
 
 ---
@@ -158,7 +158,50 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 - Validación: usar los resultados PHP compartidos por Denys, sin inventar una
   suite global ni un despliegue. Instalación y observación de 03b en el ASUS
   pendientes hasta que Denys las realice. Capturas finales por rol pendientes.
-- Commit/PR: pendiente de crear, publicar y sustituir por el enlace real.
+- Commit/PR: [e7a6f65](https://github.com/adminpam/reserva-pistes/commit/e7a6f65), [PR #16](https://github.com/adminpam/reserva-pistes/pull/16), con 03 y 03b incluidos.
 
 Las entradas con enlaces pendientes se completarán al publicar. La entrada 15 es
 un plan sin ejecución y no se cuenta para el mínimo de 15 usos significativos.
+
+
+---
+
+**21 · 18/11/2026 — Joy**
+- Herramienta: ChatGPT (OpenAI).
+- Objetivo: sincronizar el Lenovo, completar las pistas de demostración y comprobar
+  el recorrido de reserva/cancelación con datos de la base local.
+- Prompt inicial literal: «joy: ya tenemos hosteado parte frontend de denys,, y ya
+  hice merge, empezamos mi parte».
+- Prompts de la incidencia, literales: «joy: si se cancela pero no me sale que la
+  hora esta disponible» y, tras consultar la ficha otra vez, «joy: vale ahora se me
+  ha quitado la reserva y ya me sale que está disponible la hora».
+- Resultado observado: main `8a8b39c`, rama `feat/backend-datos`, Composer y build
+  correctos. SQLite local con 6 deportes, 11 clubes y 29 pistas (antes 4); importe
+  visible en Mis reservas; cancelar conserva el historial y libera la hora al
+  volver a consultar. El permiso local de esbuild queda en un stash.
+- Mejora preparada en 04: servicio compartido de disponibilidad y endpoint JSON,
+  actualización al volver a la pestaña sin perder el formulario, pruebas de
+  regresión y actualización de los documentos. No se añade pago en este paquete.
+- Validación de la mejora nueva: 14 pruebas Node aprobadas sobre la copia integrada
+  al preparar el paquete. Joy ejecutó después los 7 tests PHP: 45 aserciones
+  completadas, con dos avisos de PHP 8.5 en config/database.php. La observación del
+  comportamiento nuevo y la repetición después de 04a siguen pendientes.
+- Commit/PR: pendiente de crear por Joy y de revisión por Denys.
+
+
+---
+
+**22 · 18/11/2026 — Joy**
+- Herramienta: ChatGPT (OpenAI).
+- Objetivo: resolver los avisos de PHP 8.5 sin perder compatibilidad con PHP 8.2.
+- Prompt (fragmento literal del mensaje con la salida de consola):
+  «php vendor/phpunit/phpunit/phpunit --filter=ClubAvailabilityTest --display-deprecations»
+  y «Constant PDO::MYSQL_ATTR_SSL_CA is deprecated since 8.5, use Pdo\Mysql::ATTR_SSL_CA instead».
+- Resultado del diagnóstico: dos referencias antiguas en config/database.php
+  (MySQL y MariaDB); no se han detectado fallos de aserciones en esos 7 tests.
+- Cambio preparado: constante moderna cuando existe y alternativa para PHP 8.2;
+  se conserva la opción SSL y se evita evaluar la constante antigua en PHP 8.5.
+- Validación: 7 tests/45 aserciones antes del cambio, con 2 avisos confirmados.
+  Nueva ejecución de PHP tras instalar 04a pendiente en el Lenovo. El entorno de
+  preparación del ajuste no dispone de PHP para declarar esa ejecución realizada.
+- Commit/PR: pendiente, junto al paquete 04 en la rama de Joy.
