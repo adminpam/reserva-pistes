@@ -133,4 +133,29 @@ libera una plaza; salir como organizador cancela el partido para todos y conserv
 el historial. Nadie puede cancelar una reserva ajena ni quitar participaciones pasadas.
 La hora de una reserva cancelada vuelve a estar disponible al consultar la ficha.
 
-Validación de 07: pruebas automáticas y recorrido manual pendientes en Lenovo.
+Validación de 07 confirmada por Joy: 53 pruebas y 262 aserciones, más crear un
+partido, entrar con otra cuenta y salir liberando plaza. Integrado en main cf81124.
+
+
+## Administración y gestor · paquete 08
+
+En Administración → Usuarios, asignar rol Gestor a una cuenta ficticia. En Clubes,
+seleccionar esa cuenta en Gestor y pulsar Asignar. Con esa cuenta, Mi club permite
+crear y editar sus pistas y consultar sus reservas. Otro gestor no accede a ellas.
+Para retirar el acceso, seleccionar Sin gestor o asignar otra cuenta manager.
+
+Antes de cambiar el rol de un gestor, retirar/reasignar sus clubes. No se puede
+eliminar la propia cuenta admin ni quitarse ese rol. Los usuarios con reservas o
+participaciones se conservan, incluso si todo está pasado o cancelado.
+
+Una pista se elimina únicamente si nunca tuvo reservas; un club, si no tiene pistas.
+Si una pista tiene reservas, no se cambia su club/deporte. Su precio puede cambiar,
+pero las reservas mantienen su importe. Los horarios nuevos deben incluir todas
+las reservas confirmadas futuras y en curso. Los errores aparecen en el aviso del
+formulario, sin hacer un cambio parcial de datos.
+
+El aforo de un deporte se configura antes del primer partido abierto. Después se
+mantiene para conservar plazas e historial. Un deporte con pistas o niveles de
+jugadores no se elimina. Ver la guía [15](15-administracion-y-gestor.md).
+
+Resultado manual de 08: pendiente de confirmación de Joy después de instalar.

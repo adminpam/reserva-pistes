@@ -48,3 +48,24 @@ El ejemplo es ilustrativo. `ClubAvailability` concentra el cálculo utilizado
 también por Blade; `availability.js` actualiza los inputs de hora al volver a la
 pestaña. Consultar un hueco no lo bloquea ni lo reserva: escribir la reserva
 sigue siendo responsabilidad de `BookingController` y sus reglas transaccionales.
+
+
+## Integridad administrativa · 08
+
+Se conservan esquema y rutas. Los controladores rechazan los borrados que perderían
+reservas/participaciones: club con pistas, pista con reservas o usuario con historial.
+Deportes con pistas o niveles tampoco se borran. Las cascadas SQL siguen existiendo;
+estas reglas protegen las rutas HTTP y no sustituyen una política de mantenimiento.
+
+La fila del gestor coordina asignación, rol y operaciones de pistas; la del club
+coordina creación de pistas y eliminación de clubes vacíos. Las reservas toman
+usuario, deporte y pista; las altas a partidos, usuario y reserva. Se vuelve a leer
+la propiedad después de los bloqueos. Los cambios de rol/baja de usuarios ordenan
+primero las filas admin y verifican de nuevo al actor. La comprobación de carreras
+reales con PostgreSQL sigue pendiente.
+
+No hay copia histórica del aforo, club o deporte en bookings: por eso esos cambios
+se restringen una vez usados. price_total sí es una copia de la tarifa; cambiar el
+precio de la pista no modifica una reserva existente. Nombre de pista e indicador
+interior/exterior siguen siendo datos vivos, no una fotografía histórica inmutable.
+Ver [15-administracion-y-gestor.md](15-administracion-y-gestor.md).

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Sport;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -57,22 +58,24 @@ class MatchController extends Controller
     {
         $user = $request->user();
         DB::transaction(function () use ($user, $booking): void {
+            // La baja administrativa y el alta al partido comparten este usuario.
+            $player = User::query()->lockForUpdate()->findOrFail($user->id);
             $current = Booking::query()->lockForUpdate()->findOrFail($booking->id);
             $this->requireUpcomingOpenMatch($current);
             $current->load('court.sport');
 
             // Contamos en la base después del bloqueo, no sobre una colección
             // que pudo cargarse antes de que otra persona ocupara la última plaza.
-            if ($current->players()->where('users.id', $user->id)->exists()) {
+            if ($current->players()->where('users.id', $player->id)->exists()) {
                 throw ValidationException::withMessages(['match' => 'Ya estás apuntado a este partido.']);
             }
             if ($current->players()->count() >= $current->court->sport->players_per_match) {
                 throw ValidationException::withMessages(['match' => 'El partido está completo.']);
             }
-            if (! $current->levelFits($user->levelFor($current->court->sport_id))) {
+            if (! $current->levelFits($player->levelFor($current->court->sport_id))) {
                 throw ValidationException::withMessages(['match' => 'Tu nivel no entra en el rango de este partido. Ajusta tu nivel en el perfil.']);
             }
-            $current->players()->attach($user->id);
+            $current->players()->attach($player->id);
         }, 3);
 
         return back()->with('ok', '¡Apuntado al partido!');

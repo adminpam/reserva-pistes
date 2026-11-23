@@ -1,9 +1,9 @@
 # 14 · Reservas, partidos y aislamiento de pruebas
 
 Paquete 07 · Joy · 23/11/2026. Preparado a partir del ZIP de la rama de Joy,
-commit `fbbf879fbf56967ccd07e716a224799205455ac9`. La ejecución PHP nueva y la
-revisión de Denys se registrarán después de instalar; este documento no declara
-un despliegue ni un resultado automático que aún no se haya observado.
+commit `fbbf879fbf56967ccd07e716a224799205455ac9`. Cierre confirmado el 23/11: Joy obtuvo 53 pruebas y 262 aserciones correctas
+y comprobó crear/unirse/salir; Denys revisó y Joy confirmó el merge. Commit de
+trabajo ecbebfd, integrado en main cf81124. El despliegue no se da por confirmado.
 
 ## Problemas encontrados y solución
 
@@ -79,7 +79,8 @@ historial, búsqueda y accesos directos de invitados o no participantes.
 | Base de partida, antes de 07: ClubAvailability/MapPage/FrontendScreens/FrontendAsset | Joy confirmó 17 pruebas y 123 aserciones correctas en Lenovo |
 | Base de partida: availability.test.mjs | Joy confirmó 6 pruebas correctas |
 | Cancelar en otra pestaña y recuperar disponibilidad | Confirmado manualmente por Joy |
-| Pruebas de 07 y ejecución global | Pendientes en Lenovo; no hay PHP/Composer en el entorno que preparó el ZIP |
+| Pruebas de 07 y ejecución global | Joy confirmó 53 pruebas y 262 aserciones correctas, 2,38 s |
+| Recorrido crear partido, unirse con otra cuenta y salir | Confirmado por Joy; no sustituye los otros casos manuales |
 | Revisión de código, XML y contrato de instalación | Ejecutada al empaquetar; no sustituye PHPUnit |
 | Solicitudes realmente paralelas en PostgreSQL | Pendientes; SQLite secuencial no prueba el bloqueo de filas |
 | Pago de prueba | Pendiente del bloque final |
@@ -130,3 +131,11 @@ Fuentes oficiales revisadas el 23/11/2026:
 - https://laravel.com/docs/12.x/validation
 - https://laravel.com/docs/12.x/database-testing
 - https://docs.phpunit.de/en/11.5/configuration.html#the-env-element
+
+
+## Cierre e integración
+
+- [Commit de Joy ecbebfd](https://github.com/adminpam/reserva-pistes/commit/ecbebfd).
+- [Main integrado cf81124](https://github.com/adminpam/reserva-pistes/commit/cf811246e619e52108bee341e8a8735e0acb1491).
+- Concurrencia PostgreSQL y otros casos manuales no confirmados siguen pendientes.
+- La administración se prepara en 08; perfil/avatar y pago aún no están terminados.
