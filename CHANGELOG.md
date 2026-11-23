@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Sin publicar] — actualización 2026-11-18
+- Compatibilidad de la constante SSL de PDO entre PHP 8.2 y 8.5 (ajuste 04a).
+- Disponibilidad de pistas al recuperar el foco, con cálculo común entre Blade y JSON.
+- Pruebas y documentación de los datos locales, importe y cancelación comprobados por Joy.
 - Microanimaciones breves con movimiento reducido y documentación de instalación/manual según AEA6.
 - Resultado confirmado de FrontendScreensTest: 6 tests, 58 aserciones; continuidad con Joy y pago al final.
 - Composición común de perfil, club, reservas, partidos, gestor y administrador.

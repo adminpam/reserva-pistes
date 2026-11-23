@@ -2,6 +2,7 @@
      pueden elegirse y se conserva el contrato de BookingController. --}}
 @extends('layouts.app')
 @section('title', $club->name.' — Reserva Pistes')
+@push('styles')<script type="module" src="{{ asset('ui/availability.js') }}"></script>@endpush
 @section('banner')<div class="rp-club-cover" aria-hidden="true"></div>@endsection
 @section('content')
 <section class="rp-panel rp-club-summary" aria-labelledby="club-title">
@@ -18,11 +19,14 @@
     <button class="btn btn-ghost" type="submit">@include('partials.ui-icon', ['name' => 'calendar']) Ver disponibilidad</button>
 </form>
 <p class="rp-notice">@include('partials.ui-icon', ['name' => 'info']) <span>Las pistas, los precios y las reservas son de demostración. No se realiza ningún cobro real.</span></p>
-<div class="rp-list">
+<div class="rp-list" data-availability-url="{{ route('clubs.availability', ['club' => $club, 'date' => $date]) }}" data-availability-date="{{ $date }}">
+<p class="rp-small" data-availability-status role="status" aria-live="polite">Las horas se actualizan al volver a esta pestaña.</p>
 @forelse($club->courts as $court)
     @php
-        $hours = range((int) $court->open_hour, (int) $court->close_hour - 1);
-        $available = collect($hours)->filter(fn ($hour) => !in_array($hour, $busy[$court->id] ?? []) && \Carbon\Carbon::parse($date)->setTime($hour, 0)->isFuture())->values();
+        $courtAvailability = collect($availability['courts'])->firstWhere('id', $court->id);
+        $slots = collect($courtAvailability['hours'] ?? []);
+        $hours = $slots->pluck('hour')->all();
+        $available = $slots->where('available', true)->pluck('hour')->values();
         $selectedHour = (string) old('court_id') === (string) $court->id ? old('hour', $available->first()) : $available->first();
     @endphp
     <section class="rp-panel rp-court" aria-labelledby="court-{{ $court->id }}-title">
@@ -52,7 +56,7 @@
                         </div>
                     </div>
                     <div class="rp-slot-summary" data-slot-summary aria-live="polite">Elige una hora disponible.</div>
-                    @if($available->isEmpty())<p class="rp-small">No quedan horas disponibles para este día.</p>@endif
+                    <p class="rp-small" data-availability-empty @if($available->isNotEmpty()) hidden @endif>No quedan horas disponibles para este día.</p>
                 </div>
                 <button class="btn btn-primary" type="submit" @disabled($available->isEmpty())>Reservar</button>
             </form>

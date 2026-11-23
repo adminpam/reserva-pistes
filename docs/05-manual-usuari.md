@@ -41,6 +41,9 @@ Para las capturas y la demostración utilizar únicamente identidades ficticias.
 5. Revisar «Mis reservas»: próximas, pasadas y canceladas se muestran separadas.
 6. Para cancelar una reserva futura propia, pulsar «Cancelar» y aceptar el diálogo.
    Cerrar o rechazar el diálogo no debe enviar la cancelación.
+   Si la ficha está en otra pestaña, al volver a ella las horas se vuelven a
+   consultar automáticamente. Si falla la red, aparece el aviso para utilizar
+   «Ver disponibilidad».
 
 Una hora ocupada no puede seleccionarse. Si otra persona reserva mientras el
 formulario está abierto, el servidor debe rechazar el conflicto; este recorrido

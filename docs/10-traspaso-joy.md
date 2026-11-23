@@ -16,44 +16,36 @@ de su parte: comentarios y explicaciones en español.
   preliminar tras probarlo en su equipo. La revisión a todas las anchuras y con
   datos completos sigue pendiente; las pruebas de renderizado no la sustituyen.
 - La aplicación existente está en https://reserva-pistes.onrender.com/. El código nuevo
-  de esta sesión todavía no se ha confirmado como publicado en Render.
+  del frontend fue publicado y desplegado según la confirmación de Joy. La
+  disponibilidad y persistencia de la versión final se volverán a verificar con Denys.
 - Denys quiere terminar el despliegue y comprobar Render con él. No se da ese trabajo
   por terminado ni se publican cambios pendientes sin seguir el flujo acordado.
 
 ## Git y sincronización
 
-Estado comunicado por Denys en el ASUS:
+Estado actualizado el 18/11/2026:
 
-- `82806d1`, `feat/marca-carga`: estado previo al rediseño de portada.
-- `b505a4a`, `feat/portada-mapa`: portada y mapa adaptable.
-- Rama actual: `feat/frontend-completo`; paquete 03 instalado y sus pruebas PHP
-  aprobadas. El commit de 03 y su publicación todavía no se han comunicado.
-- Ajuste 03b: microanimaciones y documentación de cierre; su instalación en el
-  ASUS se comprueba aparte. No modifica controladores, base ni flujo de pago.
+- Denys guardó el frontend completo en `e7a6f65`, rama `feat/frontend-completo`,
+  y publicó el PR https://github.com/adminpam/reserva-pistes/pull/16.
+- Joy confirmó merge y despliegue. Su terminal confirma `main` actualizado a
+  `8a8b39c`; ahora trabaja en `feat/backend-datos` desde `C:\Dev\reserva-pistes`.
+- Composer, requisitos, npm ci y build comprobados en Lenovo. SQLite local con
+  6 deportes, 11 clubes y 29 pistas después de `CourtSeeder`.
+- Un cambio local `allowScripts` de esbuild quedó guardado en un stash. El build
+  funciona sin restaurarlo; no confundir ese stash con trabajo perdido ni borrarlo.
+- Registro, ficha, importe en Mis reservas y cancelación/liberación de hora
+  comprobados manualmente según lo comunicado. Falta la aceptación completa.
+- Paquete 04: actualización de disponibilidad al volver a una pestaña y pruebas
+  específicas preparadas. Registrar su instalación y resultados cuando ocurran.
 
-**Primer paso antes de que Joy programe:** Denys revisa las diferencias, guarda
-03/03b y publica su rama. Compartir con Joy el nombre de rama y el hash real.
-Publicar una rama no equivale a desplegarla. Antes de fusionar a `main`, Joy
-revisa el PR y ambos deben poder explicar el código. Si Render despliega `main`
-automáticamente, el merge se coordina con Denys para observar también ese despliegue.
+Denys se ocupa de frontend y despliegue. Joy continúa en español con el backend,
+datos, administración, cuentas y fotografía de perfil. La foto debe conservarse
+entre despliegues: no basar su almacenamiento definitivo en el disco efímero de
+Render Free. El pago de prueba se añade al final del backend.
 
-Cuando las ramas se hayan publicado y fusionado, en el Lenovo de Joy:
-
-```powershell
-git status --short
-git fetch origin
-git switch main
-git pull --ff-only origin main
-composer install
-npm ci
-npm run build
-php artisan view:clear
-```
-
-Si `git status` muestra trabajo propio, conservarlo primero en su rama y commit;
-no sobrescribirlo ni usar un reset para hacer pull. Si el frontend aún está en una
-rama remota sin fusionar, obtener de Denys su nombre real antes de cambiar de rama.
-Revisar los cambios locales del `.env`; el archivo no se comparte ni se sube.
+Cada paquete se confirma en su rama y lo revisa el otro miembro antes de merge.
+Los siguientes cambios se obtienen mediante Git después de conservar trabajo local;
+no sustituir las plantillas aprobadas con una copia antigua del proyecto.
 
 ## Backend: siguiente fase con Joy
 
@@ -115,8 +107,8 @@ Resultados comunicados por Denys en el ASUS:
 - Paquete 01: build y limpieza de vistas correctos; `BrandReadyTest`: 1 test, 5 aserciones.
 - Paquete 02: build y limpieza de vistas correctos; `MapPageTest`: 2 tests, 15 aserciones.
 - Paquete 03: `FrontendScreensTest` aprobado: **6 tests, 58 aserciones**, 1,31 s.
-  Denys acepta preliminarmente la interfaz; publicación y revisión en todos los
-  tamaños con datos completos pendientes.
+  Denys acepta preliminarmente la interfaz; Joy confirmó su publicación. La
+  revisión en todos los tamaños con datos completos sigue pendiente.
 
 `FrontendScreensTest` prepara su propia SQLite en memoria. Incluye datos ficticios
 de jugador, gestor y administrador, así como listas llenas/vacías, formularios,
