@@ -21,7 +21,7 @@
     @forelse($club->courts as $court)
         <article class="rp-panel rp-admin-row">
             <div class="rp-user-info"><span class="rp-sport-disc">@include('partials.sport-icon', ['slug' => $court->sport->slug])</span><div><h3>{{ $court->name }}</h3><p>{{ $court->sport->name }} · {{ \App\Support\Ui::euros($court->price_per_hour) }}/hora · {{ $court->is_outdoor ? 'Exterior' : 'Interior' }}</p><p>{{ sprintf('%02d:00', $court->open_hour) }}–{{ sprintf('%02d:00', $court->close_hour) }}</p></div></div>
-            <div class="rp-admin-actions"><a class="btn btn-ghost" href="{{ route('manager.courts.edit', $court) }}">Editar</a><form method="POST" action="{{ route('manager.courts.destroy', $court) }}" data-confirm="Se eliminarán esta pista y sus reservas. ¿Continuar?">@csrf @method('DELETE')<button class="btn btn-danger" type="submit">Eliminar</button></form></div>
+            <div class="rp-admin-actions"><a class="btn btn-ghost" href="{{ route('manager.courts.edit', $court) }}">Editar</a><form method="POST" action="{{ route('manager.courts.destroy', $court) }}" data-confirm="Solo se puede eliminar una pista que nunca haya tenido reservas. ¿Eliminar esta pista?">@csrf @method('DELETE')<button class="btn btn-danger" type="submit">Eliminar</button></form></div>
         </article>
     @empty
         <div class="rp-panel"><p class="rp-muted">Este club todavía no tiene pistas publicadas.</p></div>

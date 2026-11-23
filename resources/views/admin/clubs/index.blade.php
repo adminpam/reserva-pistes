@@ -11,7 +11,7 @@
         <div><h3>{{ $club->name }}</h3><p>{{ $club->address ?: 'Dirección no disponible' }}@if($club->city) · {{ $club->city }}@endif</p><p>{{ $club->courts_count }} {{ $club->courts_count === 1 ? 'pista' : 'pistas' }}</p></div>
         <div class="rp-admin-actions">
             <form method="POST" action="{{ route('admin.clubs.update', $club) }}">@csrf @method('PATCH')<div class="rp-field"><label for="manager-{{ $club->id }}">Gestor</label><select id="manager-{{ $club->id }}" name="manager_id"><option value="">Sin gestor</option>@foreach($managers as $manager)<option value="{{ $manager->id }}" @selected($club->manager_id === $manager->id)>{{ $manager->name }}</option>@endforeach</select></div><button class="btn btn-ghost btn-sm" type="submit">Asignar</button></form>
-            <form method="POST" action="{{ route('admin.clubs.destroy', $club) }}" data-confirm="Se eliminarán este club, sus pistas y sus reservas. ¿Continuar?">@csrf @method('DELETE')<button class="btn btn-danger btn-sm" type="submit">Eliminar</button></form>
+            <form method="POST" action="{{ route('admin.clubs.destroy', $club) }}" data-confirm="Solo se puede eliminar un club sin pistas. ¿Eliminar este club?">@csrf @method('DELETE')<button class="btn btn-danger btn-sm" type="submit">Eliminar</button></form>
         </div>
     </article>
 @empty

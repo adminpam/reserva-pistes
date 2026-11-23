@@ -12,8 +12,8 @@ php artisan config:clear
 php artisan test
 ```
 
-Se han preparado 28 casos nuevos de reservas/partidos. Resultado de 07: pendiente
-de ejecución real. Los apartados fechados anteriores se conservan como histórico.
+El paquete 07 añadió 28 casos de reservas/partidos. Joy confirmó la ejecución
+global de 07: **53 pruebas y 262 aserciones correctas**, en 2,38 s. Los apartados fechados anteriores se conservan como histórico.
 
 | Test | Qué comprueba |
 |---|---|
@@ -23,7 +23,9 @@ de ejecución real. Los apartados fechados anteriores se conservan como históri
 | `RoleAccessTest::test_cada_rol_entra_en_su_panel` | manager y admin acceden a su panel |
 | `RoleAccessTest::test_un_invitado_va_al_login` | rutas protegidas redirigen al login |
 
-Resultado de la última ejecución: _pendiente (pegar salida de `php artisan test`)_.
+Última ejecución confirmada antes de 08: **53 pruebas, 262 aserciones, sin fallos**
+en Lenovo (23/11/2026, commit de trabajo ecbebfd). La ejecución del código de 08
+está pendiente; los apartados fechados siguientes conservan el histórico.
 
 ## Pruebas manuales
 
@@ -175,8 +177,38 @@ avisos como solucionados hasta observar la nueva salida.
 | BookingRulesTest | 15 | Precio/propietario, duración, límites opcionales, organizador, fechas/horas, solapamiento, cancelación y acceso |
 | MatchRulesTest | 13 | Última plaza, aforo del deporte, repetición, nivel, alta/baja, cancelación, historial, búsqueda y permisos |
 
-Estado de ejecución de 07: **pendiente**. No se declara aprobado por estar escrito.
-El entorno de preparación no tiene PHP/Composer; se ejecutará la suite completa
-en Lenovo. SQLite comprueba reglas y transacciones secuenciales, pero no acredita
+Estado de ejecución de 07: **confirmado por Joy**, 53 pruebas y 262 aserciones,
+2,38 s, sin fallos. Joy confirmó también crear partido, entrar con otra cuenta,
+verlo en Mis partidos y salir liberando plaza. Denys revisó; merge confirmado en
+main cf81124. No se recibió aquí el número del PR; se enlaza el commit real. SQLite comprueba reglas y transacciones secuenciales, pero no acredita
 la prueba simultánea con bloqueo de filas de PostgreSQL/MySQL. Esa comprobación
 se documentará al preparar el despliegue con Denys.
+
+
+## Administración y gestor · 08 · 23/11/2026
+
+Base: main cf81124, después de integrar 07. Resultado previo confirmado:
+53 pruebas/262 aserciones y recorrido manual crear/unirse/salir. Solo los casos
+confirmados se consideran realizados; el golden test completo sigue abierto.
+
+| Archivo nuevo | Casos | Alcance |
+| --- | --- | --- |
+| AdminManagementTest | 17 | Escrituras por rol, invitados, asignación/reasignación, roles, bajas, historial, clubes, slugs, aforo y búsqueda |
+| ManagerManagementTest | 13 | Propiedad, accesos directos, crear/editar, precio y céntimos, destino/deporte, horarios futuros/en curso, medianoche y borrado |
+
+Las 30 pruebas nuevas están **pendientes en Lenovo**. Son 83 casos declarados en
+la batería completa de esta copia, no 83 pruebas ejecutadas ni aprobadas.
+Al preparar el ZIP se comprueban estructura, integridad e instalación sobre copia
+CRLF, reinstalación y rechazo de deriva local. No hay PHP/Composer en ese entorno.
+Ejecutar php artisan config:clear, php artisan view:clear y php artisan test.
+Registrar la salida real después, junto con el recorrido de la guía 15.
+
+Quedan pendientes las carreras reales en PostgreSQL, la aceptación manual de 08,
+perfil/avatar, pago de prueba y aceptación final del despliegue con Denys.
+
+## Cierre de validación del paquete 08 — Joy — 23/11/2026
+- Batería completa: 83 pruebas y 534 aserciones correctas, en 3,33 s.
+- Comprobados manualmente: asignación de gestor, creación y edición de pista.
+- La reserva conserva 12 euros aunque la tarifa cambie a 15 euros.
+- El borrado de la pista queda bloqueado antes y después de cancelar la reserva.
+- Revisión de Denys y prueba de concurrencia en PostgreSQL pendientes.

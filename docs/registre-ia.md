@@ -4,19 +4,34 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 
 ---
 
+**23/11/2026 — Joy · Administración y gestor**
+- Herramienta: ChatGPT (OpenAI).
+- Objetivo: revisar permisos, gestión de clubes/pistas y preservación de reservas.
+- Prompt: «denys ya ha hecho la revision» y «ya esta el merge»; continuar con el
+  panel de administración. Joy envió reserva-pistes-admin-actual.zip desde main cf81124.
+- Resultado preparado: asignaciones solo a gestores, cambios de rol coherentes con
+  clubes, borrados condicionados al historial, aforo estable, validación de precios,
+  slugs y horarios; mensajes adaptados en los diálogos existentes.
+- Validación: 30 casos HTTP añadidos, pendientes de ejecutar en Lenovo. El resultado
+  de 53 pruebas/262 aserciones corresponde a 07. Instalador e integridad se verifican
+  al empaquetar; el entorno de preparación no tiene PHP/Composer. Carreras reales en
+  PostgreSQL y aceptación manual de 08 pendientes.
+- Commit/PR de 08: pendiente del commit de Joy y revisión de Denys.
+
+---
+
 **23/11/2026 — Joy · Reservas, partidos y pruebas aisladas**
 - Herramienta: ChatGPT (OpenAI).
-- Objetivo: revisar las reglas reales del backend tras integrar el frontend de Denys.
-- Prompt (resumen del encargo y continuación): «continuamos donde lo dejamos»;
-  revisar reservas, partidos abiertos y permisos a partir del ZIP actual de la rama.
-- Resultado preparado: bloqueo común de pista/partido, validación de rango y fecha,
-  precio del servidor, altas/bajas coherentes y preservación del historial. Se añaden
-  28 regresiones y se aísla la suite completa para que use SQLite en memoria.
-- Validación previa recibida: 17 pruebas PHP/123 aserciones, 6 pruebas de disponibilidad
-  Node y cancelación/liberación de hora comprobadas por Joy. Son resultados anteriores
-  al paquete 07. Las pruebas PHP de 07 se ejecutarán en Lenovo; no hay PHP/Composer
-  en el entorno que preparó el paquete. Instalador y estructura verificados al empaquetar.
-- Commit/PR: pendiente del commit de Joy y revisión de Denys.
+- Objetivo: revisar reglas reales de reservas y participación tras integrar frontend.
+- Prompt (resumen): «continuamos donde lo dejamos»; revisar el backend sobre el ZIP
+  actual y conservar el trabajo de Denys.
+- Resultado: límites opcionales, validación de horarios/propietario/precio,
+  transacciones y protección del historial. Se añadieron 28 casos y aislamiento de DB.
+- Validación recibida después de instalar: **53 pruebas y 262 aserciones correctas**
+  en Lenovo, 2,38 s. Joy confirmó crear un partido, unirse con otra cuenta y salir.
+  Denys revisó y Joy confirmó el merge. La prueba paralela PostgreSQL sigue pendiente.
+- [Commit ecbebfd](https://github.com/adminpam/reserva-pistes/commit/ecbebfd).
+- [Integración cf81124](https://github.com/adminpam/reserva-pistes/commit/cf811246e619e52108bee341e8a8735e0acb1491).
 
 ---
 
@@ -263,3 +278,10 @@ un plan sin ejecución y no se cuenta para el mínimo de 15 usos significativos.
   Nueva ejecución de PHP tras instalar 04a pendiente en el Lenovo. El entorno de
   preparación del ajuste no dispone de PHP para declarar esa ejecución realizada.
 - Commit/PR: pendiente, junto al paquete 04 en la rama de Joy.
+
+## Cierre de validación del paquete 08 — Joy — 23/11/2026
+- Batería completa: 83 pruebas y 534 aserciones correctas, en 3,33 s.
+- Comprobados manualmente: asignación de gestor, creación y edición de pista.
+- La reserva conserva 12 euros aunque la tarifa cambie a 15 euros.
+- El borrado de la pista queda bloqueado antes y después de cancelar la reserva.
+- Revisión de Denys y prueba de concurrencia en PostgreSQL pendientes.

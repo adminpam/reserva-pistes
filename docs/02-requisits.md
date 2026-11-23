@@ -37,3 +37,19 @@
 
 ## Fuera de alcance (posibles mejoras)
 Valoración de compañeros, notificaciones por correo, estadísticas del club, pagos reales.
+
+
+## Reglas de administración · 08
+
+- Solo se asignan clubes a usuarios con rol manager. Un gestor debe quedar sin
+  clubes antes de cambiar a otro rol o eliminarse.
+- Un gestor solo administra sus pistas y consulta reservas de sus propios clubes.
+- Se conservan todas las reservas y participaciones: no se borra un usuario con
+  historial, una pista con reservas ni un club con pistas.
+- Una pista con reservas conserva club y deporte; los cambios de horario no dejan
+  fuera reservas confirmadas futuras o en curso. El precio guardado no se recalcula.
+- El aforo se puede configurar antes del primer partido; después se conserva
+  también para los partidos pasados o cancelados. Un deporte con pistas o niveles
+  asociados no se elimina.
+- Aceptación nueva pendiente de ejecutar con Joy. Detalle y casos:
+  [Administración y gestor](15-administracion-y-gestor.md).

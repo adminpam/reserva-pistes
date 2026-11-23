@@ -1,12 +1,21 @@
 # Changelog
 
+## [Sin publicar · backend 08] — 2026-11-23
+- Asignación exclusiva a gestores; protección de clubes asignados al cambiar roles.
+- Borrados condicionados para conservar reservas y participaciones de cualquier fecha/estado.
+- Conservación de club/deporte de pistas con reservas y de horarios ya comprometidos.
+- Aforo estable desde el primer partido; validación de slugs, búsquedas y precios.
+- Bloqueos compartidos entre administración, gestión, reservas y altas a partidos.
+- 30 regresiones HTTP nuevas preparadas; ejecución en Lenovo pendiente.
+
 ## [Sin publicar · backend 07] — 2026-11-23
 - Bloqueo de la pista al reservar y del partido al entrar, salir o cancelar.
 - Niveles mínimo/máximo opcionales; rango compatible también con el organizador.
 - Precio y propietario controlados por servidor; historial conservado en cancelaciones.
 - Protección de partidos privados, pasados/cancelados y participación de otros usuarios.
 - Aislamiento de toda la batería con SQLite en memoria y 28 regresiones nuevas.
-- Pruebas de 07 y concurrencia real en PostgreSQL pendientes de ejecución.
+- Joy confirmó 53 pruebas y 262 aserciones correctas y el recorrido crear/unirse/salir.
+- Commit ecbebfd integrado en main cf81124 tras revisión de Denys; concurrencia PostgreSQL pendiente.
 
 ## [Sin publicar] — actualización 2026-11-18
 - Compatibilidad de la constante SSL de PDO entre PHP 8.2 y 8.5 (ajuste 04a).

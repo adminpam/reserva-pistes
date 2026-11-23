@@ -4,20 +4,22 @@ Documento de continuidad para Joy Liliana Castro Valencia. Denys seguirá en rus
 cuando Joy escriba como «Joy:», se continúa con ella en español. Código y documentos
 de su parte: comentarios y explicaciones en español.
 
-## Actualización · 23/11/2026
+## Actualización · 23/11/2026 · después de 07
 
-Joy guardó disponibilidad/compatibilidad en 9a32711 e incorporó main dd20e67
-sin conflictos. En Lenovo pasaron 17 pruebas PHP (123 aserciones) y 6 Node de
-disponibilidad; Joy confirmó la cancelación y la hora libre entre pestañas.
-Denys confirmó frontend 06 publicado y corregido. Se pausa el rediseño visual.
-El ZIP entregado identifica fbbf879fbf56967ccd07e716a224799205455ac9; el PR del
-backend está revisado por Denys según Joy. Registrar su enlace/merge cuando consten.
+Joy confirmó instalación de 07, batería global de **53 pruebas y 262 aserciones**
+correctas y recorrido crear/unirse/salir con dos cuentas ficticias. Commit
+ecbebfd revisado por Denys y merge confirmado por Joy. El ZIP actual identifica
+main cf811246e619e52108bee341e8a8735e0acb1491. Rama nueva: feat/admin-gestion.
 
-07 prepara reglas transaccionales de reservas/partidos, límites opcionales,
-protección de participaciones pasadas y aislamiento global de pruebas. Su ejecución
-PHP, revisión y publicación están pendientes. Detalle: 14-reservas-y-partidos.md.
-Después se revisan asignación de gestores, borrados/historial y aforo, perfil con
-deportes válidos y fotografía persistente. El pago simulado se implementa al final.
+08 prepara reglas de administración y gestor: asignación exclusiva a manager,
+borrados que conservan historial, cambios de horario compatibles con reservas y
+aforo estable después del primer partido. Añade 30 casos nuevos; su ejecución en
+Lenovo y la revisión de Denys están pendientes. Guía: 15-administracion-y-gestor.md.
+La interfaz de Denys sigue aceptada y el rediseño continúa pausado.
+
+Después de aceptar 08, continuar con perfil/cuentas, IDs válidos de deportes y foto
+persistente. El pago simulado sigue al final. Denys gestiona despliegue y debe
+confirmar el commit publicado y la persistencia; merge no equivale a despliegue.
 
 ## Estado y acuerdos
 

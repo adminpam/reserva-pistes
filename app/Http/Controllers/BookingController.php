@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Court;
+use App\Models\Sport;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -47,7 +49,16 @@ class BookingController extends Controller
         // La pista siempre existe aunque aún no haya reservas. Bloquearla hace
         // que dos solicitudes de la misma pista comprueben el solapamiento por turno.
         $booking = DB::transaction(function () use ($request, $data, $isOpen, $minimum, $maximum): Booking {
+            // Comparte bloqueos con la baja de usuarios y los cambios de aforo.
+            // Orden: usuario, deporte y pista. Si cambió el deporte, se pide recargar.
+            $owner = User::query()->lockForUpdate()->findOrFail($request->user()->id);
+            $sportId = Court::whereKey($data['court_id'])->value('sport_id');
+            abort_if($sportId === null, 404);
+            Sport::query()->lockForUpdate()->findOrFail($sportId);
             $court = Court::query()->lockForUpdate()->findOrFail($data['court_id']);
+            if ((int) $court->sport_id !== (int) $sportId) {
+                throw ValidationException::withMessages(['court_id' => 'La pista ha cambiado. Recarga su disponibilidad antes de reservar.']);
+            }
             $hour = (int) $data['hour'];
             if ($hour < $court->open_hour || $hour >= $court->close_hour) {
                 throw ValidationException::withMessages(['hour' => 'La pista está cerrada a esa hora.']);
@@ -66,7 +77,7 @@ class BookingController extends Controller
             // Los límites son opcionales: admitimos mínimo, máximo o ambos.
             $booking = new Booking([
                 'court_id' => $court->id,
-                'user_id' => $request->user()->id,
+                'user_id' => $owner->id,
                 'starts_at' => $startsAt,
                 'ends_at' => $endsAt,
                 'status' => 'confirmed',
@@ -75,13 +86,13 @@ class BookingController extends Controller
                 'max_level' => $maximum,
                 'price_total' => $court->price_per_hour,
             ]);
-            if ($isOpen && ! $booking->levelFits($request->user()->levelFor($court->sport_id))) {
+            if ($isOpen && ! $booking->levelFits($owner->levelFor($court->sport_id))) {
                 throw ValidationException::withMessages(['min_level' => 'Elige un rango que incluya tu nivel. Puedes indicar tu nivel en el perfil.']);
             }
 
             $booking->save();
             if ($isOpen) {
-                $booking->players()->attach($request->user()->id);
+                $booking->players()->attach($owner->id);
             }
 
             return $booking;
