@@ -61,7 +61,7 @@
                 <button class="btn btn-primary" type="submit" @disabled($available->isEmpty())>Reservar</button>
             </form>
         @else
-            <div class="rp-record__actions"><a class="btn btn-primary" href="{{ route('login') }}">Entra para reservar</a></div>
+            <div class="rp-court-guest"><a class="btn btn-primary" href="{{ route('login') }}">Entra para reservar</a></div>
         @endauth
     </section>
 @empty

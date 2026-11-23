@@ -10,8 +10,8 @@
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
 @endpush
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('ui/home.css') }}">
-    <script type="module" src="{{ asset('ui/home.js') }}"></script>
+    <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/home.css') }}">
+    <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/club-explorer.js') }}"></script>
 @endpush
 
 @section('content')
@@ -38,16 +38,20 @@
     </svg>
 </section>
 
-<section class="rp-explorer" aria-label="Encuentra tu club" data-rp-explorer>
+<section class="rp-explorer" aria-label="Encuentra tu club" data-rp-explorer data-drawer-state="map">
     <aside class="rp-sports" aria-labelledby="sport-heading">
         <div class="rp-sports__heading">
             <h2 id="sport-heading">Deporte</h2>
-            <div class="rp-sports__all">
-                <input type="radio" name="sport-filter" id="sp-all" value="" checked>
-                <label for="sp-all">Todos</label>
-            </div>
+
         </div>
         <div class="rp-sport-options" role="group" aria-label="Filtrar por deporte">
+            <div class="rp-sport-choice rp-sport-choice--all">
+                <input type="radio" name="sport-filter" id="sp-all" value="" checked>
+                <label for="sp-all">
+                    @include('partials.sport-icon', ['slug' => 'generic'])
+                    <span>Todos</span><span class="rp-sport-choice__dot" aria-hidden="true"></span>
+                </label>
+            </div>
             @foreach($sports as $sport)
                 <div class="rp-sport-choice">
                     <input type="radio" name="sport-filter" id="sp-{{ $sport->slug }}" value="{{ $sport->slug }}">
@@ -81,18 +85,25 @@
         </div>
     </div>
 
-    <section class="rp-mobile-sheet" data-club-sheet aria-label="Lista de clubes">
-        <button class="rp-mobile-sheet__handle" type="button" data-sheet-toggle aria-expanded="true" aria-controls="mobile-club-content">
-            <span class="rp-mobile-sheet__grip" aria-hidden="true"></span>
-            <span data-mobile-count>Buscando clubes…</span><span class="rp-small">Ver / ocultar</span>
-        </button>
-        <div id="mobile-club-content" class="rp-mobile-sheet__content" data-sheet-content>
+    <section class="rp-club-drawer" data-club-drawer aria-label="Clubes de la zona">
+        <div class="rp-drawer-heading">
+            <button class="rp-drawer-handle" type="button" data-drawer-handle aria-expanded="false" aria-controls="mobile-club-list" aria-label="Abrir la lista de clubes">
+                <span class="rp-drawer-grip" aria-hidden="true"></span>
+                <span class="rp-drawer-count" data-mobile-count role="status" aria-live="polite">Buscando clubes…</span>
+                <span class="rp-drawer-action" data-drawer-action>Ver lista</span>
+            </button>
+            <button type="button" class="rp-drawer-map" data-drawer-map hidden>Mapa</button>
+        </div>
+        <div class="rp-selected-club" data-mobile-selection hidden>
+            <button type="button" class="rp-selection-close" data-selection-close aria-label="Cerrar la ficha del club">×</button>
+            <div data-selected-card aria-live="polite"></div>
+        </div>
+        <div id="mobile-club-list" class="rp-drawer-list" data-drawer-list hidden>
+            <p class="rp-map-message" data-map-message role="status" hidden></p>
             <label class="rp-mobile-sort">Ordenar <select data-club-sort aria-label="Ordenar clubes"><option value="name">Por nombre</option><option value="price">Por precio</option></select></label>
-            <div class="rp-mobile-selection" data-mobile-selection aria-label="Club seleccionado" aria-live="polite"><p class="rp-mobile-selection__hint">Toca un marcador para ver el club y sus pistas.</p></div>
             <div class="rp-mobile-club-list" data-mobile-club-list></div>
         </div>
     </section>
-    <p class="rp-map-message" data-map-message hidden></p>
 </section>
 <noscript>
     <p class="rp-map-message">Activa JavaScript para consultar el mapa y filtrar los clubes.</p>

@@ -37,7 +37,7 @@
 .rp-record__meta span { display:inline-flex; gap:7px; align-items:center; }
 .rp-ui-icon { width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex:none; vertical-align:middle; }
 .rp-sport-icon { width:32px; height:32px; flex:none; stroke:currentColor; }
-.rp-record__actions { display:flex; align-items:center; gap:20px; justify-content:flex-end; }
+.rp-record__actions { display:flex; align-items:center; gap:20px; justify-content:flex-end; flex-wrap:wrap; min-width:0; }
 .rp-record__actions form { margin:0; }
 .rp-record__actions .rp-btn-group { padding-left:22px; border-left:1px solid var(--rp-line); }
 .rp-badge { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:40px; padding:8px 18px; border-radius:99px; background:#ddf2eb; color:#07594b; font-size:14px; font-weight:800; white-space:nowrap; }
@@ -71,7 +71,8 @@
 .rp-toggle { display:flex; align-items:center; gap:11px; min-height:48px; font-size:14px; font-weight:700; cursor:pointer; white-space:nowrap; }
 .rp-toggle input { width:20px; height:20px; accent-color:#008474; }
 .rp-filter-bar--search { grid-template-columns:minmax(0,1fr) auto; }
-.rp-filter-bar--date { grid-template-columns:minmax(0,1.5fr) minmax(200px,.8fr); margin:30px 0; padding:0; border:0; background:transparent; }
+.rp-filter-bar--date { grid-template-columns:minmax(0,1.5fr) minmax(200px,.8fr); align-items:end; margin:30px 0; padding:0; border:0; background:transparent; }
+.rp-filter-bar--date>.btn { min-height:52px; }
 .rp-notice { display:flex; gap:12px; align-items:flex-start; padding:15px 20px; border:1px solid #f3b53e; background:#fff6e4; border-radius:12px; font-size:14px; color:#68501c; margin-bottom:24px; }
 .rp-notice .rp-ui-icon { color:#e79e00; margin-top:1px; }
 .rp-empty { display:flex; flex-direction:column; align-items:center; text-align:center; padding:56px 24px; }
@@ -116,7 +117,10 @@
 .rp-court>.rp-sport-icon { width:68px; height:68px; }
 .rp-court h3 { font-size:23px; }
 .rp-court p { font-size:14px; color:#55746a; line-height:1.6; margin-top:7px; }
-.rp-booking-form { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:18px; padding-left:22px; border-left:1px solid var(--rp-line); align-items:center; }
+.rp-booking-form { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:18px; padding-left:22px; border-left:1px solid var(--rp-line); align-items:end; margin:0; min-width:0; }
+.rp-court>div { min-width:0; }
+.rp-court>.rp-record__actions { grid-column:3; justify-self:stretch; }
+.rp-court h3 { overflow-wrap:anywhere; }
 .rp-slot-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(62px,1fr)); gap:7px; }
 .rp-slot-choice { position:relative; }
 .rp-slot-choice input { position:absolute; width:1px; height:1px; opacity:0; }
@@ -203,6 +207,7 @@
     .rp-record--match .rp-match-actions { grid-column:3; grid-row:1 / span 2; }
     .rp-court { grid-template-columns:64px minmax(0,1fr); }
     .rp-court>.rp-sport-icon { width:60px; height:60px; }
+    .rp-court>.rp-record__actions { grid-column:1/-1; border-top:1px solid var(--rp-line); padding-top:18px; }
     .rp-booking-form { grid-column:1/-1; border-left:0; border-top:1px solid var(--rp-line); padding:20px 0 0; }
     .rp-profile { grid-template-columns:280px minmax(0,1fr); }
     .rp-level-row,.rp-profile-name { grid-template-columns:1fr; gap:10px; }
@@ -212,7 +217,10 @@
     .rp-admin-actions { justify-content:flex-start; border-top:1px solid var(--rp-line); padding-top:18px; }
 }
 @media (max-width:900px) {
-    .rp-filter-bar { grid-template-columns:1fr 1fr; }
+    .rp-filter-bar { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+    .rp-filter-bar--date { align-items:end; }
+    .rp-booking-form { grid-template-columns:minmax(0,1fr); }
+    .rp-booking-form>.btn { justify-self:end; min-width:180px; }
     .rp-profile { grid-template-columns:1fr; }
     .rp-profile-summary { display:grid; grid-template-columns:120px 1fr; gap:16px 24px; text-align:left; align-items:center; }
     .rp-profile-avatar { width:120px; height:120px; font-size:44px; grid-row:1 / span 3; margin:0; }
@@ -288,7 +296,9 @@
     .rp-booking-form { grid-template-columns:1fr; gap:16px; padding-top:18px; }
     .rp-slot-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
     .rp-slot-choice label { min-height:44px; font-size:14px; }
-    .rp-booking-form>.btn { width:100%; }
+    .rp-booking-form>.btn { width:100%; min-width:0; justify-self:stretch; }
+    .rp-court>.rp-record__actions>.btn { width:100%; }
+    .rp-filter-bar--date { grid-template-columns:minmax(0,1fr); gap:14px; }
     .rp-form-grid { grid-template-columns:1fr; gap:18px; }
     .rp-choice-grid { grid-template-columns:1fr 1fr; }
     .rp-choice-grid label { flex-wrap:wrap; min-height:60px; font-size:12px; gap:6px; }
@@ -357,4 +367,30 @@
 @keyframes rp-content-arrives {
     from { opacity:.35; transform:translateY(6px); }
     to { opacity:1; transform:none; }
+}
+
+
+/* Защита вложенных сеток: элементы формы не расширяют карточку по содержимому. */
+.rp-app :is(.rp-panel,.rp-field,.rp-record,.rp-level-control) { min-width:0; }
+.rp-app [hidden] { display:none !important; }
+.rp-app input[type=date] { min-width:0; max-width:100%; }
+.rp-confirm-dialog__actions .btn { min-width:0; padding-inline:14px; white-space:normal; }
+@media (max-width:480px) {
+    .rp-admin-actions form { grid-template-columns:minmax(0,1fr); }
+    .rp-admin-actions .btn { width:100%; }
+    .rp-confirm-dialog__actions { grid-template-columns:minmax(0,1fr); }
+}
+
+/* Гость: отдельная область действий всегда занимает целую строку карточки. */
+.rp-court > .rp-court-guest {
+    grid-column:1 / -1; position:static; display:flex; justify-content:flex-end;
+    min-width:0; width:100%; padding:16px 0 0; margin:0;
+    border-top:1px solid var(--rp-line); transform:none;
+}
+.rp-court > .rp-court-guest > .btn {
+    position:static; transform:none; float:none; margin:0; min-width:0;
+    max-width:100%; white-space:normal; text-align:center;
+}
+@media(max-width:720px) {
+    .rp-court > .rp-court-guest > .btn { width:100%; min-height:48px; }
 }

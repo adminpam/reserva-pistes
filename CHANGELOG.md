@@ -17,6 +17,19 @@
 - Entrada estática opcional que espera a Laravel antes de abrir la aplicación.
 - Accesibilidad con movimiento reducido, espera limitada y reintento.
 
+## [Sin publicar · frontend 06] — 2026-11-19
+- Sustitución de la hoja móvil: mapa, ficha seleccionada y listado a pantalla completa.
+- Corrección de la ficha oculta y navegación desde el marcador al club.
+- Acción de invitado en una fila propia, con ancho completo en teléfono.
+- Versionado de recursos para evitar estilos y scripts obsoletos después de publicar.
+- Registro de la entrada estática publicada en Render; aceptación en reposo pendiente.
+
+## [Sin publicar · frontend 05] — 2026-11-19
+- Cuadrículas adaptables de pistas, acciones, fecha y disponibilidad.
+- Mapa móvil con filtros en una fila y panel Mapa/Ambos/Lista, arrastre y teclado.
+- Conservación del acceso a clubes si falla Leaflet; precios legibles y margen de login.
+- Validaciones del constructor estático y guía de configuración de Render.
+
 ## [v1.0] — Pendiente de publicar
 
 Fecha y etiqueta por confirmar después de la revisión del backend, el pago de

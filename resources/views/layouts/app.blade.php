@@ -4,15 +4,15 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="theme-color" content="#00372e">
     <title>@yield('title', 'ReservaPistes')</title>
     <link rel="icon" href="{{ asset('brand/logo-original.png') }}" type="image/png">
     @stack('head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="{{ asset('brand/loading.css') }}">
-    <link rel="stylesheet" href="{{ asset('ui/shell.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('brand/loading.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/shell.css') }}">
     <link rel="preload" href="{{ asset('brand/manrope-800.woff2') }}" as="font" type="font/woff2" crossorigin>
     {{-- Solo se oculta el contenido si JavaScript está disponible. El respaldo
          evita bloquear la página si el archivo del cargador no se descarga. --}}
@@ -42,10 +42,10 @@
             }, 15000);
         })();
     </script>
-    <script src="{{ asset('brand/loading.js') }}" defer></script>
+    <script src="{{ \App\Support\FrontendAsset::url('brand/loading.js') }}" defer></script>
     @if(!request()->routeIs('login', 'register'))
-        <link rel="stylesheet" href="{{ asset('ui/screens.css') }}">
-        <script type="module" src="{{ asset('ui/screens.js') }}"></script>
+        <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/screens.css') }}">
+        <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/screens.js') }}"></script>
     @endif
     @stack('styles')
 </head>
@@ -78,7 +78,7 @@
         <div class="divider"></div>
 
         @auth
-            <a class="user-chip" href="{{ route('profile.edit') }}">
+            <a class="user-chip" aria-label="Mi perfil" href="{{ route('profile.edit') }}">
                 <span class="avatar">{{ \App\Support\Ui::initials(auth()->user()->name) }}</span>
                 <span class="hide-sm">{{ \Illuminate\Support\Str::before(auth()->user()->name, ' ') }}</span>
             </a>
