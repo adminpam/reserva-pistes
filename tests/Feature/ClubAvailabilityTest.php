@@ -8,12 +8,14 @@ use App\Models\Court;
 use App\Models\Sport;
 use App\Models\User;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 // Regresión de cancelar en otra pestaña. Cada caso usa SQLite en memoria.
 class ClubAvailabilityTest extends TestCase
 {
+    use RefreshDatabase;
+
     private User $player;
     private Club $club;
     private Court $court;
@@ -22,14 +24,6 @@ class ClubAvailabilityTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config([
-            'database.default' => 'sqlite',
-            'database.connections.sqlite.url' => null,
-            'database.connections.sqlite.database' => ':memory:',
-        ]);
-        DB::purge('sqlite');
-        $this->withoutVite();
-        $this->artisan('migrate', ['--force' => true])->assertExitCode(0);
         $this->travelTo(Carbon::parse('2026-11-18 12:30:00'));
         $this->player = User::create(['name' => 'Persona de prueba', 'email' => 'availability@reserva.test', 'password' => 'test-password', 'role' => 'player']);
         $sport = Sport::create(['name' => 'Tenis', 'slug' => 'tenis', 'players_per_match' => 2]);

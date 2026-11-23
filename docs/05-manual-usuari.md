@@ -119,3 +119,18 @@ No se crean enlaces de imagen hasta que los archivos existan.
 | `07-pago-prueba.png` | Confirmación simulada, una vez implementada | Pendiente |
 
 Añadir cada captura a su sección y seleccionar varias para el README.
+
+
+## Reglas de reservas y partidos · paquete 07
+
+El organizador cuenta como un participante. Un rango admite solo mínimo, solo
+máximo o ambos; si se utiliza, el nivel del organizador también debe estar dentro.
+Indicar el nivel desde Perfil antes de crear un partido restringido. Las reservas
+privadas ignoran los campos de nivel y mantienen el precio al que se confirmaron.
+
+Las altas y bajas son para partidos futuros y confirmados. Salir como participante
+libera una plaza; salir como organizador cancela el partido para todos y conserva
+el historial. Nadie puede cancelar una reserva ajena ni quitar participaciones pasadas.
+La hora de una reserva cancelada vuelve a estar disponible al consultar la ficha.
+
+Validación de 07: pruebas automáticas y recorrido manual pendientes en Lenovo.

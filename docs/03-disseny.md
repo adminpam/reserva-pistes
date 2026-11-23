@@ -12,7 +12,7 @@
 | booking_players | booking_id, user_id (únicos juntos) | participantes de partidos abiertos |
 | user_sport_levels | user_id, sport_id, **level** (1–5) | nivel por deporte |
 
-**Regla anti-solapamiento:** una reserva nueva se rechaza si en la misma pista existe otra confirmada con `starts_at < nueva.ends_at` y `ends_at > nueva.starts_at`. Se comprueba dentro de una transacción con `lockForUpdate` para evitar carreras.
+**Regla anti-solapamiento:** una reserva nueva se rechaza si en la misma pista existe otra confirmada con `starts_at < nueva.ends_at` y `ends_at > nueva.starts_at`. En 07 se comprueba dentro de una transacción después de bloquear la fila de Court con `lockForUpdate`; así existe una fila común incluso en una pista aún vacía. Las altas/bajas/cancelaciones de partidos bloquean la fila de Booking antes de comprobar estado y aforo. La prueba con peticiones paralelas en PostgreSQL sigue pendiente.
 
 ## Identidad visual
 

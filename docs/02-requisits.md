@@ -12,7 +12,7 @@
 **Jugador (usuario registrado)**
 - RF4. Reservar un slot de una hora en una pista; el sistema rechaza slots que se solapan con otra reserva confirmada.
 - RF5. El pago es **simulado**: se guarda el precio pero no se cobra nada (hay un aviso visible en la interfaz).
-- RF6. Crear un **partido abierto** al reservar: el número de plazas depende del deporte y se puede fijar un rango de nivel (1–5).
+- RF6. Crear un **partido abierto** al reservar: el número de plazas depende del deporte y se puede fijar un rango de nivel (1–5), con ambos límites o uno solo. Si se fija un rango, incluye el nivel del organizador; sin rango no se exige nivel.
 - RF7. Buscar partidos abiertos (por deporte, club y «solo mi nivel») y apuntarse o salir.
 - RF8. Ver «Mis reservas» y «Mis partidos» y cancelar los futuros (si el organizador sale, el partido se cancela para todos).
 - RF9. Editar el perfil: nombre y nivel 1–5 por cada deporte.

@@ -1,5 +1,13 @@
 # Changelog
 
+## [Sin publicar · backend 07] — 2026-11-23
+- Bloqueo de la pista al reservar y del partido al entrar, salir o cancelar.
+- Niveles mínimo/máximo opcionales; rango compatible también con el organizador.
+- Precio y propietario controlados por servidor; historial conservado en cancelaciones.
+- Protección de partidos privados, pasados/cancelados y participación de otros usuarios.
+- Aislamiento de toda la batería con SQLite en memoria y 28 regresiones nuevas.
+- Pruebas de 07 y concurrencia real en PostgreSQL pendientes de ejecución.
+
 ## [Sin publicar] — actualización 2026-11-18
 - Compatibilidad de la constante SSL de PDO entre PHP 8.2 y 8.5 (ajuste 04a).
 - Disponibilidad de pistas al recuperar el foco, con cálculo común entre Blade y JSON.

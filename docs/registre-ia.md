@@ -4,6 +4,22 @@ Registro de cada uso relevante de IA en el proyecto. Herramientas utilizadas: **
 
 ---
 
+**23/11/2026 — Joy · Reservas, partidos y pruebas aisladas**
+- Herramienta: ChatGPT (OpenAI).
+- Objetivo: revisar las reglas reales del backend tras integrar el frontend de Denys.
+- Prompt (resumen del encargo y continuación): «continuamos donde lo dejamos»;
+  revisar reservas, partidos abiertos y permisos a partir del ZIP actual de la rama.
+- Resultado preparado: bloqueo común de pista/partido, validación de rango y fecha,
+  precio del servidor, altas/bajas coherentes y preservación del historial. Se añaden
+  28 regresiones y se aísla la suite completa para que use SQLite en memoria.
+- Validación previa recibida: 17 pruebas PHP/123 aserciones, 6 pruebas de disponibilidad
+  Node y cancelación/liberación de hora comprobadas por Joy. Son resultados anteriores
+  al paquete 07. Las pruebas PHP de 07 se ejecutarán en Lenovo; no hay PHP/Composer
+  en el entorno que preparó el paquete. Instalador y estructura verificados al empaquetar.
+- Commit/PR: pendiente del commit de Joy y revisión de Denys.
+
+---
+
 **19/11/2026 — Denys · Reparar mapa móvil y caché**
 - Herramienta: ChatGPT (OpenAI).
 - Objetivo: corregir defectos comunicados en Safari/iPhone y en la vista de invitado.

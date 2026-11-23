@@ -5,25 +5,13 @@ namespace Tests\Feature;
 use App\Models\Club;
 use App\Models\Court;
 use App\Models\Sport;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-// Usa una SQLite nueva en memoria: estas pruebas no vacían la base local.
+// RefreshDatabase usa la conexión en memoria definida en Tests\TestCase.
 class MapPageTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        config([
-            'database.default' => 'sqlite',
-            'database.connections.sqlite.url' => null,
-            'database.connections.sqlite.database' => ':memory:',
-        ]);
-        DB::purge('sqlite');
-        $this->withoutVite();
-        $this->artisan('migrate', ['--force' => true])->assertExitCode(0);
-    }
+    use RefreshDatabase;
 
     public function test_empty_database_has_an_explicit_empty_state(): void
     {
