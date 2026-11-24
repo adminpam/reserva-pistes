@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class UserAvatar extends Model
+{
+    protected $primaryKey = 'user_id';
+
+    public $incrementing = false;
+
+    protected $fillable = ['user_id', 'mime_type', 'image_base64'];
+
+    protected $hidden = ['image_base64'];
+}

@@ -56,6 +56,14 @@ class User extends Authenticatable
         return $this->sportLevels->firstWhere('sport_id', $sportId)?->level;
     }
 
+    // La URL lleva la versión; los bytes se consultan aparte, nunca en las listas.
+    public function avatarUrl(): ?string
+    {
+        return $this->avatar_version
+            ? route('users.avatar', ['user' => $this->id, 'v' => $this->avatar_version])
+            : null;
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

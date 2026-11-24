@@ -3,46 +3,56 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sport;
+use App\Models\User;
 use App\Models\UserSportLevel;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
-// Perfil del jugador: nombre y nivel (1-5) por cada deporte.
-// El nivel se usa al apuntarse a partidos abiertos con rango de nivel.
 class ProfileController extends Controller
 {
     public function edit(Request $request): View
     {
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $request->user()->load('sportLevels'),
             'sports' => Sport::orderBy('name')->get(),
         ]);
     }
 
-    // Guarda el nombre y los niveles. Para cada deporte: si llega un nivel
-    // valido se hace upsert; si llega vacio se borra (el jugador "quita" ese deporte).
     public function update(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:100'],
-            'levels' => ['array'],
+            'levels' => ['sometimes', 'array', 'max:100'],
             'levels.*' => ['nullable', 'integer', 'min:1', 'max:5'],
         ]);
-
-        $user = $request->user();
-        $user->update(['name' => $data['name']]);
-
-        foreach ($data['levels'] ?? [] as $sportId => $level) {
-            if ($level === null || $level === '') {
-                UserSportLevel::where('user_id', $user->id)->where('sport_id', $sportId)->delete();
-                continue;
+        $levels = $data['levels'] ?? [];
+        // Los IDs son las claves del array, no sus valores. No se aceptan alias
+        // como "01", claves negativas ni nombres de campos en lugar de deportes.
+        foreach (array_keys($levels) as $id) {
+            if ((string) (int) $id !== (string) $id || (int) $id < 1) {
+                throw ValidationException::withMessages(['levels' => 'Los niveles deben corresponder a deportes válidos. Recarga el perfil.']);
             }
-            UserSportLevel::updateOrCreate(
-                ['user_id' => $user->id, 'sport_id' => $sportId],
-                ['level' => $level],
-            );
         }
+
+        DB::transaction(function () use ($request, $data, $levels): void {
+            $user = User::query()->lockForUpdate()->findOrFail($request->user()->id);
+            $sports = Sport::whereIn('id', array_keys($levels))->orderBy('id')->lockForUpdate()->get();
+            if ($sports->count() !== count($levels)) {
+                throw ValidationException::withMessages(['levels' => 'Algún deporte ya no está disponible. Recarga el perfil antes de guardar.']);
+            }
+            // Primero se validan todos los deportes; después se guarda todo junto.
+            $user->update(['name' => $data['name']]);
+            foreach ($levels as $sportId => $level) {
+                if ($level === null) {
+                    UserSportLevel::where('user_id', $user->id)->where('sport_id', $sportId)->delete();
+                } else {
+                    UserSportLevel::updateOrCreate(['user_id' => $user->id, 'sport_id' => $sportId], ['level' => $level]);
+                }
+            }
+        }, 3);
 
         return back()->with('ok', 'Perfil actualizado.');
     }

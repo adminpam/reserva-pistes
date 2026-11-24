@@ -79,7 +79,7 @@
 
         @auth
             <a class="user-chip" aria-label="Mi perfil" href="{{ route('profile.edit') }}">
-                <span class="avatar">{{ \App\Support\Ui::initials(auth()->user()->name) }}</span>
+                <span class="avatar">@include('partials.user-avatar', ['avatarUser' => auth()->user()])</span>
                 <span class="hide-sm">{{ \Illuminate\Support\Str::before(auth()->user()->name, ' ') }}</span>
             </a>
             <form method="POST" action="{{ route('logout') }}">

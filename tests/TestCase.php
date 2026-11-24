@@ -26,6 +26,21 @@ abstract class TestCase extends BaseTestCase
         return $app;
     }
 
+    // actingAs simula un acceso nuevo. Al cambiar de identidad no se hereda
+    // el hash de sesión del usuario anterior (auth.session ahora está activo).
+    public function actingAs(\Illuminate\Contracts\Auth\Authenticatable $user, $guard = null)
+    {
+        $driver = $guard ?? $this->app['auth']->getDefaultDriver();
+        if ($this->app['auth']->guard($driver)->id() !== $user->getAuthIdentifier()) {
+            $session = $this->app['session']->driver();
+            $session->start();
+            $session->forget('password_hash_'.$driver);
+            $session->save();
+        }
+
+        return parent::actingAs($user, $guard);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

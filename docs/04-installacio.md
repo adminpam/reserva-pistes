@@ -140,3 +140,21 @@ Faltan la ejecución completa de esta guía en el Lenovo y la revisión del back
 - https://getcomposer.org/doc/03-cli.md#install-i
 - https://docs.npmjs.com/cli/v11/commands/npm-ci
 - https://docs.github.com/en/get-started/using-git/getting-changes-from-a-remote-repository
+
+
+## Actualizar al perfil con foto · 09
+
+Incorporar el PR de administración ya revisado y mantener la rama de perfil.
+Tras instalar 09, limpiar configuración, ejecutar `php artisan migrate`, limpiar
+vistas y ejecutar `php artisan test`. No usar migrate:fresh ni repetir seeders.
+La migración añade avatar_version y user_avatars sin recrear usuarios o reservas.
+
+Las fotos se guardan en la DB; no hace falta storage:link, GD ni claves de un
+proveedor. El navegador prepara una miniatura JPG/PNG/WebP y el servidor valida
+MIME, tamaño y dimensiones con las capacidades de PHP existentes. Sin JavaScript,
+la imagen elegida debe cumplir directamente el límite de 512 KB y 1600 píxeles.
+
+Los nuevos CSS/JS públicos están versionados por contenido; 09 no requiere instalar
+dependencias ni reconstruir Vite. Para producción, Denys debe verificar la DB
+persistente y su vigencia, aplicar la migración y comprobar la foto tras redesplegar.
+Detalle: [16-perfil-cuentas-y-foto.md](16-perfil-cuentas-y-foto.md).

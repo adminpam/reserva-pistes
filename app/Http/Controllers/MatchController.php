@@ -23,7 +23,7 @@ class MatchController extends Controller
             'my_level' => ['sometimes', 'boolean'],
         ]);
         $matches = Booking::openUpcoming()
-            ->with('court.club', 'court.sport', 'user:id,name', 'players:id,name')
+            ->with('court.club', 'court.sport', 'user:id,name', 'players:id,name,avatar_version')
             ->when($filters['sport'] ?? null, fn ($query, $sport) =>
                 $query->whereHas('court.sport', fn ($query) => $query->where('slug', $sport)))
             ->when($filters['club'] ?? null, fn ($query, $club) =>
@@ -47,7 +47,7 @@ class MatchController extends Controller
         $matches = Booking::where('is_open', true)
             ->where(fn ($query) => $query->where('user_id', $user->id)
                 ->orWhereHas('players', fn ($players) => $players->where('users.id', $user->id)))
-            ->with('court.club', 'court.sport', 'players:id,name')
+            ->with('court.club', 'court.sport', 'players:id,name,avatar_version')
             ->orderByDesc('starts_at')
             ->get();
 

@@ -212,3 +212,42 @@ perfil/avatar, pago de prueba y aceptación final del despliegue con Denys.
 - La reserva conserva 12 euros aunque la tarifa cambie a 15 euros.
 - El borrado de la pista queda bloqueado antes y después de cancelar la reserva.
 - Revisión de Denys y prueba de concurrencia en PostgreSQL pendientes.
+
+
+## Integración confirmada de 08 y preparación de 09 · 23/11/2026
+
+Joy confirmó 83 pruebas y 534 aserciones correctas en 3,33 s. También asignó un
+gestor, creó/editó una pista, reservó a 12 euros y comprobó que se conservan tras
+subir la tarifa a 15. El borrado siguió bloqueado antes y después de cancelar.
+Commit 25b3ccc, revisado por Denys, integrado en PR #21 / main b2a8895.
+La prueba paralela de PostgreSQL y el despliegue de ese commit siguen sin confirmar.
+
+| Casos nuevos de 09 | Cantidad | Estado |
+| --- | --- | --- |
+| ProfileRulesTest | 8 | Pendientes en Lenovo |
+| AvatarTest | 11 | Pendientes en Lenovo; imágenes sintéticas PNG/JPEG/WebP |
+| PasswordChangeTest | 8 | Pendientes en Lenovo |
+| AccountAccessTest | 10 | Pendientes en Lenovo |
+| profile.test.mjs | 8 | Aprobados al preparar el paquete |
+
+La copia integrada tiene 120 casos PHP declarados, no ejecutados en este entorno:
+no dispone de PHP/Composer. Tampoco se completó la comprobación Chromium porque
+faltaba un ejecutable funcional. La revisión visual y la miniatura en un navegador
+real siguen pendientes con Joy; las pruebas Node usan dobles del DOM/canvas.
+
+El instalador se comprueba sobre copia CRLF, con backup, reinstalación y rechazo
+de cambios locales. Las migraciones y PHP se ejecutarán en Lenovo; antes, limpiar
+configuración y aplicar únicamente las migraciones pendientes con artisan migrate.
+El golden test completo y el pago no están terminados. Guía de aceptación de este
+bloque: [16-perfil-cuentas-y-foto.md](16-perfil-cuentas-y-foto.md).
+
+## Cierre de validación del paquete 09 — Joy — 24/11/2026
+- Migración de avatares aplicada correctamente.
+- Batería PHP: 120 pruebas y 872 aserciones correctas, en 13,43 s.
+- JavaScript del perfil: 8 pruebas correctas.
+- Nombre, niveles y foto se guardan y se conservan tras cerrar sesión.
+- Sustituir y quitar la foto funciona.
+- La contraseña actual incorrecta se rechaza; la correcta permite cambiarla.
+- La sesión actual continúa y las otras requieren volver a entrar.
+- La contraseña anterior falla y la nueva permite acceder.
+- Revisión de Denys, persistencia tras redesplegar y concurrencia PostgreSQL pendientes.

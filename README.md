@@ -10,7 +10,7 @@ Aplicación web para **reservar pistas deportivas** y **encontrar compañeros de
 - Mapa de **clubes reales** (importados de OpenStreetMap) con filtro por deporte.
 - Reserva de slots de una hora con comprobación transaccional de solapamientos; la concurrencia real se revisa en la fase final del backend.
 - **Partidos abiertos**: plazas según el deporte (tenis de mesa 2, fútbol sala 10…), rango de nivel 1–5 opcional, apuntarse/salir.
-- Perfil con nivel por deporte; «Mis reservas» y «Mis partidos» con cancelación.
+- Perfil con nivel por deporte, foto pequeña guardada en la base de datos y cambio de contraseña; «Mis reservas» y «Mis partidos» con cancelación.
 - Panel de **gestor de club** (CRUD de pistas, reservas del club) y panel de **admin** (clubes, deportes, usuarios).
 - Tiempo actual en pistas exteriores (Open-Meteo). Todo **sin claves de API**.
 
@@ -47,7 +47,7 @@ https://reserva-pistes-inicio.onrender.com/. Se comprobó el paso a Laravel con 
 servicio despierto; la prueba desde reposo sigue pendiente.
 La configuración está en [`loading-site/README.md`](loading-site/README.md).
 El paquete 06 corrige el mapa móvil y versiona recursos; ver
-[`docs/13-mapa-movil.md`](docs/13-mapa-movil.md). Su despliegue está pendiente.
+[`docs/13-mapa-movil.md`](docs/13-mapa-movil.md). Denys confirmó su publicación y la corrección del mapa móvil.
 Desplegado en **Render** con Docker: https://reserva-pistes.onrender.com/.
 
 La pantalla de carga y la entrada estática opcional están documentadas en [`docs/07-marca-y-carga.md`](docs/07-marca-y-carga.md). El despliegue de la versión nueva, la rama de Render y la persistencia de la base se verificarán con Denys. El documento adicional `docs/05-desplegament.md` indica ese estado; no se presenta un plan como despliegue realizado.
@@ -73,3 +73,17 @@ El traspaso a Joy, la sincronización por GitHub y la simulación de pago pendie
 están en [`docs/10-traspaso-joy.md`](docs/10-traspaso-joy.md). La interfaz preparada
 requiere validación en los equipos y no implica que la revisión final del backend
 ni el despliegue de esta versión estén completados.
+
+
+## Perfil y cuentas · paquete 09
+
+Preparado sobre el commit revisado 25b3ccc. Administración se integró en el PR #21
+(main b2a8895); Joy confirmó 83 pruebas y 534 aserciones antes de este bloque.
+09 agrega foto de perfil, validación conjunta de nombre/niveles, cambio de contraseña
+y límites de intentos. Las pantallas de entrar/crear cuenta conservan su diseño.
+
+Después de instalar, ejecutar la migración normal (`php artisan migrate`) y la
+batería completa. La foto pequeña se guarda en una tabla de la base, no en el
+disco temporal del contenedor. Su persistencia final depende de la base que Denys
+configure y verifique. Pruebas PHP/manuales de 09 pendientes; 8 pruebas Node aprobadas.
+Guía: [Perfil, cuentas y foto](docs/16-perfil-cuentas-y-foto.md). Pago de prueba pendiente.

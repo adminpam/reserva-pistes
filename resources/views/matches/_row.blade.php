@@ -12,7 +12,7 @@
     </div>
     <div class="rp-match-players">
         <div class="rp-players" aria-hidden="true">
-            @foreach($match->players->take(4) as $player)<span class="rp-player" title="{{ $player->name }}">{{ \App\Support\Ui::initials($player->name) }}</span>@endforeach
+            @foreach($match->players->take(4) as $player)<span class="rp-player" title="{{ $player->name }}">@include('partials.user-avatar', ['avatarUser' => $player])</span>@endforeach
             @if($match->players->count() > 4)<span class="rp-player">+{{ $match->players->count() - 4 }}</span>@endif
             @for($i = 0; $i < min(3, $match->freeSlots()); $i++)<span class="rp-player rp-player--empty">+</span>@endfor
         </div>
