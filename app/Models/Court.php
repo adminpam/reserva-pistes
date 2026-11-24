@@ -34,6 +34,11 @@ class Court extends Model
         return $this->hasMany(Booking::class);
     }
 
+    public function checkouts(): HasMany
+    {
+        return $this->hasMany(BookingCheckout::class);
+    }
+
     // Цена в евро для показа в интерфейсе (в БД — центы).
     public function priceEuros(): string
     {

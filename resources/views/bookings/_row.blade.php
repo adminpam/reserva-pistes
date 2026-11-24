@@ -8,6 +8,7 @@
             <span>@include('partials.ui-icon', ['name' => 'calendar']) {{ $booking->starts_at->translatedFormat('D, j M Y') }}</span>
             <span>@include('partials.ui-icon', ['name' => 'clock']) {{ $booking->starts_at->format('H:i') }}–{{ $booking->ends_at->format('H:i') }}</span>
             <span>{{ \App\Support\Ui::euros($booking->price_total) }} · simulado</span>
+            @if($booking->checkout)<a href="{{ route('checkout.show', $booking->checkout) }}">Justificante de prueba</a>@endif
         </div>
     </div>
     <div class="rp-record__actions">

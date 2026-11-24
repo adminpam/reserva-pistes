@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 // Бронь часового слота. При is_open = true это «открытый матч»:
 // другие игроки занимают места через booking_players.
@@ -40,16 +41,44 @@ class Booking extends Model
         return $this->belongsToMany(User::class, 'booking_players')->withTimestamps();
     }
 
-    // Главное бизнес-правило проекта: слот нельзя забронировать,
-    // если на этой площадке уже есть подтверждённая бронь,
-    // пересекающаяся по времени (start < other_end AND end > other_start).
-    public static function overlaps(int $courtId, $startsAt, $endsAt): bool
+    public function checkout(): HasOne
     {
-        return static::where('court_id', $courtId)
-            ->where('status', 'confirmed')
-            ->where('starts_at', '<', $endsAt)
-            ->where('ends_at', '>', $startsAt)
-            ->exists();
+        return $this->hasOne(BookingCheckout::class, 'booking_id');
+    }
+
+    // Una sola consulta UNION ve reservas y retenciones en la misma instantánea.
+    // Los dos modelos tienen court_id/starts_at/ends_at y comparten esos casts.
+    public static function occupiedIntervals(array $courtIds, $start, $end = null, ?string $ignoreCheckout = null, $at = null): Builder
+    {
+        $bookings = static::query()->select('court_id', 'starts_at', 'ends_at')->where('status', 'confirmed');
+        $holds = BookingCheckout::active($at)->select('court_id', 'starts_at', 'ends_at');
+        if ($ignoreCheckout !== null) {
+            $holds->where('id', '!=', $ignoreCheckout);
+        }
+        foreach ([$bookings, $holds] as $query) {
+            $query->whereIn('court_id', $courtIds)->where('ends_at', '>', $start);
+            if ($end !== null) {
+                $query->where('starts_at', '<', $end);
+            }
+        }
+
+        return $bookings->unionAll($holds);
+    }
+
+    public static function overlaps(int $courtId, $startsAt, $endsAt, ?string $ignoreCheckout = null): bool
+    {
+        return static::occupiedIntervals([$courtId], $startsAt, $endsAt, $ignoreCheckout)->exists();
+    }
+
+    // Se llama dentro de la transacción que ya bloqueó esta reserva.
+    // Conserva el justificante y su referencia; repetir no duplica la reversión.
+    public function cancelWithDemoRefund(): void
+    {
+        if ($this->status !== 'cancelled') {
+            $this->update(['status' => 'cancelled']);
+        }
+        DemoPayment::where('booking_id', $this->id)->where('status', 'approved')
+            ->update(['status' => 'refunded', 'refunded_at' => now()]);
     }
 
     // Scope: только будущие подтверждённые открытые матчи — для страницы поиска.

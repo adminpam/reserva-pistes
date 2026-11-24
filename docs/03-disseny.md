@@ -15,6 +15,23 @@
 
 **Regla anti-solapamiento:** una reserva nueva se rechaza si en la misma pista existe otra confirmada con `starts_at < nueva.ends_at` y `ends_at > nueva.starts_at`. En 07 se comprueba dentro de una transacción después de bloquear la fila de Court con `lockForUpdate`; así existe una fila común incluso en una pista aún vacía. Las altas/bajas/cancelaciones de partidos bloquean la fila de Booking antes de comprobar estado y aforo. La prueba con peticiones paralelas en PostgreSQL sigue pendiente.
 
+## Pago de prueba · 10
+
+```mermaid
+erDiagram
+    USERS ||--o{ BOOKING_CHECKOUTS : inicia
+    COURTS ||--o{ BOOKING_CHECKOUTS : retiene
+    BOOKING_CHECKOUTS ||--o| DEMO_PAYMENTS : registra
+    BOOKING_CHECKOUTS o|--o| BOOKINGS : confirma
+```
+
+booking_checkouts guarda el slot, su tarifa temporal, usuario y estados. demo_payments
+guarda solo el resultado/referencia, nunca datos de tarjeta. Cada solicitud tiene
+cero o un Booking y cero o un resultado. Las reservas anteriores pueden no tener
+solicitud/pago. Los índices únicos y FKs RESTRICT conservan esta correspondencia.
+La disponibilidad ahora incluye retenciones vigentes y confirmadas con una sola UNION.
+Detalles de bloqueos, expiración, API y criterios: [17-pago-simulado.md](17-pago-simulado.md).
+
 ## Identidad visual
 
 - Paleta: fondo `#F7F7F5`, tinta `#1F2933`, ámbar `#F59E0B` (acciones), turquesa `#0E9F8E` (estados positivos), rojo `#DC2626` (errores).
@@ -96,3 +113,9 @@ Se usan RateLimiter y Hash de Laravel. auth.session protege las rutas privadas;
 logoutOtherDevices y la rotación de remember_token invalidan accesos anteriores
 después del cambio de contraseña. No hay API externa ni nuevas dependencias.
 Guía y límites: [16-perfil-cuentas-y-foto.md](16-perfil-cuentas-y-foto.md).
+
+
+El contrato de POST /bookings cambia en 10: recibe checkout_key y devuelve un
+redirect al resumen de pago, no una reserva inmediata. GET /my/payments y las
+operaciones GET/POST/DELETE /checkout/{UUID} son privadas (auth + auth.session) y
+verifican propietario. La tabla de rutas completa está en el documento 17.

@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Booking;
+use App\Models\BookingCheckout;
+use Illuminate\Support\Str;
 use App\Models\Club;
 use App\Models\Court;
 use App\Models\Sport;
@@ -15,6 +17,14 @@ use Tests\TestCase;
 class BookingOverlapTest extends TestCase
 {
     use RefreshDatabase;
+
+    private function approvePending(): void
+    {
+        $checkout = BookingCheckout::where('status', 'pending')->sole();
+        $this->post(route('checkout.pay', $checkout), ['payment' => ['holder' => 'Persona Demo',
+            'number' => '4242424242424242', 'expiry' => now()->addYears(2)->format('m/y'), 'cvc' => '123']])
+            ->assertSessionHasNoErrors();
+    }
 
     private function makeCourt(): Court
     {
@@ -41,12 +51,14 @@ class BookingOverlapTest extends TestCase
 
         // Первая бронь на 10:00 проходит.
         $this->actingAs($ana)->post('/bookings', [
-            'court_id' => $court->id, 'date' => $date, 'hour' => 10,
+            'checkout_key' => (string) Str::uuid(), 'court_id' => $court->id, 'date' => $date, 'hour' => 10,
         ])->assertSessionHasNoErrors();
+
+        $this->approvePending();
 
         // Вторая бронь того же слота — отклоняется с ошибкой валидации.
         $this->actingAs($leo)->post('/bookings', [
-            'court_id' => $court->id, 'date' => $date, 'hour' => 10,
+            'checkout_key' => (string) Str::uuid(), 'court_id' => $court->id, 'date' => $date, 'hour' => 10,
         ])->assertSessionHasErrors('hour');
 
         $this->assertSame(1, Booking::where('status', 'confirmed')->count());
@@ -60,14 +72,17 @@ class BookingOverlapTest extends TestCase
 
         $date = now()->addDay()->toDateString();
 
-        $this->actingAs($ana)->post('/bookings', ['court_id' => $court->id, 'date' => $date, 'hour' => 11]);
-        $booking = Booking::first();
+        $this->actingAs($ana)->post('/bookings', ['checkout_key' => (string) Str::uuid(), 'court_id' => $court->id, 'date' => $date, 'hour' => 11]);
+        $this->approvePending();
+        $booking = Booking::firstOrFail();
 
         // Ана отменяет — слот освобождается, и Лео может его занять.
         $this->actingAs($ana)->patch("/bookings/{$booking->id}/cancel");
 
         $this->actingAs($leo)->post('/bookings', [
-            'court_id' => $court->id, 'date' => $date, 'hour' => 11,
+            'checkout_key' => (string) Str::uuid(), 'court_id' => $court->id, 'date' => $date, 'hour' => 11,
         ])->assertSessionHasNoErrors();
+        $this->approvePending();
+        $this->assertSame(1, Booking::where('status', 'confirmed')->count());
     }
 }

@@ -64,6 +64,11 @@ class User extends Authenticatable
             : null;
     }
 
+    public function checkouts(): HasMany
+    {
+        return $this->hasMany(BookingCheckout::class);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

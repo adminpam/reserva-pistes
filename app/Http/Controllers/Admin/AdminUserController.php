@@ -54,8 +54,8 @@ class AdminUserController extends Controller
             if ($current->managedClubs()->exists()) {
                 throw ValidationException::withMessages(['user' => 'Reasigna o retira sus clubes antes de eliminar este gestor.']);
             }
-            if ($current->bookings()->exists() || $current->joinedMatches()->exists()) {
-                throw ValidationException::withMessages(['user' => 'Este usuario tiene reservas o participaciones. Debe conservarse para mantener el historial.']);
+            if ($current->bookings()->exists() || $current->joinedMatches()->exists() || $current->checkouts()->exists()) {
+                throw ValidationException::withMessages(['user' => 'Este usuario tiene reservas, participaciones o solicitudes de pago. Debe conservarse para mantener el historial.']);
             }
             $current->delete();
         }, 3);

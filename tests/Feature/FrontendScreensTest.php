@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Booking;
+use App\Models\BookingCheckout;
+use Illuminate\Support\Str;
 use App\Models\Club;
 use App\Models\Court;
 use App\Models\Sport;
@@ -76,7 +78,13 @@ class FrontendScreensTest extends TestCase
         $this->actingAs($this->player);
         $this->patch('/profile', ['name' => 'Nombre de Prueba', 'levels' => [$this->sport->id => 3]])->assertSessionHasNoErrors();
         $this->assertDatabaseHas('user_sport_levels', ['user_id' => $this->player->id, 'sport_id' => $this->sport->id, 'level' => 3]);
-        $this->post('/bookings', ['court_id' => $this->court->id, 'date' => now()->addDays(2)->toDateString(), 'hour' => 11, 'is_open' => 0, 'min_level' => null, 'max_level' => null])->assertRedirect(route('bookings.index'))->assertSessionHasNoErrors();
+        $this->post('/bookings', ['checkout_key' => (string) Str::uuid(), 'court_id' => $this->court->id, 'date' => now()->addDays(2)->toDateString(), 'hour' => 11, 'is_open' => 0, 'min_level' => null, 'max_level' => null])->assertSessionHasNoErrors();
+        $this->assertDatabaseCount('bookings', 0);
+        $checkout = BookingCheckout::sole();
+        $this->get(route('checkout.show', $checkout))->assertOk()->assertSee('Pago de prueba');
+        $this->post(route('checkout.pay', $checkout), ['payment' => ['holder' => 'Persona Demo',
+            'number' => '4242424242424242', 'expiry' => now()->addYears(2)->format('m/y'), 'cvc' => '123']])
+            ->assertRedirect(route('checkout.show', $checkout))->assertSessionHasNoErrors();
         $this->assertDatabaseHas('bookings', ['user_id' => $this->player->id, 'court_id' => $this->court->id, 'status' => 'confirmed']);
     }
 

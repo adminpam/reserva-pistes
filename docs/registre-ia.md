@@ -318,3 +318,43 @@ PR: https://github.com/adminpam/reserva-pistes/pull/21. No acredita ejecución d
 - La sesión actual continúa y las otras requieren volver a entrar.
 - La contraseña anterior falla y la nueva permite acceder.
 - Revisión de Denys, persistencia tras redesplegar y concurrencia PostgreSQL pendientes.
+
+## Confirmación de perfil · 24/11/2026
+
+Joy confirmó la migración de fotos, **120 pruebas PHP / 872 aserciones** en 13,43 s,
+ocho pruebas Node y el recorrido manual de nombre/niveles, subir/sustituir/quitar
+foto, persistencia al salir/entrar, contraseña actual incorrecta/correcta y revocación
+de otras sesiones. Commit [a423786](https://github.com/adminpam/reserva-pistes/commit/a423786971dbdf7b9c01ff6073b9df23496a0f21).
+Joy confirmó que Denys revisó y realizó el merge. No se ha aportado el número del
+PR ni el hash del merge; no se inventan. La persistencia de la foto tras redesplegar
+y la prueba de concurrencia real en PostgreSQL siguen pendientes con Denys.
+Los apartados antiguos de preparación de 09 quedan actualizados por este cierre.
+
+
+## 24/11/2026 — Joy · Pago de prueba integrado
+
+- Herramienta: ChatGPT (OpenAI).
+- Objetivo: cerrar el último bloque de backend acordado antes del despliegue final.
+- Prompt: «joy: seguimos»; continuación del acuerdo de terminar el método de pago
+  al final. Confirmación posterior: «joy: denys ya hizo revisó e hizo el merge».
+- Contexto: ZIP actual a423786, perfil revisado/integrado y rama feat/pago-simulado.
+- Resultado: retención temporal, validación de datos ficticios, aprobación/rechazo,
+  justificante privado, reintento y reversión al cancelar, con una migración aditiva.
+- Validación realizada: diez casos Node nuevos y 40 globales Frontend aprobados;
+  comprobación del instalador, hashes y conservación de archivos ajenos al paquete.
+- Pendiente: 31 casos PHP nuevos/151 declarados, ejecución en Lenovo sin atribuir
+  aquí resultados de PHP (no está disponible); aceptación manual, revisión de
+  Denys, concurrencia PostgreSQL, persistencia y despliegue del commit final.
+- Commit/PR: pendiente del commit de Joy y revisión de Denys; completar con enlaces reales.
+
+## Cierre de validación del paquete 10 — Joy — 24/11/2026
+- Migración de pagos aplicada correctamente.
+- PHP: 151 pruebas y 1290 aserciones correctas, en 15,13 s.
+- JavaScript del pago: 10 pruebas correctas.
+- Aprobación con justificante, importe correcto y sin reservas duplicadas.
+- Rechazo sin reserva confirmada y con liberación de la hora.
+- Cancelación de reserva con simulación revertida, conservando importe y referencia.
+- Cancelación pendiente y caducidad de cinco minutos comprobadas; el pago tardío no confirma.
+- Partido publicado solo tras aprobar, organizador contado una vez y participación con otra cuenta.
+- Cancelación del partido con participantes conservados y simulación revertida.
+- Pendientes: revisión de Denys, despliegue, persistencia tras redesplegar y concurrencia PostgreSQL.

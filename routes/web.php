@@ -29,6 +29,15 @@ Route::middleware(["auth", "auth.session"])->group(function () {
     Route::patch("/bookings/{booking}/cancel", [App\Http\Controllers\BookingController::class, "cancel"])->name("bookings.cancel");
 });
 
+// --- Pago de prueba: operaciones privadas, sin proveedor ni cobro real ---
+Route::middleware(['auth', 'auth.session'])->group(function () {
+    Route::get('/my/payments', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
+    Route::get('/checkout/{checkout}', [App\Http\Controllers\CheckoutController::class, 'show'])->whereUuid('checkout')->name('checkout.show');
+    Route::post('/checkout/{checkout}/pay', [App\Http\Controllers\CheckoutController::class, 'pay'])->whereUuid('checkout')->name('checkout.pay');
+    Route::delete('/checkout/{checkout}', [App\Http\Controllers\CheckoutController::class, 'cancel'])->whereUuid('checkout')->name('checkout.cancel');
+    Route::post('/checkout/{checkout}/retry', [App\Http\Controllers\CheckoutController::class, 'retry'])->whereUuid('checkout')->name('checkout.retry');
+});
+
 // --- Panel de administración ---
 Route::middleware(["auth", "auth.session", "role:admin"])->prefix("admin")->name("admin.")->group(function () {
     Route::get("/clubs", [App\Http\Controllers\Admin\AdminClubController::class, "index"])->name("clubs.index");

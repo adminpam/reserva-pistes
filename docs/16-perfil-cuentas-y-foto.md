@@ -192,3 +192,14 @@ Fuentes oficiales revisadas el 23/11/2026:
 - La sesión actual continúa y las otras requieren volver a entrar.
 - La contraseña anterior falla y la nueva permite acceder.
 - Revisión de Denys, persistencia tras redesplegar y concurrencia PostgreSQL pendientes.
+
+## Confirmación de perfil · 24/11/2026
+
+Joy confirmó la migración de fotos, **120 pruebas PHP / 872 aserciones** en 13,43 s,
+ocho pruebas Node y el recorrido manual de nombre/niveles, subir/sustituir/quitar
+foto, persistencia al salir/entrar, contraseña actual incorrecta/correcta y revocación
+de otras sesiones. Commit [a423786](https://github.com/adminpam/reserva-pistes/commit/a423786971dbdf7b9c01ff6073b9df23496a0f21).
+Joy confirmó que Denys revisó y realizó el merge. No se ha aportado el número del
+PR ni el hash del merge; no se inventan. La persistencia de la foto tras redesplegar
+y la prueba de concurrencia real en PostgreSQL siguen pendientes con Denys.
+Los apartados antiguos de preparación de 09 quedan actualizados por este cierre.
