@@ -22,5 +22,6 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Los datos ficticios de la tarjeta tampoco se conservan en old input.
+        $exceptions->dontFlash(['payment']);
     })->create();

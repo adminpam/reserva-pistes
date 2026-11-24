@@ -4,23 +4,23 @@ Documento de continuidad para Joy Liliana Castro Valencia. Denys seguirá en rus
 cuando Joy escriba como «Joy:», se continúa con ella en español. Código y documentos
 de su parte: comentarios y explicaciones en español.
 
-## Actualización · 23/11/2026 · después de administración
+## Actualización · 24/11/2026 · pago de prueba
 
-Joy confirmó 08 con 83 pruebas/534 aserciones y las pruebas manuales de gestor,
-precio histórico y borrado protegido tras cancelar. Commit 25b3ccc revisado por
-Denys e integrado mediante PR #21 en main b2a8895. Rama activa: feat/perfil-cuentas,
-limpia según salida de Joy. El ZIP de referencia de 09 contiene exactamente 25b3ccc.
+09: Joy confirmó migración, 120 pruebas/872 aserciones, ocho pruebas Node, perfil,
+fotos y cambio de contraseña/sesiones. Commit a423786. Denys revisó y realizó el
+merge, según Joy; no se conoce aquí su hash ni número de PR.
 
-09 prepara validación atómica del perfil, fotografía pequeña persistida en DB,
-cambio de contraseña con revocación de otras sesiones y límites de intentos.
-Añade una migración y 37 casos PHP pendientes en Lenovo; ocho casos Node aprobados.
-La aceptación manual/visual no está hecha. Las plantillas de login/registro siguen
-iguales y la composición aprobada se amplía solo para foto y contraseña del perfil.
-Guía: 16-perfil-cuentas-y-foto.md. Integrar origin/main antes de instalar si falta.
+10 prepara pago de prueba interno con retención temporal, formulario ficticio,
+aprobación/rechazo, justificante privado, reintento y reversión al cancelar. Rama
+feat/pago-simulado; ZIP de referencia a423786. Hay una migración con dos tablas,
+31 casos PHP nuevos (151 totales declarados) pendientes en Lenovo y diez casos
+Node nuevos aprobados, 40 aprobados en toda la carpeta Frontend. Guía 17.
 
-Después de aceptar 09, terminar el pago de prueba con Joy. Con Denys se verifican
-concurrencia real, base persistente/vigencia, migraciones, foto tras redespliegue,
-HTTPS y commit publicado. La captura de GitHub no acredita un despliegue en Render.
+Después de instalar: config:clear, migrate, view:clear, batería PHP completa y
+recorrido manual del documento 17. Después, revisión de Denys y merge. El cierre
+incluye persistencia de base/fotos/pagos tras redesplegar, peticiones paralelas
+PostgreSQL, URL/commit servido, capturas de cada rol, documentación y versión v1.0.
+No añadir nuevas mejoras visuales antes de completar este recorrido acordado.
 
 ## Estado y acuerdos
 

@@ -11,7 +11,7 @@
 
 **Jugador (usuario registrado)**
 - RF4. Reservar un slot de una hora en una pista; el sistema rechaza slots que se solapan con otra reserva confirmada.
-- RF5. El pago es **simulado**: se guarda el precio pero no se cobra nada (hay un aviso visible en la interfaz).
+- RF5. El pago es **simulado**: formulario con datos ficticios, retención temporal, aprobación/rechazo e historial; no se cobra nada y el aviso es visible.
 - RF6. Crear un **partido abierto** al reservar: el número de plazas depende del deporte y se puede fijar un rango de nivel (1–5), con ambos límites o uno solo. Si se fija un rango, incluye el nivel del organizador; sin rango no se exige nivel.
 - RF7. Buscar partidos abiertos (por deporte, club y «solo mi nivel») y apuntarse o salir.
 - RF8. Ver «Mis reservas» y «Mis partidos» y cancelar los futuros (si el organizador sale, el partido se cancela para todos).
@@ -66,3 +66,27 @@ Valoración de compañeros, notificaciones por correo, estadísticas del club, p
 - El registro público crea jugadores, conserva contraseñas con hash y valida
   correos duplicados. Se limitan intentos de registro/acceso/cambio de contraseña.
 - Criterios preparados en 09; la aceptación PHP, visual y manual sigue pendiente.
+
+
+## Aceptación de pago de prueba · 10
+
+- Reservar crea una retención de hasta cinco minutos, no una reserva confirmada.
+- Solo una aprobación crea una reserva y un justificante; repetir no los duplica.
+- Precio y titularidad proceden del servidor. La tarifa se mantiene durante la retención.
+- Rechazar/cancelar/caducar libera la hora sin crear reserva; reintentar vuelve a cotizar.
+- Cancelar la reserva revierte la simulación y conserva el historial y participantes.
+- El propietario consulta sus pagos; otros usuarios, incluso administradores, no.
+- Solo se aceptan dos tarjetas ficticias. No se guardan sus datos en DB/old input.
+- Sin pago aprobado no se publica un partido ni se ocupan plazas de jugadores.
+- Criterios implementados, pendientes de ejecutar/aceptar en Lenovo. Guía 17.
+
+## Confirmación de perfil · 24/11/2026
+
+Joy confirmó la migración de fotos, **120 pruebas PHP / 872 aserciones** en 13,43 s,
+ocho pruebas Node y el recorrido manual de nombre/niveles, subir/sustituir/quitar
+foto, persistencia al salir/entrar, contraseña actual incorrecta/correcta y revocación
+de otras sesiones. Commit [a423786](https://github.com/adminpam/reserva-pistes/commit/a423786971dbdf7b9c01ff6073b9df23496a0f21).
+Joy confirmó que Denys revisó y realizó el merge. No se ha aportado el número del
+PR ni el hash del merge; no se inventan. La persistencia de la foto tras redesplegar
+y la prueba de concurrencia real en PostgreSQL siguen pendientes con Denys.
+Los apartados antiguos de preparación de 09 quedan actualizados por este cierre.

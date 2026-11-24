@@ -47,11 +47,14 @@ class MatchController extends Controller
         $matches = Booking::where('is_open', true)
             ->where(fn ($query) => $query->where('user_id', $user->id)
                 ->orWhereHas('players', fn ($players) => $players->where('users.id', $user->id)))
-            ->with('court.club', 'court.sport', 'players:id,name,avatar_version')
+            ->with('court.club', 'court.sport', 'players:id,name,avatar_version', 'checkout.payment')
             ->orderByDesc('starts_at')
             ->get();
 
-        return view('matches.mine', ['matches' => $matches]);
+        $pendingCheckouts = $user->checkouts()->active()->where('is_open', true)
+            ->with('court.club', 'court.sport', 'payment')->orderBy('starts_at')->get();
+
+        return view('matches.mine', ['matches' => $matches, 'pendingCheckouts' => $pendingCheckouts]);
     }
 
     public function join(Request $request, Booking $booking): RedirectResponse
@@ -90,7 +93,7 @@ class MatchController extends Controller
             if ($current->user_id === $user->id) {
                 // Se conserva la lista para mostrar quién participaba en el
                 // partido cancelado. La reserva deja de bloquear la pista.
-                $current->update(['status' => 'cancelled']);
+                $current->cancelWithDemoRefund();
 
                 return;
             }

@@ -2,7 +2,7 @@
      pueden elegirse y se conserva el contrato de BookingController. --}}
 @extends('layouts.app')
 @section('title', $club->name.' — Reserva Pistes')
-@push('styles')<script type="module" src="{{ asset('ui/availability.js') }}"></script>@endpush
+@push('styles')<script type="module" src="{{ asset('ui/availability.js') }}"></script><script type="module" src="{{ \App\Support\FrontendAsset::url('ui/checkout-start.js') }}"></script>@endpush
 @section('banner')<div class="rp-club-cover" aria-hidden="true"></div>@endsection
 @section('content')
 <section class="rp-panel rp-club-summary" aria-labelledby="club-title">
@@ -18,7 +18,7 @@
     <div class="rp-field"><label for="booking-date">Día de la reserva</label><input id="booking-date" type="date" name="date" value="{{ $date }}" min="{{ now()->toDateString() }}" required></div>
     <button class="btn btn-ghost" type="submit">@include('partials.ui-icon', ['name' => 'calendar']) Ver disponibilidad</button>
 </form>
-<p class="rp-notice">@include('partials.ui-icon', ['name' => 'info']) <span>Las pistas, los precios y las reservas son de demostración. No se realiza ningún cobro real.</span></p>
+<p class="rp-notice">@include('partials.ui-icon', ['name' => 'info']) <span>Las pistas, los precios y las reservas son de demostración. No se realiza ningún cobro real. Al reservar, la hora se retiene hasta cinco minutos para completar el pago de prueba.</span></p>
 <div class="rp-list" data-availability-url="{{ route('clubs.availability', ['club' => $club, 'date' => $date]) }}" data-availability-date="{{ $date }}">
 <p class="rp-small" data-availability-status role="status" aria-live="polite">Las horas se actualizan al volver a esta pestaña.</p>
 @forelse($club->courts as $court)
@@ -37,7 +37,7 @@
         </div>
         @auth
             <form class="rp-booking-form" data-booking-form method="POST" action="{{ route('bookings.store') }}">
-                @csrf<input type="hidden" name="court_id" value="{{ $court->id }}"><input type="hidden" name="date" value="{{ $date }}">
+                @csrf<input type="hidden" name="checkout_key" value="{{ \Illuminate\Support\Str::uuid() }}"><input type="hidden" name="court_id" value="{{ $court->id }}"><input type="hidden" name="date" value="{{ $date }}">
                 <div>
                     <div class="rp-slot-grid" role="group" aria-label="Horas de {{ $court->name }}">
                     @foreach($hours as $hour)

@@ -158,3 +158,19 @@ Los nuevos CSS/JS públicos están versionados por contenido; 09 no requiere ins
 dependencias ni reconstruir Vite. Para producción, Denys debe verificar la DB
 persistente y su vigencia, aplicar la migración y comprobar la foto tras redesplegar.
 Detalle: [16-perfil-cuentas-y-foto.md](16-perfil-cuentas-y-foto.md).
+
+
+## Pago de prueba · 10
+
+Con main actualizado, trabajar en feat/pago-simulado. Instalar el ZIP 10 con su
+instalador y ejecutar config:clear, migrate, view:clear y php artisan test. La
+migración añade booking_checkouts y demo_payments, sin recrear datos anteriores.
+No hay dependencias nuevas ni hace falta npm run build por este paquete: sus
+recursos públicos se versionan por contenido. Comprobar JS con:
+
+```powershell
+node --test tests/Frontend/checkout.test.mjs
+```
+
+Datos ficticios y recorrido manual: [17-pago-simulado.md](17-pago-simulado.md).
+No usar tarjetas reales, migrate:fresh o seeders para esta actualización.

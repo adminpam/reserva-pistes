@@ -1,5 +1,15 @@
 # Changelog
 
+## [Sin publicar · backend 10] — 2026-11-24
+- Pago interno de prueba con retención temporal; solo aprobar confirma una reserva.
+- Rechazo, cancelación, caducidad y reintento con nueva tarifa explícita.
+- Resultado y justificante privados, repeticiones sin duplicar y reversión al cancelar.
+- Disponibilidad común de reservas/retenciones y protección de historial.
+- Migración aditiva con dos tablas; 31 pruebas PHP nuevas (151 declaradas), pendientes en Lenovo.
+- Diez pruebas Node nuevas y 40 en toda la carpeta Frontend aprobadas.
+- Joy confirmó 09: 120 pruebas/872 aserciones, ocho Node y recorrido manual completo.
+- Perfil a423786 revisado e integrado por Denys según Joy; despliegue final pendiente.
+
 ## [Sin publicar · backend 09] — 2026-11-23
 - Perfil y niveles guardados juntos, con validación de los IDs de deportes.
 - Subida, sustitución y eliminación de avatar pequeño en la base de datos.
@@ -71,3 +81,15 @@ Esqueleto funcional del proyecto.
 - Autenticación con sesiones y middleware de roles (player/manager/admin).
 - Base visual: layout, paleta propia, CSS sin frameworks, SVG provisionales.
 - Mapa Leaflet con clubes y filtro por deporte; ficha de club con reserva de slots de una hora sin solapamientos (pago simulado).
+
+## Cierre de validación del paquete 10 — Joy — 24/11/2026
+- Migración de pagos aplicada correctamente.
+- PHP: 151 pruebas y 1290 aserciones correctas, en 15,13 s.
+- JavaScript del pago: 10 pruebas correctas.
+- Aprobación con justificante, importe correcto y sin reservas duplicadas.
+- Rechazo sin reserva confirmada y con liberación de la hora.
+- Cancelación de reserva con simulación revertida, conservando importe y referencia.
+- Cancelación pendiente y caducidad de cinco minutos comprobadas; el pago tardío no confirma.
+- Partido publicado solo tras aprobar, organizador contado una vez y participación con otra cuenta.
+- Cancelación del partido con participantes conservados y simulación revertida.
+- Pendientes: revisión de Denys, despliegue, persistencia tras redesplegar y concurrencia PostgreSQL.

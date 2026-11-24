@@ -181,3 +181,33 @@ Un mensaje de demasiados intentos indica cuánto esperar antes de repetir el acc
 
 Resultado manual de 09: pendiente de confirmación de Joy. El apartado de cierre
 de 08 conserva sus resultados anteriores y no acredita el perfil nuevo.
+
+## Confirmación de perfil · 24/11/2026
+
+Joy confirmó la migración de fotos, **120 pruebas PHP / 872 aserciones** en 13,43 s,
+ocho pruebas Node y el recorrido manual de nombre/niveles, subir/sustituir/quitar
+foto, persistencia al salir/entrar, contraseña actual incorrecta/correcta y revocación
+de otras sesiones. Commit [a423786](https://github.com/adminpam/reserva-pistes/commit/a423786971dbdf7b9c01ff6073b9df23496a0f21).
+Joy confirmó que Denys revisó y realizó el merge. No se ha aportado el número del
+PR ni el hash del merge; no se inventan. La persistencia de la foto tras redesplegar
+y la prueba de concurrencia real en PostgreSQL siguen pendientes con Denys.
+Los apartados antiguos de preparación de 09 quedan actualizados por este cierre.
+
+
+## Pago de prueba · 10
+
+Al pulsar Reservar se abre el resumen de pago y se retiene la hora hasta cinco
+minutos. Elegir Prueba aprobada o Prueba rechazada rellena los campos ficticios;
+Simular pago envía el formulario. También se pueden introducir manualmente los
+datos del documento 17. Nunca introducir una tarjeta real.
+
+Aprobado: la reserva ya aparece confirmada y se puede consultar el justificante.
+Rechazado/cancelado/tiempo agotado: no hay reserva nueva y la hora queda libre si
+ninguna otra solicitud la ocupa. Consultar de nuevo muestra tarifa y disponibilidad
+actualizadas antes de pagar. Cancelar solicitud libera solo una retención pendiente.
+
+Mis reservas y Mis partidos enlazan Mis pagos de prueba. Desde allí se recuperan
+solicitudes y resultados, incluidas las caducadas. Cancelar una reserva confirmada
+marca su pago como Simulación revertida, sin borrar la referencia. El organizador
+paga de forma simulada el total; los participantes no pagan al apuntarse.
+La aceptación manual de este recorrido en 10 sigue pendiente con Joy.

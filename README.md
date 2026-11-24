@@ -8,6 +8,7 @@ Aplicación web para **reservar pistas deportivas** y **encontrar compañeros de
 
 ## Qué hace
 - Mapa de **clubes reales** (importados de OpenStreetMap) con filtro por deporte.
+- Pago de prueba con formulario ficticio, retención de hasta cinco minutos, justificante e historial privado; aceptación de 10 pendiente.
 - Reserva de slots de una hora con comprobación transaccional de solapamientos; la concurrencia real se revisa en la fase final del backend.
 - **Partidos abiertos**: plazas según el deporte (tenis de mesa 2, fútbol sala 10…), rango de nivel 1–5 opcional, apuntarse/salir.
 - Perfil con nivel por deporte, foto pequeña guardada en la base de datos y cambio de contraseña; «Mis reservas» y «Mis partidos» con cancelación.
@@ -26,7 +27,7 @@ Laravel 12 · Blade + CSS propio · JS vanilla + Leaflet/OpenStreetMap · SQLite
 Registro de prompts, resultados y enlaces: [`docs/registre-ia.md`](docs/registre-ia.md).
 Los enlaces pendientes se completan al publicar los cambios. Regla del equipo:
 solo entra en `main` código que al menos uno de los dos pueda explicar y que el
-otro haya revisado. El pago con formulario de prueba todavía está pendiente.
+otro haya revisado. El pago con formulario de prueba se prepara en 10; requiere la aceptación PHP y manual de Joy.
 
 ## Puesta en marcha local
 
@@ -85,5 +86,28 @@ y límites de intentos. Las pantallas de entrar/crear cuenta conservan su diseñ
 Después de instalar, ejecutar la migración normal (`php artisan migrate`) y la
 batería completa. La foto pequeña se guarda en una tabla de la base, no en el
 disco temporal del contenedor. Su persistencia final depende de la base que Denys
-configure y verifique. Pruebas PHP/manuales de 09 pendientes; 8 pruebas Node aprobadas.
-Guía: [Perfil, cuentas y foto](docs/16-perfil-cuentas-y-foto.md). Pago de prueba pendiente.
+configure y verifique. Joy confirmó 120 pruebas PHP/872 aserciones, 8 pruebas Node y el recorrido manual de 09; Denys revisó y realizó el merge.
+Guía: [Perfil, cuentas y foto](docs/16-perfil-cuentas-y-foto.md).
+
+
+## Pago de prueba · paquete 10
+
+Una selección crea una retención temporal; la reserva solo se confirma al aprobar
+el formulario ficticio. Rechazar/cancelar/caducar libera la hora y cancelar una
+reserva aprobada revierte su simulación. No hay proveedor ni cobro real.
+Guía de datos ficticios, estados y aceptación: [17-pago-simulado.md](docs/17-pago-simulado.md).
+Aplicar la nueva migración normal y ejecutar la batería completa: hay 151 casos PHP
+declarados, pendientes de ejecutar en Lenovo, y 40 pruebas Node aprobadas (10 nuevas).
+La prueba paralela PostgreSQL y el despliegue final siguen pendientes con Denys.
+
+## Cierre de validación del paquete 10 — Joy — 24/11/2026
+- Migración de pagos aplicada correctamente.
+- PHP: 151 pruebas y 1290 aserciones correctas, en 15,13 s.
+- JavaScript del pago: 10 pruebas correctas.
+- Aprobación con justificante, importe correcto y sin reservas duplicadas.
+- Rechazo sin reserva confirmada y con liberación de la hora.
+- Cancelación de reserva con simulación revertida, conservando importe y referencia.
+- Cancelación pendiente y caducidad de cinco minutos comprobadas; el pago tardío no confirma.
+- Partido publicado solo tras aprobar, organizador contado una vez y participación con otra cuenta.
+- Cancelación del partido con participantes conservados y simulación revertida.
+- Pendientes: revisión de Denys, despliegue, persistencia tras redesplegar y concurrencia PostgreSQL.

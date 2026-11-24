@@ -8,6 +8,7 @@
         <div class="rp-record__meta">
             <span>@include('partials.ui-icon', ['name' => 'calendar']) {{ $match->starts_at->translatedFormat('D, j M Y') }}</span>
             <span>@include('partials.ui-icon', ['name' => 'clock']) {{ $match->starts_at->format('H:i') }}–{{ $match->ends_at->format('H:i') }}</span>
+            @if($soyOrganizador && $match->checkout)<a href="{{ route('checkout.show', $match->checkout) }}">Justificante de prueba</a>@endif
         </div>
     </div>
     <div class="rp-match-players">

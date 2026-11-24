@@ -7,8 +7,8 @@ obligatorio número 05 de la práctica es [`05-manual-usuari.md`](05-manual-usua
 
 - URL existente: https://reserva-pistes.onrender.com/.
 - El panel compartido por Denys muestra un servicio Docker en Frankfurt.
-- El frontend nuevo se ha instalado y probado parcialmente en su ASUS. Su
-  publicación en Render no se ha confirmado.
+- Denys confirmó la publicación del frontend 06 y la corrección del mapa móvil.
+  Esto no confirma qué commit de backend está servido actualmente.
 - El despliegue final lo realizará Denys, después de cerrar el backend con Joy.
 
 El plan anterior de Laravel Cloud no describe el servicio utilizado y no debe
@@ -38,3 +38,21 @@ Fuentes oficiales revisadas el 18/11/2026:
 
 - https://render.com/docs/free
 - https://render.com/docs/deploys
+
+
+## Actualización · 24/11/2026 · antes del pago
+
+Joy confirmó que Denys revisó e integró el perfil a423786. El pago 10 añade las
+tablas booking_checkouts y demo_payments. El docker/entrypoint.sh recibido ya
+ejecuta php artisan migrate --force antes de iniciar Apache; no incluye seeders.
+No se cambia ese arranque en 10. Hay que observar que la nueva migración termine
+en los logs del despliegue y que el servicio vuelva a responder.
+
+Tras aceptar 10, verificar con Denys una reserva aprobada y su justificante,
+un rechazo sin Booking, liberación por caducidad, cancelación/reversión y la
+conservación de foto, cuenta, reserva y pago tras redesplegar. Probar peticiones
+paralelas de dos usuarios a la misma hora en PostgreSQL y confirmar que solo una
+consigue la retención; repetir la aprobación de una solicitud no debe duplicar
+reserva ni resultado. Usar cuentas ficticias y documentar los resultados reales.
+La base persistente y su vigencia deben cubrir la defensa. Nada de esto se da por
+realizado al construir el ZIP o por haber fusionado la rama en GitHub.

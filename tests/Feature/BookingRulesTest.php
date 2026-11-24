@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Booking;
+use App\Models\BookingCheckout;
+use Illuminate\Support\Str;
 use App\Models\Club;
 use App\Models\Court;
 use App\Models\Sport;
@@ -39,7 +41,15 @@ class BookingRulesTest extends TestCase
 
     private function payload(array $changes = []): array
     {
-        return array_replace(['court_id' => $this->court->id, 'date' => $this->date, 'hour' => 10], $changes);
+        return array_replace(['checkout_key' => (string) Str::uuid(), 'court_id' => $this->court->id, 'date' => $this->date, 'hour' => 10], $changes);
+    }
+
+    private function approvePending(): void
+    {
+        $checkout = BookingCheckout::where('status', 'pending')->sole();
+        $this->post(route('checkout.pay', $checkout), ['payment' => [
+            'holder' => 'Persona Demo', 'number' => '4242424242424242', 'expiry' => '12/30', 'cvc' => '123',
+        ]])->assertRedirect(route('checkout.show', $checkout))->assertSessionHasNoErrors();
     }
 
     private function existing(string $start, string $end, bool $open = false): Booking
@@ -54,7 +64,9 @@ class BookingRulesTest extends TestCase
         $other = User::factory()->create();
         $this->actingAs($this->player)->post('/bookings', $this->payload([
             'price_total' => 1, 'user_id' => $other->id, 'status' => 'cancelled',
-        ]))->assertRedirect(route('bookings.index'))->assertSessionHasNoErrors();
+        ]))->assertSessionHasNoErrors();
+        $this->assertDatabaseCount('bookings', 0);
+        $this->approvePending();
 
         $booking = Booking::sole();
         $this->assertSame($this->player->id, $booking->user_id);
@@ -68,7 +80,8 @@ class BookingRulesTest extends TestCase
     public function test_open_match_without_level_keys_counts_the_organizer_once(): void
     {
         $this->actingAs($this->player)->post('/bookings', $this->payload(['is_open' => 1]))
-            ->assertRedirect(route('matches.mine'))->assertSessionHasNoErrors();
+            ->assertSessionHasNoErrors();
+        $this->approvePending();
         $booking = Booking::sole();
         $this->assertNull($booking->min_level);
         $this->assertNull($booking->max_level);
@@ -81,6 +94,7 @@ class BookingRulesTest extends TestCase
         UserSportLevel::create(['user_id' => $this->player->id, 'sport_id' => $this->court->sport_id, 'level' => 2]);
         $this->actingAs($this->player)->post('/bookings', $this->payload(['is_open' => 1, 'max_level' => 3]))
             ->assertSessionHasNoErrors();
+        $this->approvePending();
         $this->assertNull(Booking::sole()->min_level);
         $this->assertEquals(3, Booking::sole()->max_level);
     }
@@ -90,6 +104,7 @@ class BookingRulesTest extends TestCase
         UserSportLevel::create(['user_id' => $this->player->id, 'sport_id' => $this->court->sport_id, 'level' => 4]);
         $this->actingAs($this->player)->post('/bookings', $this->payload(['is_open' => 1, 'min_level' => 3]))
             ->assertSessionHasNoErrors();
+        $this->approvePending();
         $this->assertEquals(3, Booking::sole()->min_level);
         $this->assertNull(Booking::sole()->max_level);
     }
@@ -113,6 +128,7 @@ class BookingRulesTest extends TestCase
     {
         $this->actingAs($this->player)->post('/bookings', $this->payload(['min_level' => 5, 'max_level' => 1]))
             ->assertSessionHasNoErrors();
+        $this->approvePending();
         $booking = Booking::sole();
         $this->assertFalse($booking->is_open);
         $this->assertNull($booking->min_level);
@@ -151,6 +167,7 @@ class BookingRulesTest extends TestCase
             $this->actingAs($this->player)->post('/bookings', $this->payload(['hour' => $hour]))->assertSessionHasErrors('hour');
         }
         $this->post('/bookings', $this->payload(['hour' => 12]))->assertSessionHasNoErrors();
+        $this->approvePending();
         $this->assertDatabaseCount('bookings', 2);
     }
 

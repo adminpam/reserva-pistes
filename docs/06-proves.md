@@ -251,3 +251,47 @@ bloque: [16-perfil-cuentas-y-foto.md](16-perfil-cuentas-y-foto.md).
 - La sesión actual continúa y las otras requieren volver a entrar.
 - La contraseña anterior falla y la nueva permite acceder.
 - Revisión de Denys, persistencia tras redesplegar y concurrencia PostgreSQL pendientes.
+
+## Confirmación de perfil · 24/11/2026
+
+Joy confirmó la migración de fotos, **120 pruebas PHP / 872 aserciones** en 13,43 s,
+ocho pruebas Node y el recorrido manual de nombre/niveles, subir/sustituir/quitar
+foto, persistencia al salir/entrar, contraseña actual incorrecta/correcta y revocación
+de otras sesiones. Commit [a423786](https://github.com/adminpam/reserva-pistes/commit/a423786971dbdf7b9c01ff6073b9df23496a0f21).
+Joy confirmó que Denys revisó y realizó el merge. No se ha aportado el número del
+PR ni el hash del merge; no se inventan. La persistencia de la foto tras redesplegar
+y la prueba de concurrencia real en PostgreSQL siguen pendientes con Denys.
+Los apartados antiguos de preparación de 09 quedan actualizados por este cierre.
+
+
+## Preparación del pago · 10 · 24/11/2026
+
+| Archivo | Casos | Estado |
+| --- | --- | --- |
+| CheckoutRulesTest | 15 | Pendientes de ejecutar en Lenovo |
+| DemoPaymentTest | 16 | Pendientes de ejecutar en Lenovo |
+| checkout.test.mjs | 10 | Aprobados al preparar el paquete |
+| Frontend/*.test.mjs | 40 en total | Aprobados en una ejecución de integración |
+
+Se adaptan BookingRulesTest, BookingOverlapTest y el caso de reserva de
+FrontendScreensTest para comenzar la retención y aprobar el pago por HTTP. No se
+mantiene una ruta que confirme sin pagar. La copia integrada declara 151 pruebas
+PHP; ninguna ejecución PHP de 10 se ha realizado en la preparación, al no haber
+PHP/Composer. No atribuirle los 120/872 confirmados de 09.
+
+La revisión del ZIP comprueba hashes, originales CRLF, copia de seguridad,
+reinstalación y rechazo íntegro de cambios locales. No sustituye php artisan test.
+El recorrido manual 17 y el golden test global siguen pendientes. La concurrencia
+PostgreSQL y persistencia tras redespliegue deben verificarse con Denys.
+
+## Cierre de validación del paquete 10 — Joy — 24/11/2026
+- Migración de pagos aplicada correctamente.
+- PHP: 151 pruebas y 1290 aserciones correctas, en 15,13 s.
+- JavaScript del pago: 10 pruebas correctas.
+- Aprobación con justificante, importe correcto y sin reservas duplicadas.
+- Rechazo sin reserva confirmada y con liberación de la hora.
+- Cancelación de reserva con simulación revertida, conservando importe y referencia.
+- Cancelación pendiente y caducidad de cinco minutos comprobadas; el pago tardío no confirma.
+- Partido publicado solo tras aprobar, organizador contado una vez y participación con otra cuenta.
+- Cancelación del partido con participantes conservados y simulación revertida.
+- Pendientes: revisión de Denys, despliegue, persistencia tras redesplegar y concurrencia PostgreSQL.

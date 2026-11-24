@@ -17,14 +17,10 @@ class ClubAvailability
         $nextDay = $day->copy()->addDay();
         $checkedAt = now();
 
-        // Una consulta para todas las pistas; las canceladas dejan de bloquear.
-        $bookings = Booking::query()
-            ->whereIn('court_id', $club->courts->pluck('id'))
-            ->where('status', 'confirmed')
-            ->where('starts_at', '<', $nextDay)
-            ->where('ends_at', '>', $day)
-            ->get(['court_id', 'starts_at', 'ends_at'])
-            ->groupBy('court_id');
+        // UNION evita una falsa hora libre si el pago transforma una retención
+        // en reserva entre dos lecturas separadas. No se devuelven IDs de pago.
+        $bookings = Booking::occupiedIntervals($club->courts->pluck('id')->all(), $day, $nextDay, null, $checkedAt)
+            ->get()->groupBy('court_id');
 
         $courts = [];
         foreach ($club->courts->sortBy('id') as $court) {

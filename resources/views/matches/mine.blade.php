@@ -5,6 +5,13 @@
     @include('partials.banner', ['title' => 'Mis partidos', 'subtitle' => 'Gestiona los partidos que organizas o en los que participas.'])
 @endsection
 @section('content')
+@push('styles')<link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/checkout.css') }}">@endpush
+<p><a href="{{ route('checkout.index') }}">Mis pagos de prueba</a></p>
+@if($pendingCheckouts->isNotEmpty())
+<h2 class="rp-section-heading">Pendientes de pago de prueba</h2>
+<div class="rp-list">@foreach($pendingCheckouts as $checkout)@include('checkout._row', ['checkout' => $checkout])@endforeach</div>
+@endif
+
 @php
     $activos = $matches->filter(fn ($m) => $m->status !== 'cancelled' && $m->ends_at->isFuture())->sortBy('starts_at');
     $pasados = $matches->filter(fn ($m) => $m->status !== 'cancelled' && $m->ends_at->isPast());
@@ -16,7 +23,7 @@
         <div class="rp-list">@foreach($items as $match)@include('matches._row', ['match' => $match, 'pasado' => $heading !== 'Mis partidos activos'])@endforeach</div>
     @endif
 @endforeach
-@if($matches->isEmpty())
+@if($matches->isEmpty() && $pendingCheckouts->isEmpty())
     @include('partials.empty-state', ['title' => 'Aún no tienes partidos', 'text' => 'Organiza un partido o únete a alguno de los que hay abiertos.', 'href' => route('matches.index'), 'label' => 'Buscar partidos'])
 @endif
 @endsection

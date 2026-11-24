@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Manager;
 
 use App\Http\Controllers\Controller;
 use App\Models\Club;
+use App\Models\Booking;
 use App\Models\Court;
 use App\Models\Sport;
 use App\Models\User;
@@ -76,10 +77,10 @@ class ManagerCourtController extends Controller
                 throw ValidationException::withMessages(['club_id' => 'La pista ha cambiado de club. Recarga el formulario antes de editarla.']);
             }
 
-            if ($current->bookings()->exists()) {
+            if ($current->bookings()->exists() || $current->checkouts()->exists()) {
                 foreach (['club_id', 'sport_id'] as $field) {
                     if ((int) $data[$field] !== (int) $current->$field) {
-                        throw ValidationException::withMessages([$field => 'Una pista con reservas conserva su club y deporte para mantener el historial.']);
+                        throw ValidationException::withMessages([$field => 'Una pista con reservas o solicitudes de pago conserva su club y deporte para mantener el historial.']);
                     }
                 }
             }
@@ -104,8 +105,8 @@ class ManagerCourtController extends Controller
             if ((int) $current->club_id !== (int) $club->id) {
                 throw ValidationException::withMessages(['court' => 'La pista ha cambiado de club. Recarga el listado antes de eliminarla.']);
             }
-            if ($current->bookings()->exists()) {
-                throw ValidationException::withMessages(['court' => 'Esta pista tiene reservas, incluso si están canceladas o pasadas. Debe conservarse para mantener el historial.']);
+            if ($current->bookings()->exists() || $current->checkouts()->exists()) {
+                throw ValidationException::withMessages(['court' => 'Esta pista tiene reservas o solicitudes de pago. Debe conservarse para mantener el historial.']);
             }
             $current->delete();
         }, 3);
@@ -146,12 +147,12 @@ class ManagerCourtController extends Controller
 
     private function checkBookedHours(Court $court, int $open, int $close): void
     {
-        $bookings = $court->bookings()->where('status', 'confirmed')->where('ends_at', '>', now())->get();
+        $bookings = Booking::occupiedIntervals([$court->id], now())->get();
         foreach ($bookings as $booking) {
             $midnight = $booking->starts_at->copy()->startOfDay();
             if ($booking->starts_at->lt($midnight->copy()->addHours($open))
                 || $booking->ends_at->gt($midnight->copy()->addHours($close))) {
-                throw ValidationException::withMessages(['open_hour' => 'El nuevo horario deja fuera una reserva confirmada futura o en curso. Amplía el horario o conserva el actual.']);
+                throw ValidationException::withMessages(['open_hour' => 'El nuevo horario deja fuera una reserva confirmada o una retención de pago activa. Amplía el horario o conserva el actual.']);
             }
         }
     }
