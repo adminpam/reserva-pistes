@@ -11,6 +11,7 @@
 @endpush
 @push('styles')
     <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/home.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/sport-selection.css') }}">
     <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/club-explorer.js') }}"></script>
 @endpush
 
@@ -41,28 +42,11 @@
 <section class="rp-explorer" aria-label="Encuentra tu club" data-rp-explorer data-drawer-state="map">
     <aside class="rp-sports" aria-labelledby="sport-heading">
         <div class="rp-sports__heading">
-            <h2 id="sport-heading">Deporte</h2>
+            <h2 id="sport-heading">Deportes</h2>
 
         </div>
-        <div class="rp-sport-options" role="group" aria-label="Filtrar por deporte">
-            <div class="rp-sport-choice rp-sport-choice--all">
-                <input type="radio" name="sport-filter" id="sp-all" value="" checked>
-                <label for="sp-all">
-                    @include('partials.sport-icon', ['slug' => 'generic'])
-                    <span>Todos</span><span class="rp-sport-choice__dot" aria-hidden="true"></span>
-                </label>
-            </div>
-            @foreach($sports as $sport)
-                <div class="rp-sport-choice">
-                    <input type="radio" name="sport-filter" id="sp-{{ $sport->slug }}" value="{{ $sport->slug }}">
-                    <label for="sp-{{ $sport->slug }}">
-                        @include('partials.sport-icon', ['slug' => $sport->slug])
-                        <span>{{ $sport->name }}</span>
-                        <span class="rp-sport-choice__dot" aria-hidden="true"></span>
-                    </label>
-                </div>
-            @endforeach
-        </div>
+        <p class="rp-sports__help">Elige uno o varios. Todos elimina el filtro.</p>
+        @include('partials.sport-filter', ['filterPrefix' => 'map-sport', 'filterMode' => 'map'])
         @if($sports->isEmpty())
             <p class="rp-sports__empty">Todavía no hay deportes disponibles.</p>
         @endif

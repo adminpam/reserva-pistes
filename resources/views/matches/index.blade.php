@@ -1,12 +1,20 @@
 {{-- Búsqueda y acciones reales del controlador de partidos existente. --}}
 @extends('layouts.app')
 @section('title', 'Partidos abiertos — Reserva Pistes')
+@push('styles')
+    <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/sport-selection.css') }}">
+    <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/sport-selection.js') }}"></script>
+@endpush
 @section('banner')
     @include('partials.banner', ['title' => 'Partidos abiertos', 'subtitle' => 'Encuentra gente para jugar en tu club favorito.'])
 @endsection
 @section('content')
-<form class="rp-filter-bar" method="GET" action="{{ route('matches.index') }}">
-    <select name="sport" aria-label="Deporte"><option value="">Todos los deportes</option>@foreach($sports as $sport)<option value="{{ $sport->slug }}" @selected(request('sport') === $sport->slug)>{{ $sport->name }}</option>@endforeach</select>
+<form class="rp-filter-bar rp-filter-bar--sports" method="GET" action="{{ route('matches.index') }}">
+    <fieldset class="rp-match-sports">
+        <legend>Deportes · elige uno o varios</legend>
+        @include('partials.sport-filter', ['filterPrefix' => 'match-sport', 'filterMode' => 'submit'])
+        <noscript><p class="rp-small">Desmarca todos los deportes para buscar sin filtro.</p></noscript>
+    </fieldset>
     <input type="search" name="club" value="{{ request('club') }}" placeholder="Buscar club…" aria-label="Buscar club">
     <label class="rp-toggle"><input type="checkbox" name="my_level" value="1" @checked(request()->boolean('my_level'))> Solo mi nivel</label>
     <button class="btn btn-primary" type="submit">@include('partials.ui-icon', ['name' => 'filter']) Filtrar</button>

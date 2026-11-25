@@ -2,9 +2,10 @@
      pueden elegirse y se conserva el contrato de BookingController. --}}
 @extends('layouts.app')
 @section('title', $club->name.' — Reserva Pistes')
-@push('styles')<script type="module" src="{{ asset('ui/availability.js') }}"></script><script type="module" src="{{ \App\Support\FrontendAsset::url('ui/checkout-start.js') }}"></script>@endpush
+@push('styles')<link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/sport-selection.css') }}"><script type="module" src="{{ asset('ui/availability.js') }}"></script><script type="module" src="{{ \App\Support\FrontendAsset::url('ui/checkout-start.js') }}"></script>@endpush
 @section('banner')<div class="rp-club-cover" aria-hidden="true"></div>@endsection
 @section('content')
+<a class="rp-filter-back" href="{{ route('home', $selectedSportSlugs ? ['sports' => $selectedSportSlugs] : []) }}">← Volver al mapa</a>
 <section class="rp-panel rp-club-summary" aria-labelledby="club-title">
     <div class="rp-club-summary__info">
         <h1 id="club-title">{{ $club->name }}</h1>
@@ -69,7 +70,7 @@
         @endauth
     </section>
 @empty
-    @include('partials.empty-state', ['title' => $selectedSportSlugs ? 'No hay pistas para estos deportes en este club' : 'Este club todavía no tiene pistas', 'text' => $selectedSportSlugs ? 'Cambia los filtros o consulta todas las pistas del club.' : 'Su gestor aún no ha publicado pistas disponibles.', 'href' => route('home'), 'label' => 'Ver otros clubes'])
+    @include('partials.empty-state', ['title' => $selectedSportSlugs ? 'No hay pistas para estos deportes en este club' : 'Este club todavía no tiene pistas', 'text' => $selectedSportSlugs ? 'Cambia los filtros o consulta todas las pistas del club.' : 'Su gestor aún no ha publicado pistas disponibles.', 'href' => route('home', $selectedSportSlugs ? ['sports' => $selectedSportSlugs] : []), 'label' => 'Ver otros clubes'])
 @endforelse
 </div>
 @endsection

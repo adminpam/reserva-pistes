@@ -14,7 +14,7 @@ use Illuminate\View\View;
 // una base vacía se representa como tal, sin inventar clubes para el diseño.
 class MapController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $order = ['tenis-de-mesa', 'badminton', 'baloncesto-3x3', 'voleibol', 'futbol-sala', 'tenis', 'padel'];
         $sports = Sport::orderBy('name')->get()->sortBy(function (Sport $sport) use ($order): int {
@@ -23,7 +23,7 @@ class MapController extends Controller
             return $position === false ? count($order) : $position;
         })->values();
 
-        return view('map.index', ['sports' => $sports]);
+        return view('map.index', ['sports' => $sports, 'selectedSportSlugs' => SportSelection::fromRequest($request)]);
     }
 
     public function clubs(Request $request): JsonResponse
