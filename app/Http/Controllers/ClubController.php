@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Club;
 use App\Services\ClubAvailability;
+use App\Support\SportSelection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -19,10 +20,12 @@ class ClubController extends Controller
         $input = ['date' => $request->query('date', now()->toDateString())];
         $validator = Validator::make($input, ['date' => ['required', 'date_format:Y-m-d']]);
         $date = $validator->fails() ? now()->toDateString() : $input['date'];
-        $club->load('courts.sport');
+        $selectedSportSlugs = SportSelection::fromRequest($request);
+        $this->loadCourts($club, $selectedSportSlugs);
 
         return view('clubs.show', [
             'club' => $club,
+            'selectedSportSlugs' => $selectedSportSlugs,
             'date' => $date,
             'availability' => $this->availability->forDate($club, $date),
             'hasOutdoor' => $club->courts->contains('is_outdoor', true),
@@ -34,8 +37,21 @@ class ClubController extends Controller
     {
         $data = $request->validate(['date' => ['required', 'date_format:Y-m-d']]);
 
+        $this->loadCourts($club, SportSelection::fromRequest($request));
+
         return response()->json($this->availability->forDate($club, $data['date']))
             ->header('Cache-Control', 'private, no-store')
             ->header('Pragma', 'no-cache');
     }
+
+    private function loadCourts(Club $club, array $slugs): void
+    {
+        $club->load(['courts' => function ($courts) use ($slugs): void {
+            $courts->with('sport')->orderBy('id');
+            if ($slugs !== []) {
+                $courts->whereHas('sport', fn ($sport) => $sport->whereIn('slug', $slugs));
+            }
+        }]);
+    }
+
 }

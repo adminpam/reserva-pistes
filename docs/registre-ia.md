@@ -358,3 +358,24 @@ Los apartados antiguos de preparación de 09 quedan actualizados por este cierre
 - Partido publicado solo tras aprobar, organizador contado una vez y participación con otra cuenta.
 - Cancelación del partido con participantes conservados y simulación revertida.
 - Pendientes: revisión de Denys, despliegue, persistencia tras redesplegar y concurrencia PostgreSQL.
+
+
+## 24/11/2026 · Denys / Joy · Contrato de deportes y pádel (11-Joy)
+- Herramienta: ChatGPT (OpenAI).
+- Autor de la petición: Denys; instalación/validación previstas con Joy.
+- Objetivo: selección de todos/uno/varios deportes, pádel y pistas del club coherentes.
+- Prompt: «Sports could be selected all, several, or one»; «divide todos estos mejoreas de nuevo entre nosotros».
+- Resultado preparado: contrato sports[], compatibilidad sport, precio/imagen/pistas
+  filtradas, conservación de fecha y disponibilidad, pádel y datos demo aditivos.
+- Validación: 14 casos PHP nuevos, 165 declarados, pendientes en Lenovo; no hay PHP
+  en la preparación. Paquete de Denys separado de estos archivos. Guía 18.
+- Commit/PR: pendientes de instalación, pruebas y revisión; base real
+  [873e439](https://github.com/adminpam/reserva-pistes/commit/873e439a24d546c472e988165e341020bdba3aed).
+
+## Validación local — Joy — 25/11/2026
+- Migración de pádel aplicada correctamente.
+- PHP: 165 pruebas y 1365 aserciones correctas, en 22,24 s.
+- Filtro combinado de tenis y pádel comprobado mediante URL.
+- Cambiar la fecha conserva el filtro; ver todas las pistas lo elimina.
+- Partido abierto de pádel comprobado: 1/4 jugadores.
+- Pendientes: revisión de Denys y publicación.
