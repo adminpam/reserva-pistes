@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 128 128" fill="none" role="img" aria-label="Tenis de mesa"><title>Tenis de mesa</title><defs>
+      <linearGradient id="rp-tenis-de-mesa-light-mint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F5FFFA"/><stop offset=".5" stop-color="#C6ECE1"/><stop offset="1" stop-color="#65B9A6"/></linearGradient>
+      <linearGradient id="rp-tenis-de-mesa-light-green" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#36B39B"/><stop offset=".55" stop-color="#087E6E"/><stop offset="1" stop-color="#03594E"/></linearGradient>
+      <radialGradient id="rp-tenis-de-mesa-light-gold" cx=".3" cy=".23" r=".85"><stop stop-color="#FFE18B"/><stop offset=".52" stop-color="#FFB319"/><stop offset="1" stop-color="#ED9410"/></radialGradient>
+      <radialGradient id="rp-tenis-de-mesa-light-tennis" cx=".3" cy=".23" r=".85"><stop stop-color="#F3F7B0"/><stop offset=".58" stop-color="#D7E765"/><stop offset="1" stop-color="#9CB94A"/></radialGradient>
+      <radialGradient id="rp-tenis-de-mesa-light-white" cx=".28" cy=".2" r=".9"><stop stop-color="#FFFFFF"/><stop offset=".6" stop-color="#E9F8F0"/><stop offset="1" stop-color="#9CCBBE"/></radialGradient>
+      <filter id="rp-tenis-de-mesa-light-shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="2.2" stdDeviation="1.5" flood-color="#002D27" flood-opacity=".13"/></filter>
+      <clipPath id="rp-tenis-de-mesa-light-ball"><circle cx="64" cy="64" r="45"/></clipPath>
+    </defs><g transform="rotate(34 64 64)" filter="url(#rp-tenis-de-mesa-light-shadow)">
+          <rect x="57" y="75" width="14" height="39" rx="5" fill="url(#rp-tenis-de-mesa-light-gold)" stroke="#073F38" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M58 96h12M58 104h12" fill="none" stroke="#073F38" stroke-width="2" opacity=".45"/>
+          <ellipse cx="64" cy="45" rx="30" ry="35" fill="url(#rp-tenis-de-mesa-light-green)" stroke="#073F38" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M40 63c12 13 36 13 48 0" fill="none" stroke="#C6ECE1" stroke-width="7"/>
+          <path d="M44 34c3-9 10-14 18-14" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity=".75"/>
+        </g><circle cx="98" cy="98" r="13" fill="url(#rp-tenis-de-mesa-light-gold)" stroke="#073F38" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M92 91c2-2 5-3 8-2" fill="none" stroke="#FFF9E6" stroke-width="3" stroke-linecap="round"/></svg>

@@ -47,6 +47,8 @@
         <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/screens.css') }}">
         <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/screens.js') }}"></script>
     @endif
+    <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/comfort.css') }}">
+    <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/password-visibility.js') }}"></script>
     @stack('styles')
 </head>
 <body @class(['rp-home-page' => request()->routeIs('home'), 'rp-app' => !request()->routeIs('login', 'register')])>

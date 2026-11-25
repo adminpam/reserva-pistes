@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 128 128" fill="none" role="img" aria-label="Baloncesto 3x3"><title>Baloncesto 3x3</title><defs>
+      <linearGradient id="rp-baloncesto-3x3-dark-mint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F5FFFA"/><stop offset=".5" stop-color="#C6ECE1"/><stop offset="1" stop-color="#65B9A6"/></linearGradient>
+      <linearGradient id="rp-baloncesto-3x3-dark-green" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#36B39B"/><stop offset=".55" stop-color="#087E6E"/><stop offset="1" stop-color="#03594E"/></linearGradient>
+      <radialGradient id="rp-baloncesto-3x3-dark-gold" cx=".3" cy=".23" r=".85"><stop stop-color="#FFE18B"/><stop offset=".52" stop-color="#FFB319"/><stop offset="1" stop-color="#ED9410"/></radialGradient>
+      <radialGradient id="rp-baloncesto-3x3-dark-tennis" cx=".3" cy=".23" r=".85"><stop stop-color="#F3F7B0"/><stop offset=".58" stop-color="#D7E765"/><stop offset="1" stop-color="#9CB94A"/></radialGradient>
+      <radialGradient id="rp-baloncesto-3x3-dark-white" cx=".28" cy=".2" r=".9"><stop stop-color="#FFFFFF"/><stop offset=".6" stop-color="#E9F8F0"/><stop offset="1" stop-color="#9CCBBE"/></radialGradient>
+      <filter id="rp-baloncesto-3x3-dark-shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="2.2" stdDeviation="1.5" flood-color="#002D27" flood-opacity=".26"/></filter>
+      <clipPath id="rp-baloncesto-3x3-dark-ball"><circle cx="64" cy="64" r="45"/></clipPath>
+    </defs><circle cx="64" cy="64" r="45" fill="url(#rp-baloncesto-3x3-dark-gold)" stroke="#D4FFF1" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" filter="url(#rp-baloncesto-3x3-dark-shadow)"/>
+          <g clip-path="url(#rp-baloncesto-3x3-dark-ball)" fill="none" stroke="#073F38" stroke-width="3.8" stroke-linecap="round">
+            <path d="M19 64h90M64 19v90M31 32C60 44 60 84 31 96M97 32C68 44 68 84 97 96"/>
+          </g><path d="M34 43c5-9 12-15 23-17" fill="none" stroke="#FFF8DC" stroke-width="3.5" stroke-linecap="round" opacity=".7"/></svg>
