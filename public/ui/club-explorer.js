@@ -1,6 +1,7 @@
-/* Фильтр и список работают с тем же API, что и карта. Потеря библиотеки карты
-   не блокирует список. Из ответов отображается только последний запрос. */
+/* Mapa y lista comparten selección y API. Solo se aplica la última consulta;
+   si Leaflet falla, el listado conserva los filtros y los enlaces de los clubes. */
 import { normalizeClubs, clubCount, createClubCard } from './map-data.js?v=rp06';
+import { bindSportSelection, sportsFromUrl, withSports } from './sport-selection.js?v=c4f77a5ce435f2c6';
 import { createClubDrawer } from './club-drawer.js?v=a164096e2174c1a2';
 
 function initClubMap() {
@@ -14,7 +15,12 @@ function initClubMap() {
     const retry = root.querySelector('[data-map-retry]');
     const message = root.querySelector('[data-map-message]');
     const selection = root.querySelector('[data-selected-card]');
-    const filters = root.querySelectorAll('[name="sport-filter"]');
+    const filterGroup = root.querySelector('[data-sport-filter="map"]');
+    const filters = bindSportSelection(filterGroup, (slugs) => {
+        const next = withSports(window.location.href, slugs);
+        if (next.href !== window.location.href) window.history.pushState(null, '', next);
+        loadClubs(slugs);
+    });
     const mobileCount = root.querySelector('[data-mobile-count]');
     const clubList = root.querySelector('[data-mobile-club-list]');
     const sort = root.querySelector('[data-club-sort]');
@@ -35,7 +41,7 @@ function initClubMap() {
         if (empty) empty.remove();
         if (!currentClubs.length) {
             const note = document.createElement('p'); note.dataset.listEmpty = ''; note.className = 'rp-map-message'; note.textContent = `${title}. ${text}`;
-            if (canRetry) { const button = document.createElement('button'); button.type = 'button'; button.className = 'btn btn-ghost'; button.textContent = 'Reintentar'; button.addEventListener('click', () => loadClubs(root.querySelector('[name="sport-filter"]:checked')?.value || '')); note.append(document.createElement('br'), button); }
+            if (canRetry) { const button = document.createElement('button'); button.type = 'button'; button.className = 'btn btn-ghost'; button.textContent = 'Reintentar'; button.addEventListener('click', () => loadClubs(filters.get())); note.append(document.createElement('br'), button); }
             clubList.append(note);
         }
     }
@@ -94,7 +100,7 @@ function initClubMap() {
                 .setLatLng([club.lat, club.lng]).setContent(createClubCard(club)).openOn(map);
         }
     }
-    async function loadClubs(slug = '') {
+    async function loadClubs(slugs = []) {
         const current = ++sequence;
         request?.abort(); window.clearTimeout(requestTimeout);
         const controller = new AbortController(); request = controller;
@@ -105,8 +111,7 @@ function initClubMap() {
         if (count) count.textContent = 'Buscando clubes…';
         if (mobileCount) mobileCount.textContent = 'Buscando clubes…';
         showState('Buscando clubes', 'Consultando las pistas disponibles.');
-        const url = new URL(element.dataset.clubsUrl, window.location.origin);
-        if (slug) url.searchParams.set('sport', slug);
+        const url = withSports(new URL(element.dataset.clubsUrl, window.location.origin), slugs);
         try {
             const response = await fetch(url, { signal: controller.signal, headers: { Accept: 'application/json' } });
             if (!response.ok) throw new Error('No se han podido consultar los clubes.');
@@ -132,8 +137,8 @@ function initClubMap() {
                     });
                 }
             } else {
-                const text = slug ? 'Prueba otro deporte o selecciona Todos.' : 'Vuelve a consultar el mapa más tarde.';
-                showState(slug ? 'Sin clubes para este deporte' : 'Todavía no hay clubes disponibles', text);
+                const text = slugs.length ? 'Prueba otros deportes o selecciona Todos.' : 'Vuelve a consultar el mapa más tarde.';
+                showState(slugs.length ? 'Sin clubes para estos deportes' : 'Todavía no hay clubes disponibles', text);
                 const hint = document.createElement('p'); hint.className = 'rp-mobile-selection__hint'; hint.textContent = text;
                 selection?.replaceChildren(hint); sheet?.setView('list');
             }
@@ -145,19 +150,30 @@ function initClubMap() {
             showState('No se han podido cargar los clubes', text, true);
             const note = document.createElement('p'); note.className = 'rp-mobile-selection__hint'; note.textContent = text;
             const again = document.createElement('button'); again.type = 'button'; again.className = 'btn btn-ghost'; again.textContent = 'Reintentar';
-            again.addEventListener('click', () => loadClubs(slug)); selection?.replaceChildren(note, again); sheet?.setView('list');
+            again.addEventListener('click', () => loadClubs(filters.get())); selection?.replaceChildren(note, again); sheet?.setView('list');
         } finally {
             if (current === sequence) { window.clearTimeout(requestTimeout); element.setAttribute('aria-busy', 'false'); }
         }
     }
-    filters.forEach((filter) => filter.addEventListener('change', () => loadClubs(filter.value)));
-    retry.addEventListener('click', () => loadClubs(root.querySelector('[name="sport-filter"]:checked')?.value || ''));
+    window.addEventListener('popstate', () => {
+        filters.set(sportsFromUrl(window.location.href, filters.available));
+        loadClubs(filters.get());
+    });
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            filters.set(sportsFromUrl(window.location.href, filters.available));
+            loadClubs(filters.get());
+        }
+    });
+    retry.addEventListener('click', () => loadClubs(filters.get()));
     phone.addEventListener('change', () => { map?.closePopup(); if (selected && phone.matches) showClub(selected); });
     window.addEventListener('pagehide', (event) => {
         if (event.persisted) return;
         request?.abort(); window.clearTimeout(requestTimeout); window.cancelAnimationFrame(resizeFrame); sheet?.dispose();
     });
-    loadClubs(root.querySelector('[name="sport-filter"]:checked')?.value || '');
+    const canonical = withSports(window.location.href, filters.get());
+    if (canonical.href !== window.location.href) window.history.replaceState(null, '', canonical);
+    loadClubs(filters.get());
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initClubMap, { once: true });
 else initClubMap();
