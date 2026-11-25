@@ -15,6 +15,7 @@ class MapPageTest extends TestCase
 
     public function test_empty_database_has_an_explicit_empty_state(): void
     {
+        Sport::query()->delete(); // Base realmente vacía: quitar el catálogo inicial de pádel.
         $this->getJson('/api/clubs')->assertOk()->assertExactJson([]);
         $this->get('/')->assertOk()
             ->assertSee('Todavía no hay deportes disponibles.')
@@ -35,7 +36,7 @@ class MapPageTest extends TestCase
         $response = $this->getJson('/api/clubs?sport=tenis')->assertOk()->assertJsonCount(1)
             ->assertJsonPath('0.name', 'Club de prueba A')
             ->assertJsonPath('0.sports.0', 'Tenis')
-            ->assertJsonPath('0.url', route('clubs.show', $first));
+            ->assertJsonPath('0.url', route('clubs.show', ['club' => $first->id, 'sports' => ['tenis']]));
         $this->assertStringEndsWith('/img/sports/tenis-thumb.jpg', $response->json('0.image_url'));
         $this->getJson('/api/clubs?sport[]=tenis')->assertUnprocessable();
     }

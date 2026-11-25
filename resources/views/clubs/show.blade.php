@@ -15,11 +15,15 @@
     @if($hasOutdoor)<div id="weather" class="weather" data-lat="{{ $club->lat }}" data-lng="{{ $club->lng }}" hidden></div>@endif
 </section>
 <form class="rp-filter-bar rp-filter-bar--date" method="GET" action="{{ route('clubs.show', $club) }}">
+    @foreach($selectedSportSlugs as $selectedSport)<input type="hidden" name="sports[]" value="{{ $selectedSport }}">@endforeach
     <div class="rp-field"><label for="booking-date">Día de la reserva</label><input id="booking-date" type="date" name="date" value="{{ $date }}" min="{{ now()->toDateString() }}" required></div>
     <button class="btn btn-ghost" type="submit">@include('partials.ui-icon', ['name' => 'calendar']) Ver disponibilidad</button>
 </form>
+@if($selectedSportSlugs)
+<p class="rp-small">Mostrando solo los deportes seleccionados. <a href="{{ route('clubs.show', ['club' => $club, 'date' => $date]) }}">Ver todas las pistas del club</a></p>
+@endif
 <p class="rp-notice">@include('partials.ui-icon', ['name' => 'info']) <span>Las pistas, los precios y las reservas son de demostración. No se realiza ningún cobro real. Al reservar, la hora se retiene hasta cinco minutos para completar el pago de prueba.</span></p>
-<div class="rp-list" data-availability-url="{{ route('clubs.availability', ['club' => $club, 'date' => $date]) }}" data-availability-date="{{ $date }}">
+<div class="rp-list" data-availability-url="{{ route('clubs.availability', ['club' => $club, 'date' => $date] + ($selectedSportSlugs ? ['sports' => $selectedSportSlugs] : [])) }}" data-availability-date="{{ $date }}">
 <p class="rp-small" data-availability-status role="status" aria-live="polite">Las horas se actualizan al volver a esta pestaña.</p>
 @forelse($club->courts as $court)
     @php
@@ -65,7 +69,7 @@
         @endauth
     </section>
 @empty
-    @include('partials.empty-state', ['title' => 'Este club todavía no tiene pistas', 'text' => 'Su gestor aún no ha publicado pistas disponibles.', 'href' => route('home'), 'label' => 'Ver otros clubes'])
+    @include('partials.empty-state', ['title' => $selectedSportSlugs ? 'No hay pistas para estos deportes en este club' : 'Este club todavía no tiene pistas', 'text' => $selectedSportSlugs ? 'Cambia los filtros o consulta todas las pistas del club.' : 'Su gestor aún no ha publicado pistas disponibles.', 'href' => route('home'), 'label' => 'Ver otros clubes'])
 @endforelse
 </div>
 @endsection

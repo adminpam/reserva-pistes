@@ -25,21 +25,21 @@ class Ui
     // Foto de cabecera y miniatura según el deporte. Si el slug no tiene foto
     // propia, cae en la de tenis para no dejar la tarjeta vacía.
     private const CON_FOTO = [
-        'tenis-de-mesa', 'badminton', 'baloncesto-3x3', 'voleibol', 'futbol-sala', 'tenis',
+        'tenis-de-mesa', 'badminton', 'baloncesto-3x3', 'voleibol', 'futbol-sala', 'tenis', 'padel',
     ];
 
     public static function sportCover(?string $slug): string
     {
         $slug = in_array($slug, self::CON_FOTO, true) ? $slug : 'tenis';
 
-        return asset("img/sports/{$slug}-cover.jpg");
+        return $slug === 'padel' ? asset('img/sports/padel.webp') : asset("img/sports/{$slug}-cover.jpg");
     }
 
     public static function sportThumb(?string $slug): string
     {
         $slug = in_array($slug, self::CON_FOTO, true) ? $slug : 'tenis';
 
-        return asset("img/sports/{$slug}-thumb.jpg");
+        return $slug === 'padel' ? asset('img/sports/padel.webp') : asset("img/sports/{$slug}-thumb.jpg");
     }
 
     // Precio en céntimos -> "12,50 €"

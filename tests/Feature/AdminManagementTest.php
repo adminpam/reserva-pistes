@@ -61,7 +61,7 @@ class AdminManagementTest extends TestCase
             $this->patch('/admin/users/'.$this->player->id, ['role' => 'admin'])->assertForbidden();
             $this->delete('/admin/users/'.$this->admin->id)->assertForbidden();
         }
-        $this->assertDatabaseCount('sports', 1);
+        $this->assertDatabaseCount('sports', 2);
         $this->assertDatabaseCount('users', 3);
         $this->assertEquals($this->manager->id, $this->club->fresh()->manager_id);
         $this->assertSame('player', $this->player->fresh()->role);
@@ -177,7 +177,7 @@ class AdminManagementTest extends TestCase
         foreach (['Tenis', 'Ténis!', '!!!'] as $name) {
             $this->postJson('/admin/sports', ['name' => $name, 'players_per_match' => 4])->assertUnprocessable()->assertJsonValidationErrors('name');
         }
-        $this->assertDatabaseCount('sports', 1);
+        $this->assertDatabaseCount('sports', 2);
         $this->post('/admin/sports', ['name' => 'Deporte de prueba', 'players_per_match' => 6])->assertSessionHasNoErrors();
         $this->assertDatabaseHas('sports', ['slug' => 'deporte-de-prueba', 'players_per_match' => 6]);
         foreach ([1, 31, 'texto'] as $capacity) {
@@ -214,7 +214,7 @@ class AdminManagementTest extends TestCase
         UserSportLevel::create(['user_id' => $this->player->id, 'sport_id' => $other->id, 'level' => 3]);
         $this->deleteJson('/admin/sports/'.$other->id)->assertUnprocessable()->assertJsonValidationErrors('sport');
         $this->assertDatabaseHas('user_sport_levels', ['user_id' => $this->player->id, 'sport_id' => $other->id, 'level' => 3]);
-        $this->assertDatabaseCount('sports', 2);
+        $this->assertDatabaseCount('sports', 3);
     }
 
     public function test_unused_sport_can_be_deleted(): void

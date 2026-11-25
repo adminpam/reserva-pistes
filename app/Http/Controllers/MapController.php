@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Club;
 use App\Models\Sport;
 use App\Support\Ui;
+use App\Support\SportSelection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -15,7 +16,7 @@ class MapController extends Controller
 {
     public function index(): View
     {
-        $order = ['tenis-de-mesa', 'badminton', 'baloncesto-3x3', 'voleibol', 'futbol-sala', 'tenis'];
+        $order = ['tenis-de-mesa', 'badminton', 'baloncesto-3x3', 'voleibol', 'futbol-sala', 'tenis', 'padel'];
         $sports = Sport::orderBy('name')->get()->sortBy(function (Sport $sport) use ($order): int {
             $position = array_search($sport->slug, $order, true);
 
@@ -27,14 +28,18 @@ class MapController extends Controller
 
     public function clubs(Request $request): JsonResponse
     {
-        $data = $request->validate(['sport' => ['nullable', 'string', 'max:100']]);
-        $query = Club::with('courts.sport');
-
-        if ($slug = ($data['sport'] ?? null)) {
-            $query->whereHas('courts.sport', fn ($query) => $query->where('slug', $slug));
+        $selectedSports = SportSelection::fromRequest($request);
+        $query = Club::with(['courts' => function ($courts) use ($selectedSports): void {
+            $courts->with('sport');
+            if ($selectedSports !== []) {
+                $courts->whereHas('sport', fn ($sport) => $sport->whereIn('slug', $selectedSports));
+            }
+        }]);
+        if ($selectedSports !== []) {
+            $query->whereHas('courts.sport', fn ($sport) => $sport->whereIn('slug', $selectedSports));
         }
 
-        $clubs = $query->orderBy('name')->get()->map(function (Club $club): array {
+        $clubs = $query->orderBy('name')->get()->map(function (Club $club) use ($selectedSports): array {
             $sports = $club->courts->pluck('sport')->filter()->unique('id')->values();
             $first = $sports->first();
 
@@ -47,13 +52,15 @@ class MapController extends Controller
                 'lat' => (float) $club->lat,
                 'lng' => (float) $club->lng,
                 'sports' => $sports->pluck('name')->all(),
-                'url' => route('clubs.show', $club),
+                'sport_slugs' => $sports->pluck('slug')->all(),
+                'court_count' => $club->courts->count(),
+                'url' => route('clubs.show', ['club' => $club->id] + ($selectedSports ? ['sports' => $selectedSports] : [])),
                 // Las imágenes del deporte son ilustraciones, no fotos verificadas del club.
                 'image_url' => $first ? Ui::sportThumb($first->slug) : asset('img/club-cover.svg'),
                 'image_description' => $first ? 'Imagen ilustrativa: '.$first->name : 'Ilustración de un club deportivo',
             ];
         });
 
-        return response()->json($clubs);
+        return response()->json($clubs)->header('Cache-Control', 'no-store');
     }
 }

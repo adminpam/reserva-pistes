@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Sport;
 use App\Models\User;
+use App\Support\SportSelection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,15 +18,15 @@ class MatchController extends Controller
 {
     public function index(Request $request): View
     {
+        $selectedSportSlugs = SportSelection::fromRequest($request);
         $filters = $request->validate([
-            'sport' => ['nullable', 'string', 'max:100'],
             'club' => ['nullable', 'string', 'max:150'],
             'my_level' => ['sometimes', 'boolean'],
         ]);
         $matches = Booking::openUpcoming()
             ->with('court.club', 'court.sport', 'user:id,name', 'players:id,name,avatar_version')
-            ->when($filters['sport'] ?? null, fn ($query, $sport) =>
-                $query->whereHas('court.sport', fn ($query) => $query->where('slug', $sport)))
+            ->when($selectedSportSlugs, fn ($query) =>
+                $query->whereHas('court.sport', fn ($query) => $query->whereIn('slug', $selectedSportSlugs)))
             ->when($filters['club'] ?? null, fn ($query, $club) =>
                 $query->whereHas('court.club', fn ($query) => $query->where('name', 'like', '%'.$club.'%')))
             ->orderBy('starts_at')
@@ -38,7 +39,7 @@ class MatchController extends Controller
                 $match->levelFits($user->levelFor($match->court->sport_id)))->values();
         }
 
-        return view('matches.index', ['matches' => $matches, 'sports' => Sport::orderBy('name')->get()]);
+        return view('matches.index', ['matches' => $matches, 'sports' => Sport::orderBy('name')->get(), 'selectedSportSlugs' => $selectedSportSlugs]);
     }
 
     public function mine(Request $request): View

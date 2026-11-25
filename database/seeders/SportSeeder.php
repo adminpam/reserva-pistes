@@ -23,5 +23,7 @@ class SportSeeder extends Seeder
         foreach ($sports as $sport) {
             Sport::updateOrCreate(['slug' => $sport['slug']], $sport);
         }
+        // Pádel se añade sin sobrescribir un aforo ya administrado.
+        Sport::firstOrCreate(['slug' => 'padel'], ['name' => 'Pádel', 'players_per_match' => 4, 'icon' => 'padel.svg']);
     }
 }

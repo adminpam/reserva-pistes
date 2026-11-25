@@ -22,6 +22,7 @@ class CourtSeeder extends Seeder
         'baloncesto-3x3'  => ['min' => 1000, 'max' => 1800, 'exterior' => true,  'nombre' => 'Cancha 3x3'],
         'voleibol'        => ['min' => 1200, 'max' => 2000, 'exterior' => true,  'nombre' => 'Pista voleibol'],
         'futbol-sala'     => ['min' => 2000, 'max' => 3500, 'exterior' => true,  'nombre' => 'Pista fútbol sala'],
+        'padel'           => ['min' => 1400, 'max' => 2200, 'exterior' => false, 'nombre' => '[Demo] Pista pádel'],
         'tenis'           => ['min' => 1000, 'max' => 1800, 'exterior' => true,  'nombre' => 'Pista tenis'],
     ];
 
