@@ -1,3 +1,11 @@
+{{-- Conjunto aprobado por Denys. El nombre contiguo es la etiqueta accesible. --}}
+@php($illustratedSports = ['tenis-de-mesa', 'badminton', 'baloncesto-3x3', 'voleibol', 'futbol-sala', 'tenis', 'padel'])
+@if(in_array($slug ?? '', $illustratedSports, true))
+<span class="rp-sport-icon rp-sport-art" aria-hidden="true">
+    <img class="rp-sport-art__normal" src="{{ \App\Support\FrontendAsset::url('img/sport-icons/'.$slug.'.svg') }}" alt="" width="128" height="128" decoding="async">
+    <img class="rp-sport-art__dark" src="{{ \App\Support\FrontendAsset::url('img/sport-icons/'.$slug.'-on-dark.svg') }}" alt="" width="128" height="128" decoding="async">
+</span>
+@else
 {{-- Iconos vectoriales propios. El nombre accesible está en la etiqueta del filtro. --}}
 <svg class="rp-sport-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
     @switch($slug)
@@ -29,3 +37,5 @@
             <path d="M16 6v20"/><circle cx="16" cy="16" r="6"/>
     @endswitch
 </svg>
+
+@endif

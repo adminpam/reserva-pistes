@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 128 128" fill="none" role="img" aria-label="Fútbol sala"><title>Fútbol sala</title><defs>
+      <linearGradient id="rp-futbol-sala-light-mint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F5FFFA"/><stop offset=".5" stop-color="#C6ECE1"/><stop offset="1" stop-color="#65B9A6"/></linearGradient>
+      <linearGradient id="rp-futbol-sala-light-green" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#36B39B"/><stop offset=".55" stop-color="#087E6E"/><stop offset="1" stop-color="#03594E"/></linearGradient>
+      <radialGradient id="rp-futbol-sala-light-gold" cx=".3" cy=".23" r=".85"><stop stop-color="#FFE18B"/><stop offset=".52" stop-color="#FFB319"/><stop offset="1" stop-color="#ED9410"/></radialGradient>
+      <radialGradient id="rp-futbol-sala-light-tennis" cx=".3" cy=".23" r=".85"><stop stop-color="#F3F7B0"/><stop offset=".58" stop-color="#D7E765"/><stop offset="1" stop-color="#9CB94A"/></radialGradient>
+      <radialGradient id="rp-futbol-sala-light-white" cx=".28" cy=".2" r=".9"><stop stop-color="#FFFFFF"/><stop offset=".6" stop-color="#E9F8F0"/><stop offset="1" stop-color="#9CCBBE"/></radialGradient>
+      <filter id="rp-futbol-sala-light-shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="2.2" stdDeviation="1.5" flood-color="#002D27" flood-opacity=".13"/></filter>
+      <clipPath id="rp-futbol-sala-light-ball"><circle cx="64" cy="64" r="45"/></clipPath>
+    </defs><circle cx="64" cy="64" r="45" fill="url(#rp-futbol-sala-light-white)" stroke="#073F38" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" filter="url(#rp-futbol-sala-light-shadow)"/>
+          <g clip-path="url(#rp-futbol-sala-light-ball)" stroke="#073F38" stroke-width="3" stroke-linejoin="round">
+            <path d="m64 45 18 13-7 21H53l-7-21Z" fill="url(#rp-futbol-sala-light-green)"/>
+            <path d="m51 20 13-3 14 4-5 13H57ZM20 48l14-2 7 12-8 13-16-2ZM108 48l-14-2-7 12 8 13 16-2ZM36 100l3-14 13-3 6 14-8 13ZM92 100l-3-14-13-3-6 14 8 13Z" fill="url(#rp-futbol-sala-light-green)"/>
+            <path d="M64 34v11M41 58h5M82 58h5M53 79l-4 6m26-6 4 6" fill="none"/>
+          </g></svg>

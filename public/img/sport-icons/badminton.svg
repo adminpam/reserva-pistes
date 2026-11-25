@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 128 128" fill="none" role="img" aria-label="Bádminton"><title>Bádminton</title><defs>
+      <linearGradient id="rp-badminton-light-mint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F5FFFA"/><stop offset=".5" stop-color="#C6ECE1"/><stop offset="1" stop-color="#65B9A6"/></linearGradient>
+      <linearGradient id="rp-badminton-light-green" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#36B39B"/><stop offset=".55" stop-color="#087E6E"/><stop offset="1" stop-color="#03594E"/></linearGradient>
+      <radialGradient id="rp-badminton-light-gold" cx=".3" cy=".23" r=".85"><stop stop-color="#FFE18B"/><stop offset=".52" stop-color="#FFB319"/><stop offset="1" stop-color="#ED9410"/></radialGradient>
+      <radialGradient id="rp-badminton-light-tennis" cx=".3" cy=".23" r=".85"><stop stop-color="#F3F7B0"/><stop offset=".58" stop-color="#D7E765"/><stop offset="1" stop-color="#9CB94A"/></radialGradient>
+      <radialGradient id="rp-badminton-light-white" cx=".28" cy=".2" r=".9"><stop stop-color="#FFFFFF"/><stop offset=".6" stop-color="#E9F8F0"/><stop offset="1" stop-color="#9CCBBE"/></radialGradient>
+      <filter id="rp-badminton-light-shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="2.2" stdDeviation="1.5" flood-color="#002D27" flood-opacity=".13"/></filter>
+      <clipPath id="rp-badminton-light-ball"><circle cx="64" cy="64" r="45"/></clipPath>
+    </defs><g transform="rotate(18 64 64)" filter="url(#rp-badminton-light-shadow)">
+          <path d="M45 82 27 27Q32 17 43 16L61 72" fill="url(#rp-badminton-light-mint)" stroke="#073F38" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="m53 79-9-62q8-8 18-5l7 63" fill="#F5FFFA" stroke="#073F38" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="m62 78 2-66q10-2 18 5L78 79" fill="url(#rp-badminton-light-mint)" stroke="#073F38" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="m71 80 13-63q12 2 16 12L82 85" fill="#F5FFFA" stroke="#073F38" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="m36 46 14 33m5-34 6 34m13-33-3 33m19-30-11 32" fill="none" stroke="#073F38" stroke-width="2.4" opacity=".6"/>
+          <path d="M43 77q20 9 40 0l-2 17q-1 20-18 20T45 94Z" fill="url(#rp-badminton-light-gold)" stroke="#073F38" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M44 84q19 8 38 0" fill="none" stroke="#F5FFFA" stroke-width="5"/>
+        </g></svg>

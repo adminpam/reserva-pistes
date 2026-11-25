@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 128 128" fill="none" role="img" aria-label="Voleibol"><title>Voleibol</title><defs>
+      <linearGradient id="rp-voleibol-dark-mint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F5FFFA"/><stop offset=".5" stop-color="#C6ECE1"/><stop offset="1" stop-color="#65B9A6"/></linearGradient>
+      <linearGradient id="rp-voleibol-dark-green" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#36B39B"/><stop offset=".55" stop-color="#087E6E"/><stop offset="1" stop-color="#03594E"/></linearGradient>
+      <radialGradient id="rp-voleibol-dark-gold" cx=".3" cy=".23" r=".85"><stop stop-color="#FFE18B"/><stop offset=".52" stop-color="#FFB319"/><stop offset="1" stop-color="#ED9410"/></radialGradient>
+      <radialGradient id="rp-voleibol-dark-tennis" cx=".3" cy=".23" r=".85"><stop stop-color="#F3F7B0"/><stop offset=".58" stop-color="#D7E765"/><stop offset="1" stop-color="#9CB94A"/></radialGradient>
+      <radialGradient id="rp-voleibol-dark-white" cx=".28" cy=".2" r=".9"><stop stop-color="#FFFFFF"/><stop offset=".6" stop-color="#E9F8F0"/><stop offset="1" stop-color="#9CCBBE"/></radialGradient>
+      <filter id="rp-voleibol-dark-shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="2.2" stdDeviation="1.5" flood-color="#002D27" flood-opacity=".26"/></filter>
+      <clipPath id="rp-voleibol-dark-ball"><circle cx="64" cy="64" r="45"/></clipPath>
+    </defs><circle cx="64" cy="64" r="45" fill="url(#rp-voleibol-dark-white)" stroke="#D4FFF1" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" filter="url(#rp-voleibol-dark-shadow)"/>
+          <g clip-path="url(#rp-voleibol-dark-ball)" stroke="#073F38" stroke-width="3.5" stroke-linejoin="round">
+            <path d="M64 64C40 59 35 42 43 24l20-7c-1 20-2 34 1 47Z" fill="url(#rp-voleibol-dark-mint)"/>
+            <path d="M64 64c11-22 29-23 44-14l3 20c-20-9-33-12-47-6Z" fill="url(#rp-voleibol-dark-green)"/>
+            <path d="M64 64c16 17 15 36-1 48l-21-5c16-14 23-27 22-43Z" fill="url(#rp-voleibol-dark-mint)"/>
+            <path d="M64 64c-4-18-3-32 0-45M64 64c18-4 31-2 44 8M64 64c-12 10-20 23-24 38M22 48c10-6 19-4 25 1M86 25c-9 6-13 15-13 25M100 89c-10-2-18-8-22-16M30 91c1-10 6-18 13-23" fill="none"/>
+          </g></svg>
