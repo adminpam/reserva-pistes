@@ -35,8 +35,10 @@ class MapController extends Controller
                 $courts->whereHas('sport', fn ($sport) => $sport->whereIn('slug', $selectedSports));
             }
         }]);
-        if ($selectedSports !== []) {
-            $query->whereHas('courts.sport', fn ($sport) => $sport->whereIn('slug', $selectedSports));
+        // Cada condición se añade con AND: el club debe tener todos los deportes.
+        // Contar pistas no bastaría: varias pistas de un mismo deporte no cubren otro.
+        foreach ($selectedSports as $slug) {
+            $query->whereHas('courts.sport', fn ($sport) => $sport->where('slug', $slug));
         }
 
         $clubs = $query->orderBy('name')->get()->map(function (Club $club) use ($selectedSports): array {

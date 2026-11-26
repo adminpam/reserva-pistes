@@ -1,0 +1,42 @@
+/* Ficha de club: jerarquía clara y acción separada del contenido. */
+.rp-club-popup .leaflet-popup-content-wrapper { padding:0; border:1px solid #dce8e0; border-radius:22px; box-shadow:0 16px 48px #003d352b; overflow:hidden; }
+.rp-club-popup .leaflet-popup-content { margin:0; width:min(360px,calc(100vw - 56px))!important; line-height:1.4; }
+.rp-club-popup .leaflet-popup-close-button { top:9px!important; right:9px!important; z-index:2; display:grid; place-items:center; width:30px!important; height:30px!important; border-radius:50%; background:#edf3ef; color:#587368; font:400 23px/1 system-ui; }
+.rp-club-popup .leaflet-popup-close-button:hover { background:#e2ece6; color:#123f31; }
+.rp-club-popup .rp-club-card { padding:20px 18px 16px; gap:12px; grid-template-columns:82px minmax(0,1fr); background:#fff; }
+.rp-club-card .rp-club-card__body { min-width:0; }
+.rp-club-card .rp-club-card__city { margin:0 26px 4px 0; font-size:10px; line-height:1.3; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#668174; }
+.rp-club-popup .rp-club-card h3 { margin:0 24px 6px 0; padding:0; color:#123e32; font-size:18px; line-height:1.25; }
+.rp-club-card .rp-club-card__address { margin:0; font-size:12px; line-height:1.45; color:#6b7f73; }
+.rp-club-popup .rp-club-card img { width:82px; height:104px; border-radius:12px; }
+.rp-club-popup .rp-club-card figcaption { font-size:8px; line-height:17px; border-radius:0 0 12px 12px; }
+.rp-club-card .rp-club-card__sports { margin-top:8px; gap:5px; }
+.rp-club-card .rp-club-card__sport { padding:3px 8px; background:#eef5ef; border:1px solid #e2ece3; color:#3b6c53; font-size:11px; line-height:1.25; }
+.rp-club-card .rp-club-card__meta { margin:7px 0 0; color:#7b8c80; font-size:11px; }
+.rp-club-card .rp-club-card__footer { grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; gap:12px; min-width:0; padding-top:12px; border-top:1px solid #e8eee9; }
+.rp-club-card .rp-club-card__price { align-self:center; padding:0; border:0; color:#124d37; text-align:left; font-size:18px; white-space:nowrap; line-height:1.15; }
+.rp-club-card .rp-club-card__price strong { display:inline; font-weight:800; }
+.rp-club-card .rp-club-card__price>span { display:block; color:#7a8d80; font-size:10px; line-height:1.3; }
+.rp-club-card .rp-club-card__price>strong+span { display:inline; margin-left:3px; }
+.rp-club-card .rp-club-card__link { display:inline-flex; justify-content:center; align-items:center; gap:10px; flex:none; min-height:44px; margin:0; padding:0 16px; border:1px solid #ffb21d; border-radius:99px; background:#ffb21d; color:#153d26!important; text-decoration:none; font-size:13px; font-weight:800; white-space:nowrap; }
+.rp-club-card .rp-club-card__link:hover { background:#ffc047; border-color:#ffc047; }
+.rp-club-card .rp-club-card__link:focus-visible { outline:3px solid #007e6e; outline-offset:3px; }
+.rp-selected-club .rp-club-card { grid-template-columns:72px minmax(0,1fr); gap:10px; padding:12px; background:#fff; border-color:#dce8df; border-radius:16px; }
+.rp-selected-club .rp-club-card img { width:72px; height:90px; }
+.rp-selected-club .rp-club-card h3 { margin:0 0 5px; padding-right:48px; font-size:16px; line-height:1.25; }
+.rp-selected-club .rp-club-card__city { display:none; }
+.rp-selected-club .rp-club-card__sports { flex-wrap:nowrap; overflow-x:auto; padding-bottom:2px; }
+.rp-selected-club .rp-club-card__sport { flex:none; }
+.rp-selected-club .rp-club-card__meta { margin-top:5px; }
+.rp-selected-club .rp-club-card__footer { padding-top:10px; }
+.rp-mobile-club-list .rp-club-card { grid-template-columns:64px minmax(0,1fr); gap:10px; padding:18px 0; }
+.rp-mobile-club-list .rp-club-card img { width:64px; height:90px; }
+.rp-mobile-club-list .rp-club-card h3 { margin:0 0 5px; font-size:16px; }
+.rp-mobile-club-list .rp-club-card__city { margin-right:0; }
+.rp-mobile-club-list .rp-club-card__footer { padding-top:10px; }
+@media(max-width:360px) {
+    .rp-selected-club .rp-club-card { grid-template-columns:54px minmax(0,1fr); padding:10px; gap:8px; }
+    .rp-selected-club .rp-club-card img { width:54px; height:76px; }
+    .rp-club-card .rp-club-card__link { padding-inline:12px; font-size:12px; }
+    .rp-club-card .rp-club-card__price { font-size:17px; }
+}

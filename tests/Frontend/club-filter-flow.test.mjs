@@ -23,7 +23,7 @@ test('el mapa conserva filtros y ficha, descarta respuestas antiguas y restaura 
     }
     const el=()=>new Element();
     const options=['padel','tenis','badminton'].map(value=>Object.assign(el(),{value,checked:false}));
-    const group=el(),all=el(),summary=el();group.refs={'[data-sport-all]':all,'[data-sport-summary]':summary};group.lists={'[data-sport-option]':options};
+    const group=el(),clear=el(),guide=el(),caption=el(),summary=el();group.refs={'[data-sport-clear]':clear,'[data-sport-guide]':guide,'[data-sport-caption]':caption,'[data-sport-summary]':summary};group.lists={'[data-sport-option]':options};
     const frame=el(),panel=el(),handle=el(),list=el(),selection=el(),mapButton=el(),hint=el(),selectedCard=el(),clubList=el();
     handle.parentElement=el();selection.refs={'[data-selected-card]':selectedCard};
     const root=el();
@@ -44,6 +44,8 @@ test('el mapa conserva filtros y ficha, descarta respuestas antiguas y restaura 
     const answer=(request,name)=>request.resolve({ok:true,json:async()=>[{id:1,name,lat:41.5,lng:2.1,sports:['Pádel'],url:'/clubs/1'+request.url.search,image_url:'/img/club-cover.svg',min_price_per_hour:1500}]});
     const toggle=slug=>{const input=options.find(x=>x.value===slug);input.checked=!input.checked;group.fire('change',input);};
     assert.equal(pending.length,1);
+    assert.equal(guide.hidden,false);
+    assert.equal(pending[0].url.searchParams.size,0);
     answer(pending[0],'Club inicial'); await flush();
     assert.equal(count.textContent,'1 club');
     toggle('tenis'); const old=pending[1];
@@ -51,6 +53,7 @@ test('el mapa conserva filtros y ficha, descarta respuestas antiguas y restaura 
     assert.deepEqual(newest.url.searchParams.getAll('sports[]'),['padel','tenis']);
     assert.equal(newest.url.searchParams.has('sport'),false);
     assert.equal(old.opts.signal.aborted,true);
+    assert.equal(guide.hidden,true);
     answer(newest,'Club actualizado'); await flush();
     answer(old,'Respuesta atrasada'); await flush();
     assert.equal(clubList.children[0].children[1].children[0].textContent,'Club actualizado');
@@ -59,7 +62,7 @@ test('el mapa conserva filtros y ficha, descarta respuestas antiguas y restaura 
     assert.equal(root.dataset.drawerState,'peek');
     assert.equal(selection.hidden,false);
     const card=selectedCard.children[0];
-    const link=card.children[1].children.find(x=>x.className==='rp-club-card__link');
+    const link=card.children[2].children.find(x=>x.className==='rp-club-card__link');
     assert.deepEqual(new URL(link.href).searchParams.getAll('sports[]'),['padel','tenis']);
     assert.equal(new URL(location.href).searchParams.getAll('sports[]').length,2);
     const pushes=history.pushes.length;
@@ -69,9 +72,11 @@ test('el mapa conserva filtros y ficha, descarta respuestas antiguas y restaura 
     assert.equal(options.find(x=>x.value==='padel').checked,false);
     assert.deepEqual(pending[3].url.searchParams.getAll('sports[]'),['tenis']);
     answer(pending[3],'Club al volver');await flush();
-    all.fire('click');
+    clear.fire('click');
     assert.equal(pending[4].url.searchParams.size,0);
-    answer(pending[4],'Todos');await flush();
+    assert.equal(guide.hidden,false);
+    assert.equal(clear.hidden,true);
+    answer(pending[4],'Catálogo completo');await flush();
     // Recuperar la página desde bfcache vuelve a leer la URL y consulta datos actuales.
     location.href='http://localhost:8000/?sports[0]=padel';events.get('pageshow')({persisted:true});
     assert.deepEqual(pending[5].url.searchParams.getAll('sports[]'),['padel']);
@@ -82,6 +87,17 @@ test('el mapa conserva filtros y ficha, descarta respuestas antiguas y restaura 
     root.refs['[data-map-retry]'].fire('click');
     assert.deepEqual(pending[7].url.searchParams.getAll('sports[]'),['badminton','padel']);
     answer(pending[7],'Recuperado');await flush();
+    assert.equal(count.textContent,'1 club');
+    // Un resultado vacío conserva los filtros y permite limpiar sin perder la ayuda.
+    toggle('tenis'); pending[8].resolve({ok:true,json:async()=>[]}); await flush();
+    assert.equal(count.textContent,'0 clubes');
+    assert.equal(root.refs['[data-map-state-title]'].textContent,'Ningún club reúne todos estos deportes');
+    assert.equal(guide.hidden,true);
+    assert.equal(clear.hidden,false);
+    clear.fire('click');
+    assert.equal(pending[9].url.searchParams.size,0);
+    assert.equal(guide.hidden,false);
+    answer(pending[9],'Catálogo recuperado'); await flush();
     assert.equal(count.textContent,'1 club');
     events.get('pagehide')({persisted:false});
 

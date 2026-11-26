@@ -44,15 +44,17 @@ class FrontendSportsFilterTest extends TestCase
         $response = $this->get('/?'.http_build_query(['sports' => ['tenis', 'padel']]));
         $response->assertOk()->assertViewHas('selectedSportSlugs', ['padel', 'tenis']);
         $this->assertSame(['padel', 'tenis'], $this->selected($response->getContent(), 'map'));
-        $response->assertSee('ui/sport-selection.css', false)->assertSee('data-sport-all', false);
+        $response->assertSee('ui/sport-selection.css', false)->assertSee('data-sport-clear', false)->assertDontSee('data-sport-all', false);
     }
 
     public function test_map_handles_all_and_legacy_single_sport_links(): void
     {
-        $all = $this->get('/')->assertOk();
+        $all = $this->get('/')->assertOk()->assertSee('Selecciona algún deporte')->assertDontSee('data-sport-all', false);
+        $this->assertDoesNotMatchRegularExpression('/data-sport-guide\s+hidden/', $all->getContent());
         $this->assertSame([], $this->selected($all->getContent(), 'map'));
         $legacy = $this->get('/?sport=tenis')->assertOk();
         $this->assertSame(['tenis'], $this->selected($legacy->getContent(), 'map'));
+        $this->assertMatchesRegularExpression('/data-sport-guide\s+hidden/', $legacy->getContent());
     }
 
     public function test_map_rejects_unknown_and_conflicting_filters_before_rendering(): void

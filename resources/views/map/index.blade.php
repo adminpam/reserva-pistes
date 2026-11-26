@@ -12,6 +12,7 @@
 @push('styles')
     <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/home.css') }}">
     <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/sport-selection.css') }}">
+    <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/map-cards.css') }}">
     <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/club-explorer.js') }}"></script>
 @endpush
 
@@ -45,7 +46,6 @@
             <h2 id="sport-heading">Deportes</h2>
 
         </div>
-        <p class="rp-sports__help">Elige uno o varios. Todos elimina el filtro.</p>
         @include('partials.sport-filter', ['filterPrefix' => 'map-sport', 'filterMode' => 'map'])
         @if($sports->isEmpty())
             <p class="rp-sports__empty">Todavía no hay deportes disponibles.</p>
