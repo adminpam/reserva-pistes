@@ -28,8 +28,14 @@ function responseError(status, payload) {
     return 'No se ha podido confirmar el guardado. Elige de nuevo la foto para intentarlo.';
 }
 
+function readableError(error, fallback) {
+    // Un fallo de una API nativa no se muestra como un mensaje técnico en el perfil.
+    const native = ['TypeError', 'SecurityError', 'InvalidStateError', 'NotSupportedError', 'AbortError'];
+    return error instanceof Error && !native.includes(error.name) ? error.message.slice(0, 400) : fallback;
+}
+
 export function createAvatarAutosave({ initial, send, decode, prepare = prepareAvatar, onState = () => {}, onConfirmed = () => {},
-    timers = { set: setTimeout, clear: clearTimeout }, prepareTimeoutMs = 35000, requestTimeoutMs = 20000 }) {
+    timers = { set: (...args) => globalThis.setTimeout(...args), clear: (...args) => globalThis.clearTimeout(...args) }, prepareTimeoutMs = 35000, requestTimeoutMs = 20000 }) {
     let confirmed = { ...initial }, generation = 0, desired = null, pumping = false, disposed = false;
     let state = { phase: 'idle', message: '', preview: null };
     const cancellations = new Set();
@@ -80,7 +86,7 @@ export function createAvatarAutosave({ initial, send, decode, prepare = prepareA
                         if (job.ticket === generation) emit('saved', 'Foto guardada.', null);
                         break;
                     } catch (error) {
-                        if (job.ticket === generation && !disposed) emit('error', error instanceof Error ? error.message : responseError(0), null);
+                        if (job.ticket === generation && !disposed) emit('error', readableError(error, responseError(0)), null);
                         break;
                     }
                 }
@@ -103,7 +109,7 @@ export function createAvatarAutosave({ initial, send, decode, prepare = prepareA
             emit('saving', 'Guardando foto…', blob);
             void pump();
         } catch (error) {
-            if (ticket === generation && !disposed) emit('error', error instanceof Error ? error.message : 'No se ha podido preparar la foto.', null);
+            if (ticket === generation && !disposed) emit('error', readableError(error, 'No se ha podido preparar la foto. Elige otra imagen e inténtalo de nuevo.'), null);
         }
     }
     return {

@@ -1,4 +1,4 @@
-/* Perfil: selector circular con plus y guardado automático independiente. */
+/* Perfil: foto con cámara, silueta neutra y guardado automático. */
 .rp-profile-main { display:grid; gap:24px; min-width:0; }
 .rp-profile-summary { display:block; }
 .rp-profile-summary>* { min-width:0; }
@@ -9,14 +9,18 @@
 .rp-avatar-identity .rp-profile-email { margin:8px 0 22px; }
 .rp-avatar-identity .rp-profile-since { margin:0; }
 .rp-avatar-identity .rp-badge { margin-top:14px; }
-.rp-avatar-editor .rp-avatar-trigger { position:relative; flex:none; display:grid; place-items:center; width:164px; height:164px; padding:0; margin:0; border:0; border-radius:50%; overflow:visible; background:linear-gradient(145deg,#006958,#003c34); color:#fff; font:800 54px 'Manrope',system-ui,sans-serif; box-shadow:0 0 0 5px #edf4ef; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.rp-avatar-editor .rp-avatar-trigger { position:relative; flex:none; display:grid; place-items:center; width:164px; height:164px; padding:0; margin:0; border:0; border-radius:50%; overflow:visible; background:linear-gradient(145deg,#e6eee8,#d8e5dc); color:#315b47; font:800 54px 'Manrope',system-ui,sans-serif; box-shadow:0 0 0 5px #f4f7f4,0 0 0 6px #dfe8e1; cursor:pointer; -webkit-tap-highlight-color:transparent; }
 .rp-avatar-trigger>.rp-avatar-current { overflow:hidden; border-radius:50%; }
 .rp-avatar-trigger .rp-avatar-image { border-radius:50%; }
 .rp-avatar-trigger:focus-visible { outline:3px solid #ffb21d; outline-offset:9px; }
 .rp-avatar-trigger:disabled { cursor:wait; }
 .rp-avatar-file { position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
 .rp-avatar-preview { position:absolute; inset:0; z-index:1; }
-.rp-avatar-plus { position:absolute; z-index:3; right:1px; bottom:4px; display:grid; place-items:center; width:34px; height:34px; border:3px solid #fff; border-radius:50%; background:#ffb21d; color:#104a36; box-shadow:0 2px 8px #003d3526; font:500 25px/1 system-ui,sans-serif; }
+.rp-avatar-camera { position:absolute; z-index:3; right:-3px; bottom:1px; display:grid; place-items:center; width:44px; height:44px; border:1px solid #e6ece6; border-radius:50%; background:#fff; color:#075641; box-shadow:0 3px 12px #214e3321; }
+.rp-avatar-camera svg { display:block; width:25px; height:25px; }
+.rp-avatar-placeholder { position:absolute; inset:0; display:none; width:100%; height:100%; border-radius:50%; overflow:hidden; pointer-events:none; }
+.rp-avatar-trigger>.rp-avatar-current[data-avatar-url=""] { color:transparent; }
+.rp-avatar-trigger>.rp-avatar-current[data-avatar-url=""]:not([hidden])~.rp-avatar-placeholder { display:block; }
 .rp-avatar-busy { position:absolute; inset:0; z-index:2; display:none; place-items:center; border-radius:50%; background:#00372e3d; pointer-events:none; }
 .rp-avatar-busy>span { width:28px; height:28px; border:3px solid #ffffff70; border-top-color:#fff; border-radius:50%; animation:rp-avatar-spin .85s linear infinite; }
 .rp-avatar-editor[data-avatar-state=preparing] .rp-avatar-busy,.rp-avatar-editor[data-avatar-state=saving] .rp-avatar-busy { display:grid; }
@@ -24,7 +28,7 @@
 .rp-avatar-editor[data-avatar-state=saved] .rp-avatar-trigger { box-shadow:0 0 0 4px #d9ece0; }
 .rp-avatar-status { margin:14px 0 0; color:#60786a; font-size:12px; line-height:1.5; text-align:center; overflow-wrap:anywhere; }
 .rp-avatar-status:empty { display:none; }
-.rp-avatar-editor[data-avatar-state=error] .rp-avatar-status { color:#9c342a; }
+.rp-avatar-editor[data-avatar-state=error] .rp-avatar-status { padding:10px 12px; border:1px solid #eeddd5; border-radius:12px; background:#fff7f3; color:#944632; }
 .rp-avatar-editor[data-avatar-state=saved] .rp-avatar-status { color:#087155; }
 .rp-avatar-editor [hidden] { display:none!important; }
 .rp-profile-password form { display:grid; gap:18px; margin-top:22px; }
@@ -41,7 +45,8 @@
     .rp-profile-main { gap:18px; }
     .rp-avatar-presentation { grid-template-columns:90px minmax(0,1fr); gap:18px; }
     .rp-avatar-editor .rp-avatar-trigger { width:90px; height:90px; font-size:32px; }
-    .rp-avatar-plus { width:29px; height:29px; right:-1px; bottom:0; font-size:22px; }
+    .rp-avatar-camera { width:36px; height:36px; right:-4px; bottom:-1px; }
+    .rp-avatar-camera svg { width:21px; height:21px; }
     .rp-profile-password .rp-form-footer { align-items:stretch; flex-direction:column; }
     .rp-profile-password .rp-form-footer .btn { width:100%; }
 }

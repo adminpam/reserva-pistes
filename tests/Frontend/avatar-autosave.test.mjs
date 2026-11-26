@@ -1,3 +1,5 @@
+import vm from 'node:vm';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createAvatarAutosave, normalizeAvatar, createAvatarRequest, applyConfirmedAvatar, bindAvatarAutosave } from '../../public/ui/avatar-autosave.js';
@@ -235,4 +237,70 @@ test('un fallo de lectura de una foto antigua no borra la imagen nueva de la cab
     assert.equal(s.header.children[0], current); assert.equal(s.header.textContent, undefined);
     current.listeners.get('error')();
     assert.equal(s.header.textContent, 'PD');
+});
+
+
+// Un navegador verifica el receptor de estos métodos; Node permite otros receptores.
+// El realm reproduce esa comprobación y ejecuta el módulo de producción, sin editar su lógica.
+async function browserTimerRealm() {
+    const source = await readFile(new URL('../../public/ui/avatar-autosave.js', import.meta.url), 'utf8');
+    const sandbox = vm.createContext({ URL, AbortController, Blob, Promise });
+    vm.runInContext(`
+        globalThis.pendingTimers = new Map();
+        globalThis.timerId = 0;
+        globalThis.setCalls = 0;
+        globalThis.clearCalls = 0;
+        globalThis.setTimeout = function (callback, delay) {
+            if (this !== globalThis) throw new TypeError('Illegal invocation');
+            globalThis.setCalls++;
+            pendingTimers.set(++timerId, { callback, delay });
+            return timerId;
+        };
+        globalThis.clearTimeout = function (id) {
+            if (this !== globalThis) throw new TypeError('Illegal invocation');
+            globalThis.clearCalls++;
+            pendingTimers.delete(id);
+        };
+        const prepareAvatar = () => { throw new Error('Preparador no instalado en el realm'); };
+    ` + source.replace(/^import[^\n]*\n/gm, '').replace(/^export /gm, ''), sandbox);
+    return sandbox;
+}
+
+test('los temporizadores de producción conservan el receptor global y permiten subir la primera foto', async () => {
+    const realm = await browserTimerRealm();
+    const wrongReceiver = { set: realm.setTimeout };
+    assert.throws(() => wrongReceiver.set(() => {}, 1), /Illegal invocation/);
+    let requests = 0;
+    const instance = realm.createAvatarAutosave({ initial: decode(payload(null)), decode,
+        prepare: async () => blob(), send: async () => { requests++; return { status: 200, payload: payload(a) }; } });
+    await instance.select({}); await tick();
+    assert.equal(instance.snapshot().phase, 'saved');
+    assert.equal(requests, 1);
+    assert.equal(realm.setCalls, 2); assert.equal(realm.clearCalls, 2);
+    assert.equal(realm.pendingTimers.size, 0);
+    instance.destroy();
+});
+
+test('el tiempo de espera también se limpia con el receptor global al sustituir una foto', async () => {
+    const realm = await browserTimerRealm(), response = deferred(); let signal;
+    const instance = realm.createAvatarAutosave({ initial: decode(payload(a)), decode,
+        prepare: async () => blob(), send: (file, version, value) => { signal = value; return response.promise; } });
+    await instance.select({}); await tick();
+    const timeout = [...realm.pendingTimers.values()].find((entry) => entry.delay === 20000);
+    assert.ok(timeout); timeout.callback(); await tick();
+    assert.equal(signal.aborted, true);
+    assert.equal(instance.snapshot().phase, 'error');
+    assert.equal(instance.snapshot().confirmed.version, a);
+    assert.equal(realm.pendingTimers.size, 0);
+    response.resolve({ status: 200, payload: payload(b) }); await tick();
+    assert.equal(instance.snapshot().confirmed.version, a);
+    instance.destroy();
+});
+
+test('un fallo nativo se comunica en español sin mostrar Illegal invocation', async (t) => {
+    const m = machine(t, { prepare: async () => { throw new TypeError('Illegal invocation'); } });
+    await m.instance.select({}); await tick();
+    assert.equal(m.calls.length, 0); assert.equal(m.instance.snapshot().phase, 'error');
+    assert.match(m.instance.snapshot().message, /No se ha podido preparar la foto/);
+    assert.doesNotMatch(m.instance.snapshot().message, /Illegal invocation/);
 });
