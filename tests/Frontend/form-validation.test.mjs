@@ -136,3 +136,10 @@ test('una acción sin campos editables recibe su error de negocio en su propia t
 test('el formulario de salir no se modifica',()=>{
     const f=form([], '/logout'),{doc}=documentOf([f]);enhanceValidation(doc);assert.equal(f.noValidate,false);assert.equal(f.children.length,0);
 });
+test('el error queda fuera del contenedor del icono para no desplazar el ojo',()=>{
+    const password=input('password','',{required:true}),outer=new Element(),icon=new Element(),wrapper=new Element('span');
+    outer.className='field';icon.className='field-icon';wrapper.className='rp-password-wrap';
+    const f=form([]);f.elements.push(password);password.form=f;f.append(outer);outer.append(icon);icon.append(wrapper);wrapper.append(password);
+    const {doc}=documentOf([f]);const binding=enhanceValidation(doc);doc.emit('submit',f);
+    const error=binding.states.get(f).nodes[0];assert.equal(error.parent,outer);assert.equal(icon.children.length,1);
+});
