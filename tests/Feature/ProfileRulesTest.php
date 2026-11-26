@@ -92,7 +92,7 @@ class ProfileRulesTest extends TestCase
 
     public function test_profile_contains_separate_forms_and_guest_is_redirected(): void
     {
-        $this->get('/profile')->assertOk()->assertSee('multipart/form-data', false)->assertSee('Cambiar contraseña')->assertSee('Guardar foto')->assertSee('No juego');
+        $this->get('/profile')->assertOk()->assertSee('multipart/form-data', false)->assertSee('Cambiar contraseña')->assertSee('data-avatar-autosave', false)->assertDontSee('Guardar foto')->assertDontSee('Quitar foto')->assertSee('No juego');
         auth()->logout();
         $this->patch('/profile', ['name' => 'Sin Acceso'])->assertRedirect('/login');
         $this->assertSame('Perfil Ficticio', $this->player->fresh()->name);

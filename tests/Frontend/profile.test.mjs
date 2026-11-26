@@ -96,3 +96,14 @@ test('un fallo al generar la miniatura libera la imagen y no devuelve un archivo
     }), /No se ha podido reducir/);
     assert.equal(cleaned, true);
 });
+
+
+test('si el codificador no termina, libera la imagen y permite informar del error', async () => {
+    let cleaned = false;
+    await assert.rejects(prepareAvatar({ type: 'image/png', size: 100 }, {
+        loadImage: async () => ({ image: 'source', width: 64, height: 64, cleanup: () => { cleaned = true; } }),
+        makeCanvas: () => ({ getContext: () => ({ fillRect() {}, drawImage() {} }), toBlob() {} }),
+        encodeTimeoutMs: 1,
+    }), /tarda demasiado/);
+    assert.equal(cleaned, true);
+});

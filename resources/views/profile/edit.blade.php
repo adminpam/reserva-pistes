@@ -2,7 +2,7 @@
 @section('title', 'Mi perfil — Reserva Pistes')
 @push('styles')
     <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/profile.css') }}">
-    <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/profile.js') }}"></script>
+    <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/avatar-autosave.js') }}"></script>
 @endpush
 @section('banner')
     @include('partials.banner', ['title' => 'Mi perfil', 'subtitle' => 'Gestiona tus datos y tus niveles de juego.'])
@@ -10,26 +10,27 @@
 @section('content')
 <div class="rp-profile">
     <aside class="rp-panel rp-profile-summary">
-        <div class="rp-profile-avatar" aria-hidden="true">
-            <span class="rp-avatar-current" data-avatar-current>@include('partials.user-avatar', ['avatarUser' => $user])</span>
-            <img class="rp-avatar-image" data-avatar-preview alt="" hidden>
-        </div>
-        <h2>{{ $user->name }}</h2>
-        <p class="rp-profile-email">{{ $user->email }}</p>
-        <p class="rp-profile-since">@include('partials.ui-icon', ['name' => 'calendar']) <span>Miembro desde {{ $user->created_at->translatedFormat('F \d\e Y') }}</span></p>
-        @if($user->isManager() || $user->isAdmin())<span class="rp-badge">{{ $user->isAdmin() ? 'Administrador' : 'Gestor de club' }}</span>@endif
-        <div class="rp-profile-photo-actions">
-            <form method="POST" action="{{ route('profile.avatar.store') }}" enctype="multipart/form-data" data-avatar-form>
-                @csrf
-                <div class="rp-field"><label for="avatar">Foto de perfil</label><input id="avatar" name="avatar" type="file" accept="image/jpeg,image/png,image/webp" required aria-describedby="avatar-help avatar-status" data-avatar-input></div>
-                <p class="rp-small" id="avatar-help">JPG, PNG o WebP. Comprueba la vista previa antes de guardar.</p>
-                <p class="rp-small" id="avatar-status" role="status" aria-live="polite" data-avatar-status></p>
-                <button class="btn btn-primary btn-sm" type="submit" data-avatar-submit>Guardar foto</button>
-            </form>
-            @if($user->avatar_version)
-                <form method="POST" action="{{ route('profile.avatar.destroy') }}" data-confirm="¿Eliminar tu foto de perfil y volver a mostrar tus iniciales?">@csrf @method('DELETE')<button class="btn btn-ghost btn-sm" type="submit">Quitar foto</button></form>
-            @endif
-        </div>
+        <form class="rp-avatar-editor" method="POST" action="{{ route('profile.avatar.store') }}" enctype="multipart/form-data" data-avatar-autosave data-avatar-user="{{ $user->id }}" data-avatar-endpoint="{{ route('users.avatar', ['user' => $user]) }}" data-avatar-state="idle" aria-busy="false">
+            @csrf
+            <input type="hidden" name="expected_avatar_version" value="{{ $user->avatar_version ?? '' }}">
+            <input class="rp-avatar-file" id="avatar" name="avatar" type="file" accept="image/jpeg,image/png,image/webp" tabindex="-1" aria-hidden="true" data-avatar-input>
+            <div class="rp-avatar-presentation">
+                <button class="rp-profile-avatar rp-avatar-trigger" type="button" data-avatar-pick aria-label="Cambiar foto de perfil" aria-describedby="avatar-status" title="Cambiar foto de perfil" disabled>
+                    @include('partials.user-avatar', ['avatarUser' => $user])
+                    <img class="rp-avatar-image rp-avatar-preview" data-avatar-preview alt="" hidden>
+                    <span class="rp-avatar-busy" aria-hidden="true"><span></span></span>
+                    <span class="rp-avatar-plus" aria-hidden="true">+</span>
+                </button>
+                <div class="rp-avatar-identity">
+                    <h2>{{ $user->name }}</h2>
+                    <p class="rp-profile-email">{{ $user->email }}</p>
+                    <p class="rp-profile-since">@include('partials.ui-icon', ['name' => 'calendar']) <span>Miembro desde {{ $user->created_at->translatedFormat('F \d\e Y') }}</span></p>
+                    @if($user->isManager() || $user->isAdmin())<span class="rp-badge">{{ $user->isAdmin() ? 'Administrador' : 'Gestor de club' }}</span>@endif
+                </div>
+            </div>
+            <p class="rp-avatar-status" id="avatar-status" role="status" aria-live="polite" aria-atomic="true" data-avatar-status></p>
+            <noscript><p class="rp-small">Activa JavaScript para cambiar la foto con guardado automático.</p></noscript>
+        </form>
     </aside>
     <div class="rp-profile-main">
         <section class="rp-panel rp-profile-editor" aria-labelledby="levels-heading">

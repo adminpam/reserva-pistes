@@ -1,23 +1,48 @@
-/* Ampliación del perfil: usa los paneles, botones y tipografía existentes. */
+/* Perfil: selector circular con plus y guardado automático independiente. */
 .rp-profile-main { display:grid; gap:24px; min-width:0; }
-.rp-profile-summary > * { min-width:0; }
+.rp-profile-summary { display:block; }
+.rp-profile-summary>* { min-width:0; }
 .rp-profile-summary h2 { overflow-wrap:anywhere; }
-.rp-profile-photo-actions { display:grid; gap:12px; margin-top:24px; min-width:0; }
-.rp-profile-photo-actions form { display:grid; gap:10px; min-width:0; }
-.rp-profile-photo-actions .rp-field { min-width:0; }
-.rp-profile-photo-actions input[type="file"] { width:100%; max-width:100%; min-width:0; font:inherit; font-size:13px; padding:10px; }
-.rp-profile-photo-actions input[type="file"]::file-selector-button { font:inherit; padding:7px 9px; border:0; border-radius:8px; margin-right:8px; background:#e3f2ed; color:#003c35; cursor:pointer; }
-.rp-profile-photo-actions .btn { width:100%; white-space:normal; }
-.rp-profile-photo-actions [data-error="true"] { color:#a42a25; }
+.rp-avatar-editor { min-width:0; margin:0; }
+.rp-avatar-presentation { display:flex; flex-direction:column; align-items:center; gap:24px; }
+.rp-avatar-identity { min-width:0; width:100%; }
+.rp-avatar-identity .rp-profile-email { margin:8px 0 22px; }
+.rp-avatar-identity .rp-profile-since { margin:0; }
+.rp-avatar-identity .rp-badge { margin-top:14px; }
+.rp-avatar-editor .rp-avatar-trigger { position:relative; flex:none; display:grid; place-items:center; width:164px; height:164px; padding:0; margin:0; border:0; border-radius:50%; overflow:visible; background:linear-gradient(145deg,#006958,#003c34); color:#fff; font:800 54px 'Manrope',system-ui,sans-serif; box-shadow:0 0 0 5px #edf4ef; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.rp-avatar-trigger>.rp-avatar-current { overflow:hidden; border-radius:50%; }
+.rp-avatar-trigger .rp-avatar-image { border-radius:50%; }
+.rp-avatar-trigger:focus-visible { outline:3px solid #ffb21d; outline-offset:9px; }
+.rp-avatar-trigger:disabled { cursor:wait; }
+.rp-avatar-file { position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.rp-avatar-preview { position:absolute; inset:0; z-index:1; }
+.rp-avatar-plus { position:absolute; z-index:3; right:1px; bottom:4px; display:grid; place-items:center; width:34px; height:34px; border:3px solid #fff; border-radius:50%; background:#ffb21d; color:#104a36; box-shadow:0 2px 8px #003d3526; font:500 25px/1 system-ui,sans-serif; }
+.rp-avatar-busy { position:absolute; inset:0; z-index:2; display:none; place-items:center; border-radius:50%; background:#00372e3d; pointer-events:none; }
+.rp-avatar-busy>span { width:28px; height:28px; border:3px solid #ffffff70; border-top-color:#fff; border-radius:50%; animation:rp-avatar-spin .85s linear infinite; }
+.rp-avatar-editor[data-avatar-state=preparing] .rp-avatar-busy,.rp-avatar-editor[data-avatar-state=saving] .rp-avatar-busy { display:grid; }
+.rp-avatar-editor[data-avatar-state=error] .rp-avatar-trigger { box-shadow:0 0 0 4px #f8e5df; }
+.rp-avatar-editor[data-avatar-state=saved] .rp-avatar-trigger { box-shadow:0 0 0 4px #d9ece0; }
+.rp-avatar-status { margin:14px 0 0; color:#60786a; font-size:12px; line-height:1.5; text-align:center; overflow-wrap:anywhere; }
+.rp-avatar-status:empty { display:none; }
+.rp-avatar-editor[data-avatar-state=error] .rp-avatar-status { color:#9c342a; }
+.rp-avatar-editor[data-avatar-state=saved] .rp-avatar-status { color:#087155; }
+.rp-avatar-editor [hidden] { display:none!important; }
 .rp-profile-password form { display:grid; gap:18px; margin-top:22px; }
 .rp-profile-password .rp-form-grid { margin:0; }
-.rp-profile-avatar [hidden] { display:none !important; }
-@media (max-width:900px) {
-    .rp-profile-summary > .rp-badge { grid-column:2; justify-self:start; }
-    .rp-profile-photo-actions { grid-column:1 / -1; padding-top:18px; border-top:1px solid var(--rp-line); margin:0; }
+@keyframes rp-avatar-spin { to { transform:rotate(360deg); } }
+@media(max-width:900px) {
+    .rp-avatar-presentation { display:grid; grid-template-columns:108px minmax(0,1fr); gap:22px; align-items:center; text-align:left; }
+    .rp-avatar-editor .rp-avatar-trigger { width:108px; height:108px; font-size:38px; }
+    .rp-avatar-identity .rp-profile-email { margin:5px 0 10px; }
+    .rp-avatar-identity .rp-profile-since { border:0; padding:0; }
+    .rp-avatar-status { text-align:left; }
 }
-@media (max-width:520px) {
+@media(max-width:520px) {
     .rp-profile-main { gap:18px; }
+    .rp-avatar-presentation { grid-template-columns:90px minmax(0,1fr); gap:18px; }
+    .rp-avatar-editor .rp-avatar-trigger { width:90px; height:90px; font-size:32px; }
+    .rp-avatar-plus { width:29px; height:29px; right:-1px; bottom:0; font-size:22px; }
     .rp-profile-password .rp-form-footer { align-items:stretch; flex-direction:column; }
     .rp-profile-password .rp-form-footer .btn { width:100%; }
 }
+@media(prefers-reduced-motion:reduce) { .rp-avatar-busy>span { animation:none; } }
