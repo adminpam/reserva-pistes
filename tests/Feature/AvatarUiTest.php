@@ -29,7 +29,8 @@ class AvatarUiTest extends TestCase
         $user = User::factory()->create();
         $response = $this->actingAs($user)->get('/profile')->assertOk()
             ->assertSee('data-avatar-autosave', false)->assertSee('ui/avatar-autosave.js', false)
-            ->assertDontSee('Guardar foto')->assertDontSee('Quitar foto')->assertDontSee('Comprueba la vista previa');
+            ->assertDontSee('Guardar foto')->assertDontSee('Quitar foto')->assertDontSee('Comprueba la vista previa')
+            ->assertSee('rp-avatar-camera', false)->assertSee('rp-avatar-placeholder', false)->assertDontSee('rp-avatar-plus', false);
         $xpath = $this->dom($response->getContent());
         $this->assertSame(1, $xpath->query('//form[@data-avatar-autosave]//button[@data-avatar-pick and @type="button"]')->length);
         $this->assertSame(1, $xpath->query('//form[@data-avatar-autosave]//input[@type="file" and @name="avatar"]')->length);

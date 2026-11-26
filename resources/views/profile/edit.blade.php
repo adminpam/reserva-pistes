@@ -17,9 +17,10 @@
             <div class="rp-avatar-presentation">
                 <button class="rp-profile-avatar rp-avatar-trigger" type="button" data-avatar-pick aria-label="Cambiar foto de perfil" aria-describedby="avatar-status" title="Cambiar foto de perfil" disabled>
                     @include('partials.user-avatar', ['avatarUser' => $user])
+                    <svg class="rp-avatar-placeholder" viewBox="0 0 160 160" aria-hidden="true" focusable="false"><circle cx="80" cy="80" r="80" fill="#dce8e1"/><circle cx="80" cy="59" r="28" fill="#9db3a7"/><path d="M24 155c3-30 25-49 56-49s53 19 56 49" fill="#9db3a7"/></svg>
                     <img class="rp-avatar-image rp-avatar-preview" data-avatar-preview alt="" hidden>
                     <span class="rp-avatar-busy" aria-hidden="true"><span></span></span>
-                    <span class="rp-avatar-plus" aria-hidden="true">+</span>
+                    <span class="rp-avatar-camera" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M8 6l1.5-2h5L16 6h3a2 2 0 0 1 2 2v11H3V8a2 2 0 0 1 2-2Z"/><circle cx="12" cy="12.5" r="4"/></svg></span>
                 </button>
                 <div class="rp-avatar-identity">
                     <h2>{{ $user->name }}</h2>
