@@ -1,5 +1,5 @@
 // El navegador prepara una miniatura; el servidor vuelve a validar cada archivo.
-export async function prepareAvatar(file, { loadImage = browserImage, makeCanvas = () => document.createElement('canvas') } = {}) {
+export async function prepareAvatar(file, { loadImage = browserImage, makeCanvas = () => document.createElement('canvas'), encodeTimeoutMs = 15000 } = {}) {
     if (! ['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) throw new Error('Elige una imagen JPG, PNG o WebP.');
     if (file.size > 10 * 1024 * 1024) throw new Error('La imagen supera 10 MB. Elige una versión más pequeña.');
     const decoded = await loadImage(file);
@@ -13,7 +13,12 @@ export async function prepareAvatar(file, { loadImage = browserImage, makeCanvas
         context.fillStyle = '#ffffff';
         context.fillRect(0, 0, 384, 384);
         context.drawImage(decoded.image, (decoded.width - side) / 2, (decoded.height - side) / 2, side, side, 0, 0, 384, 384);
-        const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.85));
+        const blob = await new Promise((resolve, reject) => {
+            const timer = setTimeout(() => reject(new Error('La foto tarda demasiado en prepararse. Elige otra imagen.')), encodeTimeoutMs);
+            try {
+                canvas.toBlob((result) => { clearTimeout(timer); resolve(result); }, 'image/jpeg', 0.85);
+            } catch (error) { clearTimeout(timer); reject(error); }
+        });
         if (!blob || blob.size > 512 * 1024 || !['image/jpeg', 'image/png'].includes(blob.type)) {
             throw new Error('No se ha podido reducir la foto. Prueba con una imagen más pequeña.');
         }
