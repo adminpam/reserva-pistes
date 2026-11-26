@@ -4,7 +4,8 @@
 @endif
 
 @if($errors->any())
-    <div class="flash flash-error" data-sound="error" role="alert">
+    <div class="flash flash-error" data-sound="error" role="alert" tabindex="-1" data-validation-fallback>
+        <strong>Revisa los datos indicados</strong>
         @if($errors->count() === 1)
             {{ $errors->first() }}
         @else

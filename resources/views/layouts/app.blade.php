@@ -43,6 +43,8 @@
         })();
     </script>
     <script src="{{ \App\Support\FrontendAsset::url('brand/loading.js') }}" defer></script>
+    <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/form-validation.css') }}">
+    <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/form-validation.js') }}"></script>
     @if(!request()->routeIs('login', 'register'))
         <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/screens.css') }}">
         <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/screens.js') }}"></script>
@@ -129,6 +131,8 @@
 {{-- Barra de navegacion inferior: solo en movil --}}
 @include('partials.tabbar')
 @if(!request()->routeIs('login', 'register')) @include('partials.confirm-dialog') @endif
+
+@include('partials.validation-state')
 
 </body>
 </html>
