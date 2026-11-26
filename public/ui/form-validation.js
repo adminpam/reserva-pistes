@@ -112,7 +112,7 @@ export function enhanceValidation(doc = document) {
             const fields = fieldsForError(form, dotted(key));
             if (!fields.length) continue;
             const output = doc.createElement('p'); output.className = 'rp-field-error'; output.id = `rp-error-${++serial}`; output.textContent = message;
-            const anchor = fields[0].closest('.rp-field,.field,fieldset,[role="group"],.rp-password-wrap,.field-icon') || fields[0];
+            const anchor = fields[0].closest('.rp-field,.field,fieldset,[role="group"]') || fields[0].closest('.rp-password-wrap,.field-icon') || fields[0];
             if (anchor.matches('.rp-field,.field,fieldset')) anchor.append(output); else anchor.after(output);
             state.nodes.push(output);
             for (const field of fields) {
