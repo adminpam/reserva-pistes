@@ -4,7 +4,7 @@
 @section('banner')@include('partials.banner', ['title' => 'Administración', 'subtitle' => 'Gestiona los clubes, deportes y usuarios de la plataforma.'])@endsection
 @section('content')
 @include('admin._nav')
-<form class="rp-filter-bar rp-filter-bar--search" method="GET" action="{{ route('admin.clubs.index') }}"><input type="search" name="q" value="{{ request('q') }}" placeholder="Buscar club…" aria-label="Buscar club"><button class="btn btn-primary" type="submit">Buscar</button></form>
+<form class="rp-filter-bar rp-filter-bar--search" method="GET" action="{{ route('admin.clubs.index') }}"><input type="search" maxlength="150" name="q" value="{{ request('q') }}" placeholder="Buscar club…" aria-label="Buscar club"><button class="btn btn-primary" type="submit">Buscar</button></form>
 <div class="rp-list">
 @forelse($clubs as $club)
     <article class="rp-panel rp-admin-row">

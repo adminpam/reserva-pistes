@@ -1,0 +1,22 @@
+/* Avisos compartidos: el error se expresa con texto, icono y borde. */
+.rp-field-error { display:block; margin:8px 0 0; color:#a52e25; font-size:13px; line-height:1.5; font-weight:600; overflow-wrap:anywhere; }
+.rp-field-error::before { content:'!'; display:inline-grid; place-items:center; width:16px; height:16px; margin-right:7px; border:1.5px solid currentColor; border-radius:50%; font-size:11px; font-weight:800; vertical-align:1px; }
+.rp-app input[aria-invalid=true]:not([type=radio]):not([type=checkbox]),
+.rp-app select[aria-invalid=true], .rp-app textarea[aria-invalid=true],
+input[aria-invalid=true]:not([type=radio]):not([type=checkbox]), select[aria-invalid=true], textarea[aria-invalid=true] { border-color:#bd4538; box-shadow:0 0 0 2px #bd453812; background-color:#fffafa; }
+input[aria-invalid=true]:focus, select[aria-invalid=true]:focus, textarea[aria-invalid=true]:focus { outline:3px solid #bd453838; outline-offset:2px; }
+.rp-slot-choice input[aria-invalid=true]+label { border-color:#bd4538; }
+.rp-validation-summary { grid-column:1/-1; flex-basis:100%; width:100%; min-width:0; padding:15px 18px; margin:0 0 18px; border:1px solid #e3b8af; border-left:4px solid #b73d2e; border-radius:12px; background:#fff7f3; color:#713128; text-align:left; }
+.rp-validation-summary strong { display:block; font-size:15px; line-height:1.4; }
+.rp-validation-summary p { margin:5px 0 0; font-size:13px; line-height:1.5; overflow-wrap:anywhere; }
+.rp-validation-summary:focus, [data-validation-fallback]:focus { outline:3px solid #be7c4b66; outline-offset:3px; }
+.rp-validation-summary[hidden], [data-validation-fallback][hidden] { display:none!important; }
+[data-validation-fallback] { border:1px solid #e3b8af; border-left:4px solid #b73d2e; border-radius:14px; background:#fff7f3; color:#713128; padding:18px 22px; line-height:1.55; overflow-wrap:anywhere; }
+[data-validation-fallback] strong { display:block; margin-bottom:7px; }
+[data-validation-fallback] ul { margin:0; padding-left:20px; }
+.rp-form-hint { margin:8px 0 0; color:#587168; font-size:12px; line-height:1.5; }
+.rp-field-error, .rp-validation-summary, input, select, textarea { scroll-margin-block:110px; }
+@media(max-width:600px) {
+    .rp-validation-summary { padding:13px 14px; margin-bottom:14px; }
+    [data-validation-fallback] { padding:14px 16px; }
+}

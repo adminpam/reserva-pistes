@@ -33,7 +33,8 @@
                 <div class="field">
                     <label for="password">Contraseña</label>
                     <input id="password" name="password" type="password" placeholder="Mínimo 8 caracteres"
-                           required minlength="8" autocomplete="new-password">
+                           required minlength="8" maxlength="72" autocomplete="new-password" aria-describedby="register-password-hint">
+                    <p class="rp-form-hint" id="register-password-hint">Mínimo 8 caracteres. Repite la misma contraseña en ambos campos.</p>
                     <div class="strength" id="strength"><i></i><i></i><i></i></div>
                     <p class="tiny" id="strength-text" style="margin-top:6px">&nbsp;</p>
                 </div>
@@ -41,7 +42,7 @@
                 <div class="field">
                     <label for="password_confirmation">Repite la contraseña</label>
                     <input id="password_confirmation" name="password_confirmation" type="password"
-                           placeholder="La misma otra vez" required minlength="8" autocomplete="new-password">
+                           placeholder="La misma otra vez" required minlength="8" maxlength="72" autocomplete="new-password">
                 </div>
 
                 <button class="btn btn-primary btn-block" type="submit" style="margin-top:8px">Crear cuenta</button>

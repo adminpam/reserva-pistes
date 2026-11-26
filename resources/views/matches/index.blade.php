@@ -15,7 +15,7 @@
         @include('partials.sport-filter', ['filterPrefix' => 'match-sport', 'filterMode' => 'submit'])
         <noscript><p class="rp-small">Desmarca todos los deportes para buscar sin filtro.</p></noscript>
     </fieldset>
-    <input type="search" name="club" value="{{ request('club') }}" placeholder="Buscar club…" aria-label="Buscar club">
+    <input type="search" maxlength="150" name="club" value="{{ request('club') }}" placeholder="Buscar club…" aria-label="Buscar club">
     <label class="rp-toggle"><input type="checkbox" name="my_level" value="1" @checked(request()->boolean('my_level'))> Solo mi nivel</label>
     <button class="btn btn-primary" type="submit">@include('partials.ui-icon', ['name' => 'filter']) Filtrar</button>
 </form>
