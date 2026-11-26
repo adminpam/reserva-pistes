@@ -22,6 +22,7 @@ export function normalizeClubs(payload, origin) {
         seen.add(url);
         result.push({
             price: Number.isInteger(raw.min_price_per_hour) && raw.min_price_per_hour >= 0 ? raw.min_price_per_hour : null,
+            courtCount: Number.isInteger(raw.court_count) && raw.court_count >= 0 ? raw.court_count : null,
             id: String(raw.id ?? url), name: raw.name.trim().slice(0, 180),
             address: typeof raw.address === 'string' ? raw.address.slice(0, 240) : '',
             city: typeof raw.city === 'string' ? raw.city.slice(0, 100) : '', lat, lng, url,
@@ -43,28 +44,39 @@ export function createClubCard(club, doc = document) {
         return element;
     };
     const article = node('article', 'rp-club-card');
-    const figure = node('figure');
+    const figure = node('figure', 'rp-club-card__figure');
     const image = node('img');
     image.src = club.image;
     image.alt = club.imageDescription;
-    image.width = 84; image.height = 90;
+    image.width = 84; image.height = 96;
     image.addEventListener('error', () => {
         image.src = new URL('/img/club-cover.svg', club.url).href;
     }, { once: true });
     figure.append(image, node('figcaption', '', 'Ilustración'));
-    const content = node('div');
+    const content = node('div', 'rp-club-card__body');
+    if (club.city) content.append(node('p', 'rp-club-card__city', club.city));
     content.append(node('h3', '', club.name));
-    content.append(node('p', '', club.address || club.city || 'Dirección no disponible'));
+    content.append(node('p', 'rp-club-card__address', club.address || 'Dirección no disponible'));
     const sports = node('div', 'rp-club-card__sports');
     for (const sport of club.sports) sports.append(node('span', 'rp-club-card__sport', sport));
     content.append(sports);
+    if (club.courtCount !== null && club.courtCount !== undefined) {
+        content.append(node('p', 'rp-club-card__meta', club.courtCount === 1 ? '1 pista' : `${club.courtCount} pistas`));
+    }
+    const footer = node('div', 'rp-club-card__footer');
+    const price = node('div', 'rp-club-card__price');
+    if (club.price !== null) {
+        price.append(node('span', '', 'desde'), node('strong', '', new Intl.NumberFormat('es-ES', {
+            style: 'currency', currency: 'EUR', maximumFractionDigits: 2,
+        }).format(club.price / 100)), node('span', '', '/hora'));
+    } else price.append(node('span', '', 'Precio por consultar'));
     const link = node('a', 'rp-club-card__link', 'Ver detalles');
     link.href = club.url;
     link.setAttribute('aria-label', `Ver detalles de ${club.name}`);
     const arrow = node('span', '', '→');
     arrow.setAttribute('aria-hidden', 'true');
     link.append(arrow);
-    content.append(link);
-    article.append(figure, content);
+    footer.append(price, link);
+    article.append(figure, content, footer);
     return article;
 }

@@ -17,7 +17,7 @@ test('restaura los enlaces nuevos y los índices que genera Laravel', () => {
     assert.deepEqual(sportsFromUrl(origin + '/?sports[0]=padel&sports[1]=tenis', available), ['padel', 'tenis']);
 });
 
-test('restaura enlaces antiguos y representa Todos sin filtros', () => {
+test('restaura enlaces antiguos y representa la selección vacía sin filtros', () => {
     assert.deepEqual(sportsFromUrl(origin + '/?sport=tenis', available), ['tenis']);
     assert.deepEqual(sportsFromUrl(origin + '/', available), []);
     assert.deepEqual(sportsFromUrl(origin + '/?sports[]=inexistente', available), []);
@@ -36,30 +36,31 @@ test('no mezcla sport antiguo con sports y conserva club, nivel, fecha y fragmen
     assert.equal(next.hash, '#partidos');
 });
 
-test('Todos elimina cada parámetro de deporte y deja los otros filtros', () => {
+test('Limpiar elimina cada parámetro de deporte y deja los otros filtros', () => {
     const next = withSports(origin + '/matches?sports[0]=tenis&sports[]=padel&club=Demo&my_level=1', []);
     assert.equal(next.searchParams.get('club'), 'Demo');
     assert.equal(next.searchParams.get('my_level'), '1');
     assert.deepEqual([...next.searchParams.keys()], ['club', 'my_level']);
 });
 
-function fixture(initial = []) {
-    const options = available.map((value) => ({ value, checked: initial.includes(value) }));
+function fixture(initial = [], catalog = available) {
+    const options = catalog.map((value) => ({ value, checked: initial.includes(value), focus() { this.focused = true; } }));
     const events = new Map();
-    const allEvents = new Map();
+    const clearEvents = new Map();
     const attrs = {};
-    const all = { hidden: true, setAttribute: (key, value) => { attrs[key] = value; }, addEventListener: (key, fn) => allEvents.set(key, fn) };
+    const clear = { hidden: true, addEventListener: (key, fn) => clearEvents.set(key, fn) };
+    const guide = { hidden: false }, caption = { hidden: true, textContent: '' };
     const summary = { textContent: '' };
     const group = {
         querySelectorAll: () => options,
-        querySelector: (selector) => selector === '[data-sport-all]' ? all : summary,
+        querySelector: (selector) => ({ '[data-sport-clear]': clear, '[data-sport-guide]': guide, '[data-sport-caption]': caption, '[data-sport-summary]': summary })[selector],
         addEventListener: (key, fn) => events.set(key, fn),
     };
     const changes = [];
     const binding = bindSportSelection(group, (value) => changes.push(value));
-    return { options, group, all, attrs, summary, changes, binding,
+    return { options, group, clearButton: clear, guide, caption, attrs, summary, changes, binding,
         toggle(value) { const input = options.find((option) => option.value === value); input.checked = !input.checked; events.get('change')({ target: input }); },
-        clear() { allEvents.get('click')(); } };
+        clear() { clearEvents.get('click')(); } };
 }
 
 test('añadir el segundo deporte conserva el primero y comunica ambas opciones', () => {
@@ -67,23 +68,27 @@ test('añadir el segundo deporte conserva el primero y comunica ambas opciones',
     f.toggle('tenis'); f.toggle('padel');
     assert.deepEqual(f.binding.get(), ['padel', 'tenis']);
     assert.equal(f.options.find((input) => input.value === 'tenis').checked, true);
-    assert.equal(f.attrs['aria-pressed'], 'false');
+    assert.equal(f.guide.hidden, true);
+    assert.equal(f.clearButton.hidden, false);
     assert.equal(f.summary.textContent, '2 deportes seleccionados');
     assert.deepEqual(f.changes, [['tenis'], ['padel', 'tenis']]);
 });
 
-test('desmarcar el último vuelve a Todos sin bloquear el formulario', () => {
+test('desmarcar el último vuelve a mostrar todos los clubes sin bloquear el formulario', () => {
     const f = fixture(['tenis']); f.toggle('tenis');
     assert.deepEqual(f.binding.get(), []);
-    assert.equal(f.attrs['aria-pressed'], 'true');
-    assert.equal(f.summary.textContent, 'Todos los deportes');
+    assert.equal(f.guide.hidden, false);
+    assert.equal(f.clearButton.hidden, true);
+    assert.equal(f.summary.textContent, 'Sin filtro de deporte');
 });
 
-test('Todos desmarca las opciones y repetirlo no duplica consultas', () => {
+test('Limpiar desmarca las opciones y repetirlo no duplica consultas', () => {
     const f = fixture(['tenis', 'padel']); f.clear(); f.clear();
     assert.deepEqual(f.changes, [[]]);
     assert.equal(f.options.some((input) => input.checked), false);
-    assert.equal(f.all.hidden, false);
+    assert.equal(f.clearButton.hidden, true);
+    assert.equal(f.guide.hidden, false);
+    assert.equal(f.options[0].focused, true);
 });
 
 test('restaurar Atrás actualiza controles sin generar otra entrada del historial', () => {
@@ -106,4 +111,26 @@ test('la inicialización repetida conserva una sola vinculación por grupo', () 
     assert.equal(bindSportSelection(f.group), f.binding);
     f.toggle('tenis'); assert.deepEqual(f.changes, [['tenis']]);
     assert.equal(bindSportSelection(null), null);
+});
+
+
+test('sin selección se muestra la ayuda y marcar un deporte la oculta', () => {
+    const f = fixture();
+    assert.equal(f.guide.hidden, false);
+    assert.equal(f.clearButton.hidden, true);
+    assert.equal(f.caption.hidden, true);
+    f.toggle('padel');
+    assert.equal(f.guide.hidden, true);
+    assert.equal(f.clearButton.hidden, false);
+    assert.equal(f.caption.textContent, '1 deporte seleccionado');
+    f.clear();
+    assert.equal(f.guide.hidden, false);
+    assert.equal(f.caption.hidden, true);
+});
+
+test('un catálogo sin deportes no pide seleccionar un botón inexistente', () => {
+    const f = fixture([], []);
+    assert.equal(f.guide.hidden, true);
+    assert.equal(f.clearButton.hidden, true);
+    assert.deepEqual(f.binding.get(), []);
 });

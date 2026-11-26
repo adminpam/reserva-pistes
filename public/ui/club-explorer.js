@@ -1,8 +1,8 @@
 /* Mapa y lista comparten selección y API. Solo se aplica la última consulta;
    si Leaflet falla, el listado conserva los filtros y los enlaces de los clubes. */
-import { normalizeClubs, clubCount, createClubCard } from './map-data.js?v=rp06';
-import { bindSportSelection, sportsFromUrl, withSports } from './sport-selection.js?v=c4f77a5ce435f2c6';
-import { createClubDrawer } from './club-drawer.js?v=a164096e2174c1a2';
+import { normalizeClubs, clubCount, createClubCard } from './map-data.js?v=78ef7408e95679a4';
+import { bindSportSelection, sportsFromUrl, withSports } from './sport-selection.js?v=c56e18d68c41017a';
+import { createClubDrawer } from './club-drawer.js?v=23dc131327e2b92e';
 
 function initClubMap() {
     const element = document.getElementById('rp-club-map');
@@ -68,16 +68,7 @@ function initClubMap() {
         const ordered = [...currentClubs].sort((a, b) => sort?.value === 'price'
             ? (a.price ?? Infinity) - (b.price ?? Infinity) || a.name.localeCompare(b.name, 'es')
             : a.name.localeCompare(b.name, 'es'));
-        clubList.replaceChildren(...ordered.map((club) => {
-            const card = createClubCard(club);
-            const price = document.createElement('div'); price.className = 'rp-club-card__price';
-            if (club.price !== null) {
-                const prefix = document.createElement('span'); prefix.textContent = 'desde';
-                const amount = document.createTextNode(new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 }).format(club.price / 100));
-                const unit = document.createElement('span'); unit.textContent = '/hora'; price.append(prefix, amount, unit);
-            } else { const note = document.createElement('span'); note.textContent = 'Sin pistas'; price.append(note); }
-            card.append(price); return card;
-        }));
+        clubList.replaceChildren(...ordered.map((club) => createClubCard(club)));
     }
     sort?.addEventListener('change', renderList);
 
@@ -96,7 +87,7 @@ function initClubMap() {
             const [top, bottom] = sheet?.insets() || [24, 120];
             map?.panInside([club.lat, club.lng], { paddingTopLeft: [24, top], paddingBottomRight: [24, bottom], animate: !reduced.matches });
         } else if (map) {
-            L.popup({ className: 'rp-club-popup', maxWidth: 370, minWidth: 260, offset: [0, -12], autoPanPadding: [24, 24] })
+            L.popup({ className: 'rp-club-popup', maxWidth: 360, minWidth: 240, offset: [0, -12], autoPanPadding: [24, 24] })
                 .setLatLng([club.lat, club.lng]).setContent(createClubCard(club)).openOn(map);
         }
     }
@@ -137,8 +128,8 @@ function initClubMap() {
                     });
                 }
             } else {
-                const text = slugs.length ? 'Prueba otros deportes o selecciona Todos.' : 'Vuelve a consultar el mapa más tarde.';
-                showState(slugs.length ? 'Sin clubes para estos deportes' : 'Todavía no hay clubes disponibles', text);
+                const text = slugs.length ? 'Quita algún deporte o pulsa Limpiar para volver a ver todos los clubes.' : 'Vuelve a consultar el mapa más tarde.';
+                showState(slugs.length ? 'Ningún club reúne todos estos deportes' : 'Todavía no hay clubes disponibles', text);
                 const hint = document.createElement('p'); hint.className = 'rp-mobile-selection__hint'; hint.textContent = text;
                 selection?.replaceChildren(hint); sheet?.setView('list');
             }

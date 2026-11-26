@@ -59,15 +59,40 @@ class SportSelectionTest extends TestCase
         $this->getJson($this->api([]))->assertOk()->assertJsonCount(2);
     }
 
-    public function test_multiple_sports_use_or_and_scope_price_image_and_tags(): void
+    public function test_multiple_sports_require_all_and_scope_price_image_and_tags(): void
     {
-        $response = $this->getJson($this->api(['tenis', 'badminton']))->assertOk()->assertJsonCount(2);
+        $response = $this->getJson($this->api(['tenis', 'badminton']))->assertOk()->assertJsonCount(1);
         $mixed = collect($response->json())->firstWhere('id', $this->mixed->id);
         $this->assertSame(900, $mixed['min_price_per_hour']);
         $this->assertSame(2, $mixed['court_count']);
         $this->assertEqualsCanonicalizing(['tenis', 'badminton'], $mixed['sport_slugs']);
         $this->assertNotContains('Fútbol sala', $mixed['sports']);
         $this->assertNotEquals(asset('img/sports/futbol-sala-thumb.jpg'), $mixed['image_url']);
+    }
+
+    public function test_four_sports_without_a_common_club_return_empty_and_clearing_restores_all(): void
+    {
+        // Pádel existe por la migración, pero estos clubes no tienen ninguna pista suya.
+        $this->getJson($this->api(['tenis', 'badminton', 'futbol-sala', 'padel']))
+            ->assertOk()->assertExactJson([]);
+        $this->getJson('/api/clubs')->assertOk()->assertJsonCount(2);
+    }
+
+    public function test_several_courts_of_one_sport_do_not_replace_a_missing_sport(): void
+    {
+        Court::create(['club_id' => $this->badmintonClub->id, 'sport_id' => $this->badminton->sport_id,
+            'name' => 'Segunda pista de bádminton', 'price_per_hour' => 800]);
+        $this->getJson($this->api(['tenis', 'badminton']))->assertOk()->assertJsonCount(1)
+            ->assertJsonPath('0.id', $this->mixed->id);
+    }
+
+    public function test_adding_sports_only_narrows_the_club_catalog(): void
+    {
+        $this->getJson($this->api(['badminton']))->assertOk()->assertJsonCount(2);
+        $this->getJson($this->api(['badminton', 'tenis']))->assertOk()->assertJsonCount(1);
+        $this->getJson($this->api(['badminton', 'tenis', 'futbol-sala']))->assertOk()->assertJsonCount(1)
+            ->assertJsonPath('0.min_price_per_hour', 100);
+        $this->getJson($this->api(['badminton', 'tenis', 'futbol-sala', 'padel']))->assertOk()->assertExactJson([]);
     }
 
     public function test_single_legacy_sport_is_kept_in_the_club_link(): void
@@ -80,7 +105,7 @@ class SportSelectionTest extends TestCase
 
     public function test_duplicate_sports_are_canonicalized_without_duplicate_clubs(): void
     {
-        $r = $this->getJson($this->api(['tenis', 'badminton', 'tenis']))->assertOk()->assertJsonCount(2);
+        $r = $this->getJson($this->api(['tenis', 'badminton', 'tenis']))->assertOk()->assertJsonCount(1);
         parse_str(parse_url($r->json('0.url'), PHP_URL_QUERY), $query);
         $this->assertSame(['badminton', 'tenis'], $query['sports']);
     }

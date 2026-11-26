@@ -5,7 +5,8 @@ namespace App\Support;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
-// Contrato común: sin filtro = todos; sports[] = cualquiera de los elegidos.
+// Contrato común: sin filtro = catálogo completo; sports[] = selección de deportes.
+// El mapa exige todos los deportes en el club; partidos filtra cada modalidad.
 // sport=slug conserva los enlaces y el selector anteriores.
 class SportSelection
 {

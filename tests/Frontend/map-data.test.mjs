@@ -43,3 +43,37 @@ test('la tarjeta trata nombres y deportes como texto y no como HTML', () => {
     assert.ok(elements.some((node) => node.textContent === '<script>alert(1)</script>'));
     assert.equal(elements.find((node) => node.tag === 'a').href, 'http://localhost:8000/clubs/1');
 });
+
+
+function cardElements(raw) {
+    const elements = [];
+    const doc = { createElement(tag) {
+        const node = { tag, children: [], textContent: '', append(...nodes) { this.children.push(...nodes); },
+            setAttribute(name, value) { this[name] = value; }, addEventListener() {},
+            set innerHTML(value) { throw new Error('HTML no permitido: ' + value); } };
+        elements.push(node); return node;
+    } };
+    const [club] = normalizeClubs([{ ...fixture, ...raw }], origin);
+    createClubCard(club, doc);
+    return { elements, club };
+}
+
+test('la ficha muestra precio y pistas filtrados y conserva el enlace con deportes', () => {
+    const { elements, club } = cardElements({ court_count: 2, min_price_per_hour: 1400,
+        city: 'Ciudad de prueba', url: '/clubs/1?sports[]=padel&sports[]=tenis' });
+    assert.equal(club.courtCount, 2);
+    assert.equal(elements.find((node) => node.className === 'rp-club-card__meta').textContent, '2 pistas');
+    assert.match(elements.find((node) => node.tag === 'strong').textContent, /14,00/);
+    assert.deepEqual(new URL(elements.find((node) => node.tag === 'a').href).searchParams.getAll('sports[]'), ['padel', 'tenis']);
+    const footer = elements.find((node) => node.className === 'rp-club-card__footer');
+    assert.equal(footer.children.filter((node) => node.className === 'rp-club-card__price').length, 1);
+    assert.equal(footer.children.find((node) => node.tag === 'a').textContent, 'Ver detalles');
+});
+
+test('datos de precio o aforo incorrectos no inventan importes ni pistas', () => {
+    const { elements, club } = cardElements({ min_price_per_hour: -1, court_count: '2' });
+    assert.equal(club.price, null);
+    assert.equal(club.courtCount, null);
+    assert.ok(elements.some((node) => node.textContent === 'Precio por consultar'));
+    assert.equal(elements.some((node) => node.tag === 'strong'), false);
+});

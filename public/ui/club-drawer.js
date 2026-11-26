@@ -19,7 +19,7 @@ export function createClubDrawer(root, onChange = () => {}) {
         const maximum = Math.max(0, root.clientHeight - filter);
         const header = Math.min(maximum, Math.ceil(handle.parentElement.getBoundingClientRect().height));
         const card = Math.ceil((selection.querySelector('[data-selected-card]')?.scrollHeight || 0) + 20);
-        const peek = Math.min(maximum, Math.max(header, Math.min(maximum * .58, header + card)));
+        const peek = Math.min(maximum, Math.max(header, Math.min(maximum * .72, header + card)));
         return { filter, maximum, header, peek };
     }
     function visibleHeight(state, size = dimensions()) {
