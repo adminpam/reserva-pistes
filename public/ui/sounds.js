@@ -1,16 +1,16 @@
-/* Sonidos opcionales de la interfaz. El contexto solo se crea/reanuda dentro
-   de un gesto; guardar la preferencia no autoriza una reproducción automática. */
+/* Sonidos opcionales de clic, ratón y edición. No se reproduce audio al cargar.
+   El teclado móvil se detecta por cambios de texto, sin leer su contenido. */
 const RECIPES = Object.freeze({
-    clic:{notes:[[1320,0,.035]], volume:.07, type:'triangle'},
-    tecla:{notes:[[880,0,.022]], volume:.035, type:'square'},
     hover:{notes:[[1760,0,.025]], volume:.025, type:'sine'},
+    tecla:{notes:[[880,0,.022]], volume:.035, type:'square'},
+    clic:{notes:[[1320,0,.035]], volume:.07, type:'triangle'},
     ok:{notes:[[523,0,.09],[784,.085,.14]], volume:.10, type:'sine'},
     error:{notes:[[233,0,.13],[175,.1,.18]], volume:.11, type:'sine'},
 });
 const defaultTimers = {set:(...args)=>globalThis.setTimeout(...args), clear:(...args)=>globalThis.clearTimeout(...args)};
 
 export function createSoundController({Context, storage, onChange=()=>{}, onNotice=()=>{}, timers=defaultTimers, now=()=>performance.now()}={}) {
-    let wanted=false, enabled=false, unlocked=false, destroyed=false, context=null, master=null, pending=null, generation=0, lastSound=-Infinity;
+    let wanted=false, enabled=false, unlocked=false, destroyed=false, context=null, master=null, pending=null, generation=0, lastSound=-Infinity, lastTone=null;
     const supported=typeof Context==='function', voices=new Map();
     try {wanted=storage?.getItem('rp-sonido')==='on';} catch { /* Preferencia opcional. */ }
     enabled=wanted; // Una elección ya confirmada se conserva entre páginas.
@@ -43,7 +43,8 @@ export function createSoundController({Context, storage, onChange=()=>{}, onNoti
         return context;
     };
     const play=(name, interval=45)=>{
-        if(!snapshot().active || !Object.hasOwn(RECIPES,name) || voices.size>=12 || now()-lastSound<interval) return false;
+        const wait=lastTone==='hover'&&name!=='hover'?0:interval;
+        if(!snapshot().active || !Object.hasOwn(RECIPES,name) || voices.size>=12 || now()-lastSound<wait) return false;
         const recipe=RECIPES[name], time=context.currentTime;
         try {
             for(const [hz,delay,duration] of recipe.notes) {
@@ -56,34 +57,43 @@ export function createSoundController({Context, storage, onChange=()=>{}, onNoti
                 oscillator.onended=()=>{voices.delete(oscillator);oscillator.disconnect();gain.disconnect();};
                 oscillator.start(time+delay);oscillator.stop(time+delay+duration+.02);
             }
-            lastSound=now();return true;
+            lastSound=now();lastTone=name;return true;
         } catch {silence();wanted=false;enabled=false;unlocked=false;save(false);render();onNotice('error');return false;}
     };
-    const activate=(tone='ok')=>{
+    const activate=(tone='clic',announce=false,quiet=false)=>{
         if(!supported||destroyed) return Promise.resolve(false);
-        if(pending) return pending.promise; // No se acumulan tonos durante una reanudación.
-        if(snapshot().active) {play(tone);return Promise.resolve(true);}
+        if(pending) {
+            if(pending.quiet&&!quiet) {generation++;stopWaiting();silence();}
+            else {if(!pending.tone&&tone) pending.tone=tone;return pending.promise;}
+        } // Un clic real sustituye un intento de hover bloqueado; no se acumulan tonos.
+        if(snapshot().active) {if(tone) play(tone,tone==='hover'?120:45);return Promise.resolve(true);}
         wanted=true;unlocked=false;
         const ticket=++generation;
         let current;
-        try {current=ensureContext();} catch {wanted=false;enabled=false;save(false);render();onNotice('error');return Promise.resolve(false);}
+        try {current=ensureContext();} catch {
+            if(!quiet) {wanted=false;enabled=false;save(false);onNotice('error');}
+            render();return Promise.resolve(false);
+        }
         let resolve, timeout=null;
         const promise=new Promise(done=>{resolve=done;});
         const finish=success=>{
             if(pending?.ticket!==ticket) return;
+            const selectedTone=pending.tone;
             timers.clear(timeout);current.removeEventListener?.('statechange',check);pending=null;
             let accepted=success&&ticket===generation&&!destroyed&&wanted&&current.state==='running';
             if(accepted) {try {master.gain.setValueAtTime(.8,current.currentTime);} catch {accepted=false;}}
             if(accepted) {
-                unlocked=true;enabled=true;save(true);render();accepted=play(tone,0);if(accepted) onNotice('on');
+                unlocked=true;enabled=true;save(true);render();accepted=selectedTone?play(selectedTone,0):true;if(accepted&&announce) onNotice('on');
             } else if(ticket===generation&&!destroyed) {
-                wanted=false;enabled=false;unlocked=false;save(false);silence();render();onNotice('error');
+                unlocked=false;silence();
+                if(!quiet) {wanted=false;enabled=false;save(false);onNotice('error');}
+                render();
             }
             resolve(accepted);
         };
         let resumeFinished=false;
         const check=()=>{if(resumeFinished&&current.state==='running') finish(true);};
-        pending={promise,finish,ticket};
+        pending={promise,finish,ticket,quiet,tone};
         current.addEventListener?.('statechange',check);
         timeout=timers.set(()=>finish(current.state==='running'),2500);
         render();
@@ -113,8 +123,8 @@ export function createSoundController({Context, storage, onChange=()=>{}, onNoti
         try {Promise.resolve(context?.close()).catch(()=>{});} catch {}
     };
     render();
-    return {snapshot,activate,play,pause,destroy,toggle:()=>pending||snapshot().enabled?(deactivate(),Promise.resolve(false)):activate('ok'),
-        gesture:tone=>wanted?activate(tone):Promise.resolve(false)};
+    return {snapshot,activate,play,pause,destroy,toggle:()=>pending||snapshot().enabled?(deactivate(),Promise.resolve(false)):activate('clic',true),
+        gesture:(tone='clic',quiet=false)=>wanted?activate(tone,false,quiet):Promise.resolve(false)};
 }
 
 const bindings=new WeakMap();
@@ -142,22 +152,40 @@ export function mountSounds(doc=document, env=globalThis) {
     const toggle=event=>{if(event.isTrusted===false) return;void controller.toggle();};
     const click=event=>{
         if(event.isTrusted===false||event.target?.closest?.('#sound-toggle')) return;
-        if(event.target?.closest?.('button,a,label,summary,[role="button"],input,select,textarea')) void controller.gesture('clic');
+        if(event.target?.closest?.('button,a,label,summary,[role="button"],input,select,textarea')) void controller.gesture();
     };
-    const hover=event=>{if(event.isTrusted!==false&&event.pointerType==='mouse'&&event.target?.closest?.('.btn,.main-nav a')) controller.play('hover',120);};
+    const hoverSelector='.btn,.main-nav a,.nav-menu__panel a,.header-actions a,.header-actions button,.nav-menu summary';
+    const hover=event=>{
+        if(event.isTrusted===false||event.pointerType!=='mouse') return;
+        const target=event.target?.closest?.(hoverSelector);
+        if(!target||target===event.relatedTarget?.closest?.(hoverSelector)) return;
+        // El navegador puede requerir un clic previo. Esperar no apaga la elección.
+        void controller.gesture('hover',true);
+    };
+    const editable=field=>{
+        if(!field?.matches?.('input,textarea')||field.disabled||field.readOnly||field.closest?.('[data-payment-form]')) return false;
+        const type=(field.type||'text').toLowerCase(),name=(field.name||'').toLowerCase();
+        const autocomplete=(field.autocomplete||'').toLowerCase().split(/\s+/);
+        return (field.matches('textarea')||['text','search','email','tel','url','number'].includes(type))
+            &&!name.includes('password')&&!autocomplete.some(token=>token.includes('password')||token==='one-time-code'||token.startsWith('cc-'));
+    };
     const key=event=>{
-        const field=event.target;
-        if(event.isTrusted===false||event.repeat||!field?.matches?.('input,textarea')||field.type==='password'||field.name?.includes('password')||field.closest('[data-payment-form]')) return;
-        if(event.key==='Enter') void controller.gesture('clic');
-        else if(event.key?.length===1||event.key==='Backspace') controller.play('tecla');
+        if(event.isTrusted===false||event.repeat||!editable(event.target)) return;
+        // Prepara audio dentro del gesto físico; el único tono sale del evento input.
+        void controller.gesture(null);
+    };
+    const input=event=>{
+        if(event.isTrusted===false||!editable(event.target)) return;
+        if(event.inputType&&!/^(insert|delete|history)/.test(event.inputType)) return;
+        void controller.gesture('tecla');
     };
     const hidden=()=>{if(doc.hidden) controller.pause();};
     const pagehide=()=>controller.pause();
     const destroy=()=>{
-        button.removeEventListener('click',toggle);doc.removeEventListener('click',click);doc.removeEventListener('pointerover',hover);doc.removeEventListener('keydown',key);doc.removeEventListener('visibilitychange',hidden);env.removeEventListener?.('pagehide',pagehide);
+        button.removeEventListener('click',toggle);doc.removeEventListener('click',click,true);doc.removeEventListener('pointerover',hover,true);doc.removeEventListener('keydown',key,true);doc.removeEventListener('input',input,true);doc.removeEventListener('visibilitychange',hidden);env.removeEventListener?.('pagehide',pagehide);
         globalThis.clearTimeout(noticeTimer);controller.destroy();bindings.delete(doc);
     };
-    button.addEventListener('click',toggle);doc.addEventListener('click',click);doc.addEventListener('pointerover',hover);doc.addEventListener('keydown',key);doc.addEventListener('visibilitychange',hidden);env.addEventListener?.('pagehide',pagehide);
+    button.addEventListener('click',toggle);doc.addEventListener('click',click,true);doc.addEventListener('pointerover',hover,true);doc.addEventListener('keydown',key,true);doc.addEventListener('input',input,true);doc.addEventListener('visibilitychange',hidden);env.addEventListener?.('pagehide',pagehide);
     const binding={controller,destroy};bindings.set(doc,binding);return binding;
 }
 if(typeof document!=='undefined') mountSounds(document);

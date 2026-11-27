@@ -17,7 +17,7 @@ function scenario(t,options={}) {
         resume(){log.push('resume');const job=deferred();this.resumptions.push(job);if(options.resume==='reject')job.reject(Error('No permitido'));if(options.resume==='immediate'){this.emit('running');job.resolve();}return job.promise;}
         suspend(){if(options.deferSuspend){const job=deferred();this.suspensions.push(job);return job.promise;}this.emit('suspended');return Promise.resolve();}
         close(){this.emit('closed');return Promise.resolve();}
-        createGain(){if(options.failFirstGain&&contexts.length===1)throw Error('Sin recursos');const param={value:1,setValueAtTime(v){this.value=v;},exponentialRampToValueAtTime(){}};const gain={gain:param,connect(){},disconnect(){this.disconnected=true;}};this.gains.push(gain);return gain;}
+        createGain(){if(options.failFirstGain&&contexts.length===1)throw Error('Sin recursos');const param={value:1,setValueAtTime(v){this.value=v;},ramps:[],exponentialRampToValueAtTime(value,time){this.ramps.push([value,time]);}};const gain={gain:param,connect(){},disconnect(){this.disconnected=true;}};this.gains.push(gain);return gain;}
         createOscillator(){const oscillator={frequency:{value:0},connect(){},disconnect(){this.disconnected=true;},start(){this.started=true;},stop(){this.stopped=true;}};this.oscillators.push(oscillator);return oscillator;}
         createBuffer(){return {};}
         createBufferSource(){log.push('prime');const source={connect(){},disconnect(){this.disconnected=true;},start(){this.started=true;},stop(){this.stopped=true;}};this.sources.push(source);return source;}
@@ -40,10 +40,10 @@ test('la preferencia guardada espera un gesto y no crea contexto en la carga',t=
 });
 test('crear, reanudar y preparar el frame silencioso ocurren dentro del gesto original',async t=>{
     const s=scenario(t),result=s.controller.toggle();assert.deepEqual(s.log,['create','resume','prime']);assert.equal(s.controller.snapshot().phase,'starting');assert.equal(s.controller.snapshot().active,false);assert.equal(s.contexts[0].oscillators.length,0);
-    s.run();assert.equal(await result,true);assert.equal(s.controller.snapshot().active,true);assert.equal(s.contexts[0].oscillators.length,2);assert.deepEqual(s.writes.at(-1),['rp-sonido','on']);
+    s.run();assert.equal(await result,true);assert.equal(s.controller.snapshot().active,true);assert.equal(s.contexts[0].oscillators.length,1);assert.deepEqual(s.writes.at(-1),['rp-sonido','on']);
 });
 test('un contexto ya iniciado también confirma la activación una sola vez',async t=>{
-    const s=scenario(t,{state:'running',resume:'immediate'});assert.equal(await s.controller.toggle(),true);assert.equal(s.log.includes('resume'),true);assert.equal(s.contexts[0].oscillators.length,2);assert.equal(s.clock.tasks.size,0);
+    const s=scenario(t,{state:'running',resume:'immediate'});assert.equal(await s.controller.toggle(),true);assert.equal(s.log.includes('resume'),true);assert.equal(s.contexts[0].oscillators.length,1);assert.equal(s.clock.tasks.size,0);
 });
 test('un rechazo de resume vuelve a apagado y permite reintentar',async t=>{
     const s=scenario(t),first=s.controller.toggle();s.reject();assert.equal(await first,false);assert.equal(s.controller.snapshot().phase,'off');assert.deepEqual(s.notices,['error']);assert.equal(s.controller.snapshot().enabled,false);
@@ -57,13 +57,13 @@ test('apagar mientras espera cancela el intento y descarta el sonido tardío',as
     const s=scenario(t),result=s.controller.toggle();await s.controller.toggle();assert.equal(await result,false);s.run();await tick();assert.equal(s.controller.snapshot().phase,'off');assert.equal(s.contexts[0].gains[0].gain.value,0);assert.equal(s.contexts[0].oscillators.length,0);assert.equal(s.clock.tasks.size,0);
 });
 test('muchos gestos durante el arranque no acumulan notas ni reanudaciones',async t=>{
-    const s=scenario(t),first=s.controller.toggle();assert.equal(s.controller.gesture('clic'),first);assert.equal(s.controller.gesture('tecla'),first);assert.equal(s.contexts[0].resumptions.length,1);s.run();await first;assert.equal(s.contexts[0].oscillators.length,2);
+    const s=scenario(t),first=s.controller.toggle();assert.equal(s.controller.gesture('clic'),first);assert.equal(s.controller.gesture('tecla'),first);assert.equal(s.contexts[0].resumptions.length,1);s.run();await first;assert.equal(s.contexts[0].oscillators.length,1);
 });
 test('desactivar silencia la ganancia, detiene y desconecta las notas',async t=>{
     const s=scenario(t),result=s.controller.toggle();s.run();await result;await s.controller.toggle();const c=s.contexts[0];assert.equal(s.controller.snapshot().active,false);assert.equal(c.gains[0].gain.value,0);assert.ok(c.oscillators.every(n=>n.stopped&&n.disconnected));assert.ok(c.gains.slice(1).every(n=>n.disconnected));assert.deepEqual(s.writes.at(-1),['rp-sonido','off']);
 });
 test('una interrupción móvil espera el siguiente toque y reanuda dentro de él',async t=>{
-    const s=scenario(t),first=s.controller.toggle();s.run();await first;const c=s.contexts[0];c.emit('interrupted');assert.equal(s.controller.snapshot().phase,'armed');assert.equal(c.resumptions.length,1);s.advance(100);const next=s.controller.gesture('clic');assert.equal(c.resumptions.length,2);s.run(1);assert.equal(await next,true);assert.equal(c.oscillators.length,3);
+    const s=scenario(t),first=s.controller.toggle();s.run();await first;const c=s.contexts[0];c.emit('interrupted');assert.equal(s.controller.snapshot().phase,'armed');assert.equal(c.resumptions.length,1);s.advance(100);const next=s.controller.gesture('clic');assert.equal(c.resumptions.length,2);s.run(1);assert.equal(await next,true);assert.equal(c.oscillators.length,2);
 });
 test('ocultar la página cancela un intento pendiente y mantiene la preferencia para otro gesto',async t=>{
     const s=scenario(t,{stored:'on'}),first=s.controller.gesture('clic');s.controller.pause();assert.equal(await first,false);s.run();await tick();assert.equal(s.controller.snapshot().phase,'armed');assert.equal(s.contexts[0].oscillators.length,0);
@@ -72,7 +72,7 @@ test('un contexto cerrado se sustituye solo al recibir el siguiente gesto',async
     const s=scenario(t),first=s.controller.toggle();s.run();await first;s.contexts[0].emit('closed');assert.equal(s.contexts.length,1);const next=s.controller.gesture('clic');assert.equal(s.contexts.length,2);s.run();assert.equal(await next,true);
 });
 test('el resultado de un intento anterior no duplica una activación nueva',async t=>{
-    const s=scenario(t),old=s.controller.toggle();await s.controller.toggle();const current=s.controller.toggle();s.run(0);await tick();assert.equal(s.controller.snapshot().active,false);assert.equal(await old,false);s.run(1);assert.equal(await current,true);assert.equal(s.contexts[0].oscillators.length,2);
+    const s=scenario(t),old=s.controller.toggle();await s.controller.toggle();const current=s.controller.toggle();s.run(0);await tick();assert.equal(s.controller.snapshot().active,false);assert.equal(await old,false);s.run(1);assert.equal(await current,true);assert.equal(s.contexts[0].oscillators.length,1);
 });
 test('el almacenamiento bloqueado no impide activar ni desactivar',async t=>{
     const s=scenario(t,{storageError:true}),result=s.controller.toggle();s.run();assert.equal(await result,true);await s.controller.toggle();assert.equal(s.controller.snapshot().active,false);
@@ -118,14 +118,14 @@ test('la preferencia no activa el audio con hover táctil ni eventos artificiale
 });
 test('las teclas de contraseña y pago no producen sonidos de tecleo',async t=>{
     const s=ui(t);s.button.emit('click');s.run();await tick();const count=s.contexts[0].oscillators.length;
-    for(const field of [{type:'password',name:'password',closest:()=>false},{type:'text',name:'password',closest:()=>false},{type:'text',name:'payment[number]',closest:()=>true}])s.doc.emit('keydown',{key:'a',target:{matches:()=>true,...field}});
+    for(const field of [{type:'password',name:'password',closest:()=>false},{type:'text',name:'password',closest:()=>false},{type:'text',name:'payment[number]',closest:()=>true}])s.doc.emit('keydown',{key:'a',target:{matches:selector=>selector==='input,textarea',...field}});
     assert.equal(s.contexts[0].oscillators.length,count);
 });
 
 test('reactivar antes de terminar suspend respeta la última decisión y espera su resume',async t=>{
     const s=scenario(t,{deferSuspend:true}),first=s.controller.toggle();s.run();await first;await s.controller.toggle();
     const last=s.controller.toggle(),c=s.contexts[0];assert.equal(c.resumptions.length,2);assert.equal(s.controller.snapshot().active,false);
-    c.emit('suspended');c.suspensions[0].resolve();s.run(1);assert.equal(await last,true);assert.equal(s.controller.snapshot().active,true);assert.equal(c.oscillators.length,4);
+    c.emit('suspended');c.suspensions[0].resolve();s.run(1);assert.equal(await last,true);assert.equal(s.controller.snapshot().active,true);assert.equal(c.oscillators.length,2);
 });
 
 
@@ -154,4 +154,108 @@ test('ocultar, interrumpir y reanudar mantienen el icono hasta apagarlo expresam
     c.emit('interrupted');selected();assert.equal(s.binding.controller.snapshot().active,false);
     resume();selected();s.run(2);await tick();selected();
     s.button.emit('click');assert.equal(s.attrs.get('aria-pressed'),'false');assert.equal(s.binding.controller.snapshot().active,false);
+});
+
+
+test('los avisos se muestran solo al cambiar la elección con el altavoz',async t=>{
+    const s=scenario(t),enabled=s.controller.toggle();s.run();assert.equal(await enabled,true);assert.deepEqual(s.notices,['on']);
+    s.controller.pause();const resumed=s.controller.gesture();s.run(1);assert.equal(await resumed,true);assert.deepEqual(s.notices,['on']);
+    await s.controller.toggle();assert.deepEqual(s.notices,['on','off']);
+    const next=scenario(t,{stored:'on'}),first=next.controller.gesture();next.run();assert.equal(await first,true);assert.deepEqual(next.notices,[]);
+});
+test('un clic que reanuda en otra página no abre un aviso de activación',async t=>{
+    const s=ui(t,{stored:'on'});assert.equal(s.status.hidden,true);
+    s.doc.emit('click',{target:{closest:selector=>selector==='#sound-toggle'?null:true}});s.run();await tick();
+    assert.equal(s.binding.controller.snapshot().active,true);assert.equal(s.status.hidden,true);assert.equal(s.status.textContent,undefined);
+    s.button.emit('click');assert.equal(s.status.textContent,'Sonidos desactivados.');
+    s.button.emit('click');s.run(1);await tick();assert.equal(s.status.textContent,'Sonidos activados.');
+});
+test('el hover táctil y los eventos de edición artificiales no producen sonidos',async t=>{
+    const s=ui(t,{stored:'on'});s.doc.emit('click',{target:{closest:selector=>selector==='#sound-toggle'?null:true}});s.run();await tick();
+    const before=s.contexts[0].oscillators.length;
+    const target={matches:selector=>selector==='input,textarea',closest:()=>false,type:'text',name:'name'};
+    s.doc.emit('pointerover',{pointerType:'touch',target});s.doc.emit('pointerdown',{pointerType:'touch',target});s.doc.emit('input',{isTrusted:false,inputType:'insertText',target});
+    assert.equal(s.contexts[0].oscillators.length,before);assert.equal(s.status.hidden,true);
+});
+test('activar, reanudar y clicar usan el mismo tono y nivel de salida',async t=>{
+    const enabled=scenario(t),start=enabled.controller.toggle();enabled.run();await start;
+    const next=scenario(t,{stored:'on'}),resumed=next.controller.gesture();next.run();await resumed;
+    next.advance(100);await next.controller.gesture();
+    const signature=(c,index)=>({type:c.oscillators[index].type,hz:c.oscillators[index].frequency.value,master:c.gains[0].gain.value,envelope:c.gains[index+1].gain.ramps});
+    const reference=signature(enabled.contexts[0],0);
+    assert.deepEqual(signature(next.contexts[0],0),reference);assert.deepEqual(signature(next.contexts[0],1),reference);
+    assert.equal(reference.master,.8);assert.equal(reference.envelope[0][0],.07);assert.equal(enabled.contexts[0].oscillators.length,1);assert.equal(next.contexts[0].oscillators.length,2);
+});
+test('un fallo real al reanudar mantiene el aviso de error y apaga la preferencia',async t=>{
+    const s=scenario(t,{stored:'on'}),resume=s.controller.gesture();s.reject();assert.equal(await resume,false);
+    assert.deepEqual(s.notices,['error']);assert.equal(s.controller.snapshot().enabled,false);assert.deepEqual(s.writes.at(-1),['rp-sonido','off']);
+});
+
+
+const textField=(extra={})=>({type:'text',name:'name',matches:selector=>selector==='input,textarea',closest:()=>false,...extra});
+const navTarget=()=>{const target={closest:selector=>selector==='#sound-toggle'?null:target};return target;};
+test('un primer hover de ratón prepara el audio también en Perfil sin aviso',async t=>{
+    const s=ui(t,{stored:'on'}),target=navTarget();s.doc.emit('pointerover',{pointerType:'mouse',target});
+    assert.equal(s.contexts.length,1);assert.equal(s.attrs.get('aria-pressed'),'true');s.run();await tick();
+    assert.equal(s.contexts[0].oscillators[0].frequency.value,1760);assert.equal(s.status.hidden,true);
+    s.doc.emit('pointerover',{pointerType:'mouse',target,relatedTarget:target});assert.equal(s.contexts[0].oscillators.length,1);
+});
+test('un hover bloqueado no apaga el sonido ni muestra error y el clic reintenta',async t=>{
+    const s=scenario(t,{stored:'on'}),hover=s.controller.gesture('hover',true);s.reject();assert.equal(await hover,false);
+    assert.equal(s.controller.snapshot().enabled,true);assert.deepEqual(s.notices,[]);assert.deepEqual(s.writes,[]);
+    const click=s.controller.gesture();s.run(1);assert.equal(await click,true);assert.equal(s.contexts[0].oscillators[0].frequency.value,1320);
+});
+test('un clic sustituye el hover aún pendiente sin reproducir el hover tardío',async t=>{
+    const s=scenario(t,{stored:'on'}),hover=s.controller.gesture('hover',true),click=s.controller.gesture();
+    assert.equal(await hover,false);assert.equal(s.contexts[0].resumptions.length,2);s.run(0);await tick();assert.equal(s.contexts[0].oscillators.length,0);
+    s.run(1);assert.equal(await click,true);assert.equal(s.contexts[0].oscillators.length,1);assert.equal(s.contexts[0].oscillators[0].frequency.value,1320);assert.deepEqual(s.notices,[]);
+});
+test('el teclado móvil suena con input aunque no emita keydown',async t=>{
+    const s=ui(t,{stored:'on'});s.doc.emit('input',{inputType:'insertText',target:textField()});s.run();await tick();
+    assert.equal(s.contexts[0].oscillators.length,1);assert.equal(s.contexts[0].oscillators[0].frequency.value,880);assert.equal(s.status.hidden,true);
+});
+test('el teclado físico prepara en keydown y reproduce una sola nota al editar',async t=>{
+    const s=ui(t,{stored:'on'}),target=textField();s.doc.emit('keydown',{key:'a',target});
+    s.doc.emit('input',{inputType:'insertText',target});s.run();await tick();
+    assert.equal(s.contexts[0].resumptions.length,1);assert.equal(s.contexts[0].oscillators.length,1);assert.equal(s.contexts[0].oscillators[0].frequency.value,880);
+});
+test('ediciones móviles de composición, borrado y reemplazo producen una nota por evento',async t=>{
+    for(const inputType of ['insertCompositionText','deleteContentBackward','insertReplacementText']) {
+        const s=ui(t,{stored:'on'});s.doc.emit('input',{inputType,isComposing:inputType==='insertCompositionText',target:textField()});s.run();await tick();
+        assert.equal(s.contexts[0].oscillators.length,1);assert.equal(s.contexts[0].oscillators[0].frequency.value,880);
+    }
+});
+test('la edición excluye contraseñas visibles, pagos, códigos, campos deshabilitados y controles no textuales',async t=>{
+    const s=ui(t,{stored:'on'});
+    for(const extra of [{type:'password'},{name:'new_password'},{autocomplete:'section-a current-password'},{autocomplete:'one-time-code'},{autocomplete:'cc-number'},{closest:()=>true},{readOnly:true},{disabled:true},{type:'checkbox'}]) {
+        const target=textField(extra);s.doc.emit('keydown',{key:'a',target});s.doc.emit('input',{inputType:'insertText',target});
+    }
+    assert.equal(s.contexts.length,0);assert.equal(s.status.hidden,true);
+});
+test('la edición y el hover respetan apagado y los listeners se retiran al destruir',async t=>{
+    const s=ui(t);s.doc.emit('input',{inputType:'insertText',target:textField()});s.doc.emit('pointerover',{pointerType:'mouse',target:navTarget()});
+    assert.equal(s.contexts.length,0);s.binding.destroy();
+    for(const event of ['click','pointerover','keydown','input'])assert.equal(s.doc.handlers.get(event).size,0);
+});
+test('un hover que vence conserva la elección y el clic posterior puede reanudar',async t=>{
+    const s=scenario(t,{stored:'on'}),hover=s.controller.gesture('hover',true);s.clock.fire();assert.equal(await hover,false);
+    assert.equal(s.controller.snapshot().enabled,true);assert.deepEqual(s.notices,[]);
+    const click=s.controller.gesture();s.run(1);assert.equal(await click,true);assert.deepEqual(s.notices,[]);
+});
+
+
+test('un clic inmediato tiene prioridad sobre el hover anterior',async t=>{
+    const s=scenario(t,{stored:'on'}),hover=s.controller.gesture('hover',true);s.run();assert.equal(await hover,true);
+    assert.equal(await s.controller.gesture(),true);assert.equal(s.contexts[0].oscillators.length,2);
+    assert.equal(s.contexts[0].oscillators[0].frequency.value,1760);assert.equal(s.contexts[0].oscillators[1].frequency.value,1320);
+    assert.deepEqual(s.notices,[]);
+});
+test('apagar durante un hover pendiente descarta cualquier reproducción tardía',async t=>{
+    const s=scenario(t,{stored:'on'}),hover=s.controller.gesture('hover',true);await s.controller.toggle();s.run();await tick();
+    assert.equal(await hover,false);assert.equal(s.controller.snapshot().enabled,false);assert.equal(s.contexts[0].oscillators.length,0);
+    assert.deepEqual(s.notices,['off']);assert.deepEqual(s.writes.at(-1),['rp-sonido','off']);
+});
+test('un navegador que rechaza crear audio al pasar el ratón conserva la elección',async t=>{
+    const s=scenario(t,{stored:'on',constructorError:true});assert.equal(await s.controller.gesture('hover',true),false);
+    assert.equal(s.controller.snapshot().enabled,true);assert.deepEqual(s.notices,[]);assert.deepEqual(s.writes,[]);
 });
