@@ -8,7 +8,10 @@ WORKDIR /app
 COPY package.json package-lock.json vite.config.js ./
 RUN npm ci
 COPY resources ./resources
-RUN npm run build
+COPY public/brand ./public/brand
+COPY public/rp-gateway-sw.js ./public/rp-gateway-sw.js
+COPY scripts/build-navigation-shell.mjs ./scripts/build-navigation-shell.mjs
+RUN node scripts/build-navigation-shell.mjs && npm run build
 
 # --- Etapa 2: aplicacion ---
 FROM php:8.2-apache
@@ -31,6 +34,8 @@ RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
 # El codigo del proyecto y los assets ya compilados.
 COPY . .
 COPY --from=assets /app/public/build ./public/build
+COPY --from=assets /app/public/brand/navigation-shell.html ./public/brand/navigation-shell.html
+COPY --from=assets /app/public/rp-gateway-sw.js ./public/rp-gateway-sw.js
 
 RUN composer dump-autoload --optimize \
     && chown -R www-data:www-data storage bootstrap/cache
