@@ -1,9 +1,8 @@
-/* Sonidos opcionales de la interfaz. El contexto solo se crea/reanuda dentro
-   de un gesto; guardar la preferencia no autoriza una reproducción automática. */
+/* Un único sonido de clic opcional; pasar el puntero o escribir no reproduce audio.
+   El contexto solo se crea/reanuda dentro de un gesto. Guardar la preferencia
+   no autoriza una reproducción automática. */
 const RECIPES = Object.freeze({
     clic:{notes:[[1320,0,.035]], volume:.07, type:'triangle'},
-    tecla:{notes:[[880,0,.022]], volume:.035, type:'square'},
-    hover:{notes:[[1760,0,.025]], volume:.025, type:'sine'},
     ok:{notes:[[523,0,.09],[784,.085,.14]], volume:.10, type:'sine'},
     error:{notes:[[233,0,.13],[175,.1,.18]], volume:.11, type:'sine'},
 });
@@ -59,7 +58,7 @@ export function createSoundController({Context, storage, onChange=()=>{}, onNoti
             lastSound=now();return true;
         } catch {silence();wanted=false;enabled=false;unlocked=false;save(false);render();onNotice('error');return false;}
     };
-    const activate=(tone='ok')=>{
+    const activate=(tone='clic',announce=false)=>{
         if(!supported||destroyed) return Promise.resolve(false);
         if(pending) return pending.promise; // No se acumulan tonos durante una reanudación.
         if(snapshot().active) {play(tone);return Promise.resolve(true);}
@@ -75,7 +74,7 @@ export function createSoundController({Context, storage, onChange=()=>{}, onNoti
             let accepted=success&&ticket===generation&&!destroyed&&wanted&&current.state==='running';
             if(accepted) {try {master.gain.setValueAtTime(.8,current.currentTime);} catch {accepted=false;}}
             if(accepted) {
-                unlocked=true;enabled=true;save(true);render();accepted=play(tone,0);if(accepted) onNotice('on');
+                unlocked=true;enabled=true;save(true);render();accepted=play(tone,0);if(accepted&&announce) onNotice('on');
             } else if(ticket===generation&&!destroyed) {
                 wanted=false;enabled=false;unlocked=false;save(false);silence();render();onNotice('error');
             }
@@ -113,8 +112,8 @@ export function createSoundController({Context, storage, onChange=()=>{}, onNoti
         try {Promise.resolve(context?.close()).catch(()=>{});} catch {}
     };
     render();
-    return {snapshot,activate,play,pause,destroy,toggle:()=>pending||snapshot().enabled?(deactivate(),Promise.resolve(false)):activate('ok'),
-        gesture:tone=>wanted?activate(tone):Promise.resolve(false)};
+    return {snapshot,activate,play,pause,destroy,toggle:()=>pending||snapshot().enabled?(deactivate(),Promise.resolve(false)):activate('clic',true),
+        gesture:()=>wanted?activate('clic'):Promise.resolve(false)};
 }
 
 const bindings=new WeakMap();
@@ -142,22 +141,15 @@ export function mountSounds(doc=document, env=globalThis) {
     const toggle=event=>{if(event.isTrusted===false) return;void controller.toggle();};
     const click=event=>{
         if(event.isTrusted===false||event.target?.closest?.('#sound-toggle')) return;
-        if(event.target?.closest?.('button,a,label,summary,[role="button"],input,select,textarea')) void controller.gesture('clic');
-    };
-    const hover=event=>{if(event.isTrusted!==false&&event.pointerType==='mouse'&&event.target?.closest?.('.btn,.main-nav a')) controller.play('hover',120);};
-    const key=event=>{
-        const field=event.target;
-        if(event.isTrusted===false||event.repeat||!field?.matches?.('input,textarea')||field.type==='password'||field.name?.includes('password')||field.closest('[data-payment-form]')) return;
-        if(event.key==='Enter') void controller.gesture('clic');
-        else if(event.key?.length===1||event.key==='Backspace') controller.play('tecla');
+        if(event.target?.closest?.('button,a,label,summary,[role="button"],input,select,textarea')) void controller.gesture();
     };
     const hidden=()=>{if(doc.hidden) controller.pause();};
     const pagehide=()=>controller.pause();
     const destroy=()=>{
-        button.removeEventListener('click',toggle);doc.removeEventListener('click',click);doc.removeEventListener('pointerover',hover);doc.removeEventListener('keydown',key);doc.removeEventListener('visibilitychange',hidden);env.removeEventListener?.('pagehide',pagehide);
+        button.removeEventListener('click',toggle);doc.removeEventListener('click',click);doc.removeEventListener('visibilitychange',hidden);env.removeEventListener?.('pagehide',pagehide);
         globalThis.clearTimeout(noticeTimer);controller.destroy();bindings.delete(doc);
     };
-    button.addEventListener('click',toggle);doc.addEventListener('click',click);doc.addEventListener('pointerover',hover);doc.addEventListener('keydown',key);doc.addEventListener('visibilitychange',hidden);env.addEventListener?.('pagehide',pagehide);
+    button.addEventListener('click',toggle);doc.addEventListener('click',click);doc.addEventListener('visibilitychange',hidden);env.addEventListener?.('pagehide',pagehide);
     const binding={controller,destroy};bindings.set(doc,binding);return binding;
 }
 if(typeof document!=='undefined') mountSounds(document);
