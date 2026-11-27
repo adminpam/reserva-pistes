@@ -46,7 +46,7 @@ function setup(mode, options = {}) {
         cancelAnimationFrame: (id) => timers.delete(id),
         matchMedia: () => ({ matches: !!options.reduced }),
         addEventListener: (name, callback) => listeners.set(name, callback),
-        location: { replace: (url) => redirects.push(url) },
+        location: { hash:options.hash || '', replace: (url) => redirects.push(url) },
     };
     class FakeImage {
         constructor() { images.push(this); }
@@ -56,7 +56,7 @@ function setup(mode, options = {}) {
     const sessionStorage = { setItem(key, value) {
         if (options.storageDenied) throw new Error('Storage denied'); stored.set(key, value);
     } };
-    vm.runInNewContext(code, { document, window, sessionStorage, Image: FakeImage, URL, Date: { now: () => now } });
+    vm.runInNewContext(code, { document, window, sessionStorage, Image: FakeImage, URL, URLSearchParams, Date: { now: () => now } });
     const flush = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
     const advance = async (milliseconds) => {
         const limit = now + milliseconds;
@@ -158,4 +158,19 @@ test('un destino sin HTTPS se rechaza sin enviar peticiones', () => {
     const s = setup('gateway', { destination: 'http://example.test/' });
     assert.equal(s.images.length, 0);
     assert.equal(s.nodes.notice.hidden, false);
+});
+
+
+test('la entrada conserva ruta, filtros y ancla después de recibir la imagen válida', async () => {
+    const relative = '/clubs/7?date=2026-11-28&sports%5B0%5D=padel#court-9';
+    const s = setup('gateway', {hash:'#'+new URLSearchParams({next:relative})});await s.respond();
+    const url = new URL(s.redirects[0]);assert.equal(url.pathname,'/clubs/7');assert.equal(url.searchParams.get('sports[0]'),'padel');assert.equal(url.hash,'#court-9');assert.equal(url.searchParams.get('rp_ready'),'1');
+});
+test('un fragmento externo, protocol-relative o con barras inversas no cambia el origen', async () => {
+    for (const next of ['https://externo.test/','//externo.test/','/\\externo.test/','/profile'+String.fromCharCode(10)]) {
+        const s=setup('gateway',{hash:'#'+new URLSearchParams({next})});await s.respond();assert.equal(s.redirects[0],'https://reserva-pistes.onrender.com/?rp_ready=1');
+    }
+});
+test('volver desde la caché del navegador reinicia una comprobación cancelada', async () => {
+    const s=setup('gateway');s.listeners.get('pagehide')();s.listeners.get('pageshow')({persisted:true});assert.equal(s.images.length,2);await s.respond();assert.equal(s.redirects.length,1);
 });
