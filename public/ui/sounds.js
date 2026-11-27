@@ -10,11 +10,13 @@ const RECIPES = Object.freeze({
 const defaultTimers = {set:(...args)=>globalThis.setTimeout(...args), clear:(...args)=>globalThis.clearTimeout(...args)};
 
 export function createSoundController({Context, storage, onChange=()=>{}, onNotice=()=>{}, timers=defaultTimers, now=()=>performance.now()}={}) {
-    let wanted=false, unlocked=false, destroyed=false, context=null, master=null, pending=null, generation=0, lastSound=-Infinity;
+    let wanted=false, enabled=false, unlocked=false, destroyed=false, context=null, master=null, pending=null, generation=0, lastSound=-Infinity;
     const supported=typeof Context==='function', voices=new Map();
     try {wanted=storage?.getItem('rp-sonido')==='on';} catch { /* Preferencia opcional. */ }
+    enabled=wanted; // Una elección ya confirmada se conserva entre páginas.
     const save=value=>{try {storage?.setItem('rp-sonido',value?'on':'off');} catch { /* El audio no depende del almacenamiento. */ }};
-    const snapshot=()=>({supported,wanted,active:!destroyed&&wanted&&unlocked&&context?.state==='running'&&!pending,
+    // enabled refleja la elección; active indica si se puede reproducir ahora.
+    const snapshot=()=>({supported,wanted,enabled:!destroyed&&supported&&enabled,active:!destroyed&&wanted&&unlocked&&context?.state==='running'&&!pending,
         phase:!supported?'unsupported':pending?'starting':!destroyed&&wanted&&unlocked&&context?.state==='running'?'on':wanted?'armed':'off'});
     const render=()=>onChange(snapshot());
     const silence=()=>{
@@ -55,7 +57,7 @@ export function createSoundController({Context, storage, onChange=()=>{}, onNoti
                 oscillator.start(time+delay);oscillator.stop(time+delay+duration+.02);
             }
             lastSound=now();return true;
-        } catch {silence();wanted=false;unlocked=false;save(false);render();onNotice('error');return false;}
+        } catch {silence();wanted=false;enabled=false;unlocked=false;save(false);render();onNotice('error');return false;}
     };
     const activate=(tone='ok')=>{
         if(!supported||destroyed) return Promise.resolve(false);
@@ -64,7 +66,7 @@ export function createSoundController({Context, storage, onChange=()=>{}, onNoti
         wanted=true;unlocked=false;
         const ticket=++generation;
         let current;
-        try {current=ensureContext();} catch {wanted=false;save(false);render();onNotice('error');return Promise.resolve(false);}
+        try {current=ensureContext();} catch {wanted=false;enabled=false;save(false);render();onNotice('error');return Promise.resolve(false);}
         let resolve, timeout=null;
         const promise=new Promise(done=>{resolve=done;});
         const finish=success=>{
@@ -73,9 +75,9 @@ export function createSoundController({Context, storage, onChange=()=>{}, onNoti
             let accepted=success&&ticket===generation&&!destroyed&&wanted&&current.state==='running';
             if(accepted) {try {master.gain.setValueAtTime(.8,current.currentTime);} catch {accepted=false;}}
             if(accepted) {
-                unlocked=true;save(true);render();accepted=play(tone,0);if(accepted) onNotice('on');
+                unlocked=true;enabled=true;save(true);render();accepted=play(tone,0);if(accepted) onNotice('on');
             } else if(ticket===generation&&!destroyed) {
-                wanted=false;unlocked=false;save(false);silence();render();onNotice('error');
+                wanted=false;enabled=false;unlocked=false;save(false);silence();render();onNotice('error');
             }
             resolve(accepted);
         };
@@ -98,7 +100,7 @@ export function createSoundController({Context, storage, onChange=()=>{}, onNoti
         return promise;
     };
     const deactivate=()=>{
-        generation++;wanted=false;unlocked=false;stopWaiting();silence();save(false);render();onNotice('off');
+        generation++;wanted=false;enabled=false;unlocked=false;stopWaiting();silence();save(false);render();onNotice('off');
         try {Promise.resolve(context?.suspend()).catch(()=>{});} catch { /* Ya queda silenciado por la ganancia. */ }
     };
     const pause=()=>{
@@ -111,7 +113,7 @@ export function createSoundController({Context, storage, onChange=()=>{}, onNoti
         try {Promise.resolve(context?.close()).catch(()=>{});} catch {}
     };
     render();
-    return {snapshot,activate,play,pause,destroy,toggle:()=>pending||snapshot().active?(deactivate(),Promise.resolve(false)):activate('ok'),
+    return {snapshot,activate,play,pause,destroy,toggle:()=>pending||snapshot().enabled?(deactivate(),Promise.resolve(false)):activate('ok'),
         gesture:tone=>wanted?activate(tone):Promise.resolve(false)};
 }
 
@@ -129,11 +131,11 @@ export function mountSounds(doc=document, env=globalThis) {
     };
     const paint=state=>{
         button.hidden=!state.supported;if(divider) divider.hidden=!state.supported;
-        button.setAttribute('aria-pressed',String(state.active));button.setAttribute('aria-busy',String(state.phase==='starting'));
-        const title=state.phase==='starting'?'Cancelar activación del sonido':state.active?'Desactivar sonidos':'Activar sonidos';
-        button.setAttribute('aria-label',title);button.title=state.phase==='armed'?'Toca para activar los sonidos guardados':title;
-        button.querySelector('.snd-on')?.toggleAttribute('hidden',!state.active);
-        button.querySelector('.snd-off')?.toggleAttribute('hidden',state.active);
+        button.setAttribute('aria-pressed',String(state.enabled));button.setAttribute('aria-busy',String(state.phase==='starting'));
+        const title=state.enabled?'Desactivar sonidos':state.phase==='starting'?'Cancelar activación del sonido':'Activar sonidos';
+        button.setAttribute('aria-label',title);button.title=state.phase==='armed'?'Sonidos activados; se reanudarán al tocar la página':title;
+        button.querySelector('.snd-on')?.toggleAttribute('hidden',!state.enabled);
+        button.querySelector('.snd-off')?.toggleAttribute('hidden',state.enabled);
     };
     let storage;try {storage=env.localStorage;} catch {}
     const controller=createSoundController({Context:env.AudioContext||env.webkitAudioContext,storage,onChange:paint,onNotice:notice});
