@@ -1,6 +1,6 @@
-/* Devuelve primero una escena pública verificada, nunca HTML de una cuenta.
-   La lectura real se hace después del ready. POST/PATCH/DELETE siguen nativos. */
-import {APP_ORIGIN, gatewayFor} from './brand/gateway-policy.js?v=de54935532b129a1';
+/* Las páginas rápidas se devuelven intactas. Solo una espera larga o una
+   respuesta del proxy abre la escena pública. Las escrituras siguen nativas. */
+import {APP_ORIGIN, gatewayFor, NAVIGATION_GRACE_MS} from './brand/gateway-policy.js?v=5aa3abecf34a6036';
 
 export const SHELL_PATH = '/brand/navigation-shell.html';
 export const SHELL_DIGEST = '152961a593fd7e621b40e62617f2e5941d189ef8d0d80fab3ba7e7bbdcbc10ba';
@@ -34,12 +34,25 @@ export function guardedNavigation(request) {
     } catch {return false;}
 }
 
-export async function navigate(request,{cacheStorage=globalThis.caches,fetcher=(...args)=>globalThis.fetch(...args)}={}) {
+const discard = response => {try {response?.body?.cancel().catch(() => {});} catch { /* El cuerpo ya puede estar cerrado. */ }};
+
+export async function navigate(request,{cacheStorage=globalThis.caches,fetcher=(...args)=>globalThis.fetch(...args),timers={set:(...args)=>globalThis.setTimeout(...args),clear:(...args)=>globalThis.clearTimeout(...args)}}={}) {
     if (!guardedNavigation(request)) return fetcher(request);
+    const controller = new AbortController();let timer, finished = false, received;
+    const deadline = new Promise(resolve => {timer = timers.set(() => resolve(null),NAVIGATION_GRACE_MS);});
+    // Se solicita el GET original, con su sesión; no se guarda su respuesta.
+    const network = Promise.resolve().then(() => fetcher(request,{signal:controller.signal,cache:'no-store'})).then(response => {
+        if (finished) {discard(response);return null;}
+        received = response;return response;
+    }).catch(() => null);
+    const response = await Promise.race([network,deadline]);
+    finished = true;timers.clear(timer);
+    // Los redirects manuales de navegación no exponen cabeceras al worker.
+    if (response && (response.headers.get('X-Reserva-Pistes-App') === '1' || response.type === 'opaqueredirect')) return response;
+    discard(received);controller.abort();
     try {
         const cache = await cacheStorage.open(CACHE_NAME), shell = await cache.match(SHELL_URL);
         if (shell?.headers.get('X-RP-Public-Loader')===SHELL_DIGEST) {
-            // No hay una petición al servidor antes de esta respuesta.
             return new Response(shell.body,{headers:{
                 'Content-Type':'text/html; charset=utf-8','Cache-Control':'private, no-store',
                 'X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer',

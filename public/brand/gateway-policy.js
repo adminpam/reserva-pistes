@@ -2,6 +2,7 @@
    no se cambia el origen de Laravel ni se guardan páginas o formularios. */
 export const APP_ORIGIN = 'https://reserva-pistes.onrender.com';
 export const ENTRY_URL = 'https://reserva-pistes-inicio.onrender.com/';
+export const NAVIGATION_GRACE_MS = 800;
 
 export function isAppPage(url) {
     if (url.origin !== APP_ORIGIN || url.username || url.password) return false;
@@ -17,7 +18,7 @@ export function gatewayFor(value) {
     const entry = new URL(ENTRY_URL);entry.hash = new URLSearchParams({next:relative}).toString();return entry.href;
 }
 
-export async function appIsReady({fetcher=(...args)=>globalThis.fetch(...args), timers={set:(...args)=>globalThis.setTimeout(...args), clear:(...args)=>globalThis.clearTimeout(...args)}, timeout=4000, now=()=>Date.now()}={}) {
+export async function appIsReady({fetcher=(...args)=>globalThis.fetch(...args), timers={set:(...args)=>globalThis.setTimeout(...args), clear:(...args)=>globalThis.clearTimeout(...args)}, timeout=NAVIGATION_GRACE_MS, now=()=>Date.now()}={}) {
     const controller = new AbortController();let timer;
     const deadline = new Promise(resolve => {timer = timers.set(() => {controller.abort();resolve(false);}, timeout);});
     const check = async () => {

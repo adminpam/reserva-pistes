@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // En produccion la app esta detras del proxy de Render: confiamos en
         // sus cabeceras X-Forwarded-* para que los enlaces se generen con https.
         $middleware->trustProxies(at: "*");
+        $middleware->append(\App\Http\Middleware\MarkApplicationResponse::class);
 
         $middleware->alias([
             "role" => \App\Http\Middleware\EnsureRole::class,
