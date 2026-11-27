@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Rules\EmailDomainWithExtension;
 use App\Support\PasswordRules;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\RedirectResponse;
@@ -31,7 +32,7 @@ class AuthController extends Controller
         $this->normalizeEmail($request);
         $data = $request->validate([
             'name' => ['required', 'string', 'max:100'],
-            'email' => ['bail', 'required', 'email', 'max:150', function ($attribute, $value, $fail): void {
+            'email' => ['bail', 'required', 'email', 'max:150', new EmailDomainWithExtension(), function ($attribute, $value, $fail): void {
                 if (User::whereRaw('LOWER(email) = ?', [$value])->exists()) {
                     $fail('Este correo ya está registrado.');
                 }

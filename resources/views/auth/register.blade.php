@@ -27,7 +27,8 @@
                 <div class="field">
                     <label for="email">Correo electrónico</label>
                     <input id="email" name="email" type="email" value="{{ old('email') }}"
-                           placeholder="tu@email.com" required maxlength="150" autocomplete="email">
+                           placeholder="tu@email.com" required maxlength="150" autocomplete="email" pattern="[^\s@]+@[^\s@]+\.[^\s@]+" aria-describedby="register-email-hint">
+                    <p class="rp-form-hint" id="register-email-hint">Incluye el dominio y su extensión: nombre@dominio.com. Para pruebas también se admite .test.</p>
                 </div>
 
                 <div class="field">

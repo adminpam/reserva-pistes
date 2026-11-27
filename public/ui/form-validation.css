@@ -1,6 +1,7 @@
 /* Avisos compartidos: el error se expresa con texto, icono y borde. */
-.rp-field-error { display:block; margin:8px 0 0; color:#a52e25; font-size:13px; line-height:1.5; font-weight:600; overflow-wrap:anywhere; }
-.rp-field-error::before { content:'!'; display:inline-grid; place-items:center; width:16px; height:16px; margin-right:7px; border:1.5px solid currentColor; border-radius:50%; font-size:11px; font-weight:800; vertical-align:1px; }
+.rp-form-grid > .rp-field { align-self:start; align-content:start; }
+.rp-field-error { display:grid; grid-template-columns:18px minmax(0,1fr); align-items:start; column-gap:8px; margin:8px 0 0; color:#a52e25; font-size:13px; line-height:1.5; font-weight:600; overflow-wrap:anywhere; }
+.rp-field-error::before { content:''; display:block; width:18px; height:18px; margin-top:calc((1.5em - 18px)/2); background:center/contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='8' fill='none' stroke='%23a52e25' stroke-width='1.6'/%3E%3Cpath d='M10 5.5v5' stroke='%23a52e25' stroke-width='1.8' stroke-linecap='round'/%3E%3Ccircle cx='10' cy='14' r='1' fill='%23a52e25'/%3E%3C/svg%3E"); }
 .rp-app input[aria-invalid=true]:not([type=radio]):not([type=checkbox]),
 .rp-app select[aria-invalid=true], .rp-app textarea[aria-invalid=true],
 input[aria-invalid=true]:not([type=radio]):not([type=checkbox]), select[aria-invalid=true], textarea[aria-invalid=true] { border-color:#bd4538; box-shadow:0 0 0 2px #bd453812; background-color:#fffafa; }
