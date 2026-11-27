@@ -46,7 +46,7 @@ test('un contexto ya iniciado también confirma la activación una sola vez',asy
     const s=scenario(t,{state:'running',resume:'immediate'});assert.equal(await s.controller.toggle(),true);assert.equal(s.log.includes('resume'),true);assert.equal(s.contexts[0].oscillators.length,2);assert.equal(s.clock.tasks.size,0);
 });
 test('un rechazo de resume vuelve a apagado y permite reintentar',async t=>{
-    const s=scenario(t),first=s.controller.toggle();s.reject();assert.equal(await first,false);assert.equal(s.controller.snapshot().phase,'off');assert.deepEqual(s.notices,['error']);
+    const s=scenario(t),first=s.controller.toggle();s.reject();assert.equal(await first,false);assert.equal(s.controller.snapshot().phase,'off');assert.deepEqual(s.notices,['error']);assert.equal(s.controller.snapshot().enabled,false);
     const second=s.controller.toggle();s.run(1);assert.equal(await second,true);
 });
 test('una reanudación que no termina vence sin dejar el botón activado',async t=>{
@@ -114,7 +114,7 @@ test('el montaje repetido conserva un solo listener y destruir lo retira',t=>{
     const s=ui(t);assert.equal(mountSounds(s.doc,s.env),s.binding);assert.equal(s.button.handlers.get('click').size,1);s.binding.destroy();assert.equal(s.button.handlers.get('click').size,0);assert.equal(s.doc.handlers.get('click').size,0);
 });
 test('la preferencia no activa el audio con hover táctil ni eventos artificiales',t=>{
-    const s=ui(t,{stored:'on'});s.button.emit('click',{isTrusted:false});s.doc.emit('pointerover',{pointerType:'touch',target:{closest:()=>true}});assert.equal(s.contexts.length,0);assert.equal(s.attrs.get('aria-pressed'),'false');
+    const s=ui(t,{stored:'on'});s.button.emit('click',{isTrusted:false});s.doc.emit('pointerover',{pointerType:'touch',target:{closest:()=>true}});assert.equal(s.contexts.length,0);assert.equal(s.attrs.get('aria-pressed'),'true');assert.equal(s.binding.controller.snapshot().active,false);
 });
 test('las teclas de contraseña y pago no producen sonidos de tecleo',async t=>{
     const s=ui(t);s.button.emit('click');s.run();await tick();const count=s.contexts[0].oscillators.length;
@@ -126,4 +126,32 @@ test('reactivar antes de terminar suspend respeta la última decisión y espera 
     const s=scenario(t,{deferSuspend:true}),first=s.controller.toggle();s.run();await first;await s.controller.toggle();
     const last=s.controller.toggle(),c=s.contexts[0];assert.equal(c.resumptions.length,2);assert.equal(s.controller.snapshot().active,false);
     c.emit('suspended');c.suspensions[0].resolve();s.run(1);assert.equal(await last,true);assert.equal(s.controller.snapshot().active,true);assert.equal(c.oscillators.length,4);
+});
+
+
+test('navegar conserva el icono activado sin iniciar audio en el nuevo documento',async t=>{
+    const first=ui(t);first.button.emit('click');first.run();await tick();
+    assert.deepEqual(first.writes.at(-1),['rp-sonido','on']);first.env.emit('pagehide');
+    const next=ui(t,{stored:first.writes.at(-1)[1]});
+    assert.equal(next.attrs.get('aria-pressed'),'true');assert.equal(next.attrs.get('aria-label'),'Desactivar sonidos');
+    assert.equal(next.icons['.snd-on'],false);assert.equal(next.icons['.snd-off'],true);
+    assert.equal(next.binding.controller.snapshot().active,false);assert.equal(next.contexts.length,0);
+});
+test('apagar el icono guardado antes del primer gesto no crea contexto ni reproduce después',async t=>{
+    const s=ui(t,{stored:'on'});s.button.emit('click');
+    assert.equal(s.attrs.get('aria-pressed'),'false');assert.equal(s.icons['.snd-on'],true);
+    assert.equal(s.attrs.get('aria-label'),'Activar sonidos');assert.deepEqual(s.writes.at(-1),['rp-sonido','off']);
+    s.doc.emit('click',{target:{closest:selector=>selector==='#sound-toggle'?null:true}});await tick();
+    assert.equal(s.contexts.length,0);assert.equal(s.binding.controller.snapshot().enabled,false);
+});
+test('ocultar, interrumpir y reanudar mantienen el icono hasta apagarlo expresamente',async t=>{
+    const s=ui(t);s.button.emit('click');s.run();await tick();const c=s.contexts[0];
+    const selected=()=>{assert.equal(s.attrs.get('aria-pressed'),'true');assert.equal(s.icons['.snd-on'],false);assert.equal(s.attrs.get('aria-label'),'Desactivar sonidos');};
+    selected();s.doc.hidden=true;s.doc.emit('visibilitychange');selected();assert.equal(s.binding.controller.snapshot().active,false);
+    s.env.emit('pagehide');selected();s.doc.hidden=false;
+    const resume=()=>s.doc.emit('click',{target:{closest:selector=>selector==='#sound-toggle'?null:true}});
+    resume();selected();assert.equal(s.attrs.get('aria-busy'),'true');s.run(1);await tick();selected();assert.equal(s.binding.controller.snapshot().active,true);
+    c.emit('interrupted');selected();assert.equal(s.binding.controller.snapshot().active,false);
+    resume();selected();s.run(2);await tick();selected();
+    s.button.emit('click');assert.equal(s.attrs.get('aria-pressed'),'false');assert.equal(s.binding.controller.snapshot().active,false);
 });
