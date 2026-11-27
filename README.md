@@ -1,5 +1,9 @@
 # ReservaPistes 🏸
 
+<!-- RP_ENTRADA_PUBLICA -->
+**Abrir el proyecto:** [Reserva Pistes](https://reserva-pistes-inicio.onrender.com/).
+Esta entrada muestra la carga propia mientras arranca el servidor.
+
 Aplicación web para **reservar pistas deportivas** y **encontrar compañeros de juego** en la zona Sabadell–Terrassa–Barcelona. Proyecto del módulo **M0617 Programación asistida con IA** (AEA6 «Vibe Coding»), IES Sabadell.
 
 **Autores:** Denys Peresunko (@adminpam) y Joy Liliana Castro Valencia (@joyvalencia)

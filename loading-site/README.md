@@ -1,5 +1,7 @@
 # Entrada estática en Render
 
+**Entrada principal para compartir:** https://reserva-pistes-inicio.onrender.com/.
+
 Esta página es una entrada independiente para mostrar el cargador mientras el
 Web Service de Laravel despierta. No sustituye la página interna de Render al
 visitar directamente la URL del Web Service dormido. La entrada tendrá su propia
@@ -67,3 +69,28 @@ Fuentes oficiales revisadas el 19/11/2026:
 
 - https://render.com/docs/static-sites
 - https://render.com/docs/free
+
+
+## Protección de visitas posteriores — paquete 20
+
+Decisión de Denys, 27/11/2026: mantener la opción gratuita y compartir siempre la
+entrada estática. El acceso inicial directo al Web Service dormido conserva la
+pantalla de Render; no se presenta esa limitación como resuelta.
+
+La entrada acepta una ruta relativa en #next para volver a la página solicitada,
+con sus filtros y ancla. No acepta cambiar el origen a un sitio externo. El
+fragmento no se envía al servidor del Static Site.
+
+Después de visitar la aplicación se registra rp-gateway-sw.js, cuando el navegador
+lo permite. Las navegaciones GET conocidas comprueban /brand/ready sin cookies ni
+caché; si no responde con la imagen esperada, se abre la entrada estática. No se
+almacena HTML privado ni se interceptan o repiten POST, PATCH o DELETE.
+
+Cuando no hay worker propio activo, enlaces normales y búsquedas GET del sitio
+usan la entrada estática como respaldo. Se respetan pestañas nuevas, descargas y
+anclas de la misma página. La aplicación local no instala esta protección.
+
+No sustituye un proxy permanente, no ofrece modo offline y no protege una primera
+visita directa al servidor en un navegador que todavía no instaló el worker.
+Tampoco reemplaza las respuestas de las operaciones de escritura o de las APIs.
+Guía de comprobación: docs/29-entrada-estatica-y-recargas.md.

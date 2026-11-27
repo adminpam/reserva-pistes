@@ -73,7 +73,15 @@
         if (notice) { notice.hidden = false; notice.textContent = 'No se ha podido abrir la aplicación.'; }
         return;
     }
-    // El destino está fijado en el archivo, nunca se toma de parámetros de la URL.
+    // El origen está fijado en el archivo. El fragmento solo puede aportar una
+    // ruta local: conserva la página solicitada sin permitir redirecciones externas.
+    try {
+        const relative = new URLSearchParams((window.location.hash || '').slice(1)).get('next');
+        if (relative && relative.length <= 4096 && relative.startsWith('/') && !relative.startsWith('//') && !/[\\\u0000-\u001f\u007f]/.test(relative)) {
+            const next = new URL(relative, destination.origin);
+            if (next.origin === destination.origin && !next.username && !next.password) destination = next;
+        }
+    } catch { /* Fragmento inválido: abrir la portada configurada. */ }
     if (direct) direct.href = destination.href;
     let epoch = 0;
     let nextAttempt = 0;
@@ -185,6 +193,7 @@
         cancelProbe();
         window.cancelAnimationFrame(frame);
     });
+    window.addEventListener('pageshow', (event) => { if (event.persisted) start(); });
     // CSS reduce el movimiento; la comprobación del servidor sigue funcionando.
     if (reduced.matches) loader.classList.add('is-reduced');
     start();

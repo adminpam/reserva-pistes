@@ -53,6 +53,7 @@
     <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/password-visibility.js') }}"></script>
     <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/sounds.css') }}">
     <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/sounds.js') }}"></script>
+    <script type="module" src="{{ \App\Support\FrontendAsset::url('brand/gateway-navigation.js') }}"></script>
     @stack('styles')
 </head>
 <body @class(['rp-home-page' => request()->routeIs('home'), 'rp-app' => !request()->routeIs('login', 'register')])>
