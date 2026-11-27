@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {APP_ORIGIN,ENTRY_URL,gatewayFor,appIsReady} from '../../public/brand/gateway-policy.js';
-import {guardedNavigation,navigate} from '../../public/rp-gateway-sw.js';
+import {guardedNavigation,navigate,installShell,cleanShellCaches,SHELL_PATH,SHELL_DIGEST,CACHE_NAME,CACHE_PREFIX} from '../../public/rp-gateway-sw.js';
 import {mountGateway} from '../../public/brand/gateway-navigation.js';
 const svg='<svg xmlns="http://www.w3.org/2000/svg" width="2" height="2" viewBox="0 0 2 2"></svg>';
 const image=()=>new Response(svg,{headers:{'Content-Type':'image/svg+xml'}});
@@ -35,26 +35,37 @@ test('solo las navegaciones GET conocidas entran en el guardián',()=>{
     assert.equal(guardedNavigation(navigation()),true);
     for(const extra of [{method:'POST'},{method:'PATCH'},{method:'DELETE'},{mode:'cors'},{url:APP_ORIGIN+'/api/clubs'},{url:'https://externo.test/profile'}])assert.equal(guardedNavigation(navigation('/profile',extra)),false);
 });
-test('si el servidor duerme redirige sin solicitar HTML de la página privada',async()=>{
-    let calls=0;const response=await navigate(navigation('/profile'),{ready:async()=>false,fetcher:async()=>{calls++;return new Response('privado');}});
+class CacheStore {
+    constructor(){this.stores=new Map();this.puts=[];this.deleted=[];}
+    async open(name){if(!this.stores.has(name))this.stores.set(name,new Map());const store=this.stores.get(name);return {put:async(key,response)=>{this.puts.push([name,key]);store.set(key,response.clone());},match:async key=>store.get(key)?.clone()};}
+    async keys(){return [...this.stores.keys()];}
+    async delete(name){this.deleted.push(name);return this.stores.delete(name);}
+}
+async function shellCache(){const cacheStorage=new CacheStore(),cache=await cacheStorage.open(CACHE_NAME);await cache.put(APP_ORIGIN+SHELL_PATH,new Response('escena pública',{headers:{'Content-Type':'text/html','X-RP-Public-Loader':SHELL_DIGEST}}));return cacheStorage;}
+test('la escena aparece sin consultar el servidor ni esperar el timeout anterior',async()=>{
+    const cacheStorage=await shellCache();let calls=0;
+    const response=await navigate(navigation('/profile'),{cacheStorage,fetcher:()=>{calls++;return new Promise(()=>{});}});
+    assert.equal(await response.text(),'escena pública');assert.equal(calls,0);assert.match(response.headers.get('Cache-Control'),/no-store/);
+});
+test('sin escena instalada se usa la entrada estática sin una espera previa',async()=>{
+    let calls=0;const response=await navigate(navigation('/profile'),{cacheStorage:new CacheStore(),fetcher:async()=>{calls++;return new Response('privado');}});
     assert.equal(response.status,302);assert.equal(new URL(response.headers.get('Location')).origin,new URL(ENTRY_URL).origin);assert.equal(calls,0);
 });
-test('si está preparado pasa una sola vez la petición original y su respuesta',async()=>{
-    const request=navigation(),expected=new Response('privado'),seen=[];
-    const response=await navigate(request,{ready:async()=>true,fetcher:async r=>{seen.push(r);return expected;}});
-    assert.equal(response,expected);assert.deepEqual(seen,[request]);
+test('después de ready pasa una vez la petición original y nunca guarda su respuesta',async()=>{
+    const request=navigation('/profile?rp_ready=1'),expected=new Response('privado'),cacheStorage=await shellCache(),seen=[];
+    const response=await navigate(request,{cacheStorage,fetcher:async r=>{seen.push(r);return expected;}});
+    assert.equal(response,expected);assert.deepEqual(seen,[request]);assert.equal(cacheStorage.puts.length,1);assert.equal(guardedNavigation(request),false);
 });
-test('un error de Laravel se conserva y no genera bucles de carga',async()=>{
+test('un error real de Laravel después de ready se conserva sin bucles',async()=>{
     const expected=new Response('Error propio de Laravel',{status:503});
-    assert.equal(await navigate(navigation(),{ready:async()=>true,fetcher:async()=>expected}),expected);
+    assert.equal(await navigate(navigation('/profile?rp_ready=1'),{fetcher:async()=>expected}),expected);
 });
 test('POST se conserva sin comprobación ni repetición del cuerpo',async()=>{
-    const request=navigation('/bookings',{method:'POST'}),expected=new Response('enviado');let checks=0,calls=0;
-    assert.equal(await navigate(request,{ready:async()=>{checks++;return false;},fetcher:async r=>{assert.equal(r,request);calls++;return expected;}}),expected);
-    assert.equal(calls,1);assert.equal(checks,0);
+    const request=navigation('/bookings',{method:'POST'}),expected=new Response('enviado');let calls=0;
+    assert.equal(await navigate(request,{cacheStorage:{open(){throw Error('No acceder al caché');}},fetcher:async r=>{assert.equal(r,request);calls++;return expected;}}),expected);assert.equal(calls,1);
 });
-test('un fallo de conexión en una navegación ofrece la entrada como continuación',async()=>{
-    const response=await navigate(navigation(),{ready:async()=>true,fetcher:async()=>{throw Error('red');}});assert.equal(response.status,302);
+test('si el navegador rechaza el caché se ofrece la entrada estática',async()=>{
+    const response=await navigate(navigation(),{cacheStorage:{async open(){throw Error('Sin espacio');}}});assert.equal(response.status,302);
 });
 
 class Events {
@@ -66,7 +77,7 @@ class Events {
 function fixture({workers=false,foreign=false,local=false}={}) {
     const doc=new Events(),redirects=[],registrations=[];
     const env={location:{origin:local?'http://127.0.0.1:8000':APP_ORIGIN,pathname:'/',search:'',href:(local?'http://127.0.0.1:8000':APP_ORIGIN)+'/',assign:url=>redirects.push(url)},navigator:{},FormData:class{constructor(form){return form.values||[];}}};
-    const worker={scriptURL:APP_ORIGIN+'/rp-gateway-sw.js'};
+    const worker={scriptURL:APP_ORIGIN+'/rp-gateway-sw.js?loader=20a'};
     if(workers)env.navigator.serviceWorker={controller:worker,getRegistration:async()=>foreign?{active:{scriptURL:APP_ORIGIN+'/other-sw.js'}}:null,register:async(...args)=>{registrations.push(args);return {active:worker};}};
     const link=(href,extra={})=>({href,target:'',hasAttribute:()=>false,...extra});
     const click=(href,extra={})=>doc.emit('click',{target:{closest:()=>link(href)},...extra});
@@ -88,7 +99,7 @@ test('el formulario GET conserva campos repetidos y no altera formularios POST',
     s.doc.emit('submit',{target:{...form,method:'post'}});assert.equal(s.redirects.length,1);binding.destroy();
 });
 test('con worker propio controla recargas y conserva la navegación nativa',async()=>{
-    const s=fixture({workers:true}),binding=mountGateway(s.doc,s.env);assert.equal(await binding.ready,true);s.click(APP_ORIGIN+'/profile');assert.deepEqual(s.redirects,[]);assert.deepEqual(s.registrations[0],['/rp-gateway-sw.js',{scope:'/',type:'module',updateViaCache:'none'}]);binding.destroy();
+    const s=fixture({workers:true}),binding=mountGateway(s.doc,s.env);assert.equal(await binding.ready,true);s.click(APP_ORIGIN+'/profile');assert.deepEqual(s.redirects,[]);assert.deepEqual(s.registrations[0],['/rp-gateway-sw.js?loader=20a',{scope:'/',type:'module',updateViaCache:'none'}]);binding.destroy();
 });
 test('no reemplaza otro worker ni registra la protección en desarrollo local',async()=>{
     const s=fixture({workers:true,foreign:true}),binding=mountGateway(s.doc,s.env);assert.equal(await binding.ready,false);assert.equal(s.registrations.length,0);binding.destroy();
@@ -96,4 +107,26 @@ test('no reemplaza otro worker ni registra la protección en desarrollo local',a
 });
 test('montar dos veces no duplica listeners y destruir los libera',async()=>{
     const s=fixture(),binding=mountGateway(s.doc,s.env);assert.equal(mountGateway(s.doc,s.env),binding);assert.equal(s.doc.handlers.get('click').size,1);binding.destroy();assert.equal(s.doc.handlers.get('click').size,0);assert.equal(s.doc.handlers.get('submit').size,0);
+});
+
+
+test('instalar descarga solo el HTML público y verifica su huella antes de guardarlo',async()=>{
+    const {readFile}=await import('node:fs/promises');const bytes=await readFile(new URL('../../public/brand/navigation-shell.html',import.meta.url)),cacheStorage=new CacheStore();let actual;
+    await installShell({cacheStorage,fetcher:async(...args)=>{actual=args;return new Response(bytes,{headers:{'Content-Type':'text/html','Set-Cookie':'ignorar=1'}});}});
+    assert.equal(new URL(actual[0]).pathname,SHELL_PATH);assert.equal(actual[1].credentials,'omit');assert.equal(actual[1].cache,'reload');assert.equal(actual[1].redirect,'error');
+    assert.deepEqual(cacheStorage.puts,[[CACHE_NAME,APP_ORIGIN+SHELL_PATH]]);
+    const cached=await (await cacheStorage.open(CACHE_NAME)).match(APP_ORIGIN+SHELL_PATH);assert.equal(cached.headers.has('Set-Cookie'),false);
+});
+test('HTML de cuenta, errores o una escena de otra versión no entran en el caché',async()=>{
+    for(const response of [new Response('cuenta privada',{headers:{'Content-Type':'text/html'}}),new Response('Render',{status:503}),new Response('script',{headers:{'Content-Type':'application/javascript'}})]) {
+        const cacheStorage=new CacheStore();await assert.rejects(installShell({cacheStorage,fetcher:async()=>response}));assert.deepEqual(cacheStorage.puts,[]);
+    }
+});
+test('limpiar versiones anteriores no toca otros cachés de la aplicación',async()=>{
+    const cacheStorage=new CacheStore();for(const name of [CACHE_PREFIX+'old',CACHE_NAME,'otra-aplicacion'])await cacheStorage.open(name);
+    await cleanShellCaches(cacheStorage);assert.deepEqual(cacheStorage.deleted,[CACHE_PREFIX+'old']);assert.deepEqual(await cacheStorage.keys(),[CACHE_NAME,'otra-aplicacion']);
+});
+test('un worker antiguo todavía activo usa el respaldo hasta completar la actualización',async()=>{
+    const s=fixture({workers:true});s.env.navigator.serviceWorker.controller={scriptURL:APP_ORIGIN+'/rp-gateway-sw.js'};
+    const binding=mountGateway(s.doc,s.env);await binding.ready;s.click(APP_ORIGIN+'/profile');assert.equal(s.redirects[0],gatewayFor(APP_ORIGIN+'/profile'));binding.destroy();
 });

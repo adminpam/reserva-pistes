@@ -8,7 +8,7 @@ export function mountGateway(doc=document, env=globalThis) {
     let disposed = false, ownWorker = false;
     const workers = env.navigator?.serviceWorker;
     const isOwn = worker => {try {return new URL(worker.scriptURL).origin === APP_ORIGIN && new URL(worker.scriptURL).pathname === '/rp-gateway-sw.js';} catch {return false;}};
-    const controlled = () => ownWorker && isOwn(workers?.controller);
+    const controlled = () => ownWorker && isOwn(workers?.controller) && new URL(workers.controller.scriptURL).searchParams.get('loader') === '20a';
     const sameDocument = url => url.pathname === env.location.pathname && url.search === env.location.search;
     const click = event => {
         if (controlled() || event.defaultPrevented || event.isTrusted === false || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -41,7 +41,7 @@ export function mountGateway(doc=document, env=globalThis) {
         try {
             const existing = await workers.getRegistration('/');
             if (disposed || existing && ![existing.active,existing.waiting,existing.installing].filter(Boolean).every(isOwn)) return false;
-            const registration = await workers.register('/rp-gateway-sw.js', {scope:'/', type:'module', updateViaCache:'none'});
+            const registration = await workers.register('/rp-gateway-sw.js?loader=20a', {scope:'/', type:'module', updateViaCache:'none'});
             if (!disposed) ownWorker = [registration.active,registration.waiting,registration.installing].filter(Boolean).some(isOwn);
             return ownWorker;
         } catch {return false;}

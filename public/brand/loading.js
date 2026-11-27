@@ -73,16 +73,24 @@
         if (notice) { notice.hidden = false; notice.textContent = 'No se ha podido abrir la aplicación.'; }
         return;
     }
-    // El origen está fijado en el archivo. El fragmento solo puede aportar una
-    // ruta local: conserva la página solicitada sin permitir redirecciones externas.
+    // Una escena entregada por el worker mantiene la URL real del documento.
+    // La entrada estática admite solo una ruta local en #next.
     try {
-        const relative = new URLSearchParams((window.location.hash || '').slice(1)).get('next');
-        if (relative && relative.length <= 4096 && relative.startsWith('/') && !relative.startsWith('//') && !/[\\\u0000-\u001f\u007f]/.test(relative)) {
-            const next = new URL(relative, destination.origin);
-            if (next.origin === destination.origin && !next.username && !next.password) destination = next;
+        if (loader.dataset.return === 'current') {
+            const current = new URL(window.location.href);
+            if (current.origin === destination.origin && !current.pathname.startsWith('/brand/')) destination = current;
+            destination.searchParams.delete('rp_ready');
+        } else {
+            const relative = new URLSearchParams((window.location.hash || '').slice(1)).get('next');
+            if (relative && relative.length <= 4096 && relative.startsWith('/') && !relative.startsWith('//') && !/[\\\u0000-\u001f\u007f]/.test(relative)) {
+                const next = new URL(relative, destination.origin);
+                if (next.origin === destination.origin && !next.username && !next.password) destination = next;
+            }
         }
-    } catch { /* Fragmento inválido: abrir la portada configurada. */ }
-    if (direct) direct.href = destination.href;
+    } catch { /* Dirección inválida: abrir la portada configurada. */ }
+    if (direct) {
+        const manual = new URL(destination.href);manual.searchParams.set('rp_ready','1');direct.href = manual.href;
+    }
     let epoch = 0;
     let nextAttempt = 0;
     let activeProbe = null;

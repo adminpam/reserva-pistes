@@ -27,7 +27,7 @@ function setup(mode, options = {}) {
     const clicks = new Map();
     nodes.retry.addEventListener = (name, callback) => clicks.set(name, callback);
     const loader = { ...element(), hidden: false,
-        dataset: { mode, destination: options.destination || 'https://reserva-pistes.onrender.com/' },
+        dataset: { mode, return:options.current?'current':undefined, destination: options.destination || 'https://reserva-pistes.onrender.com/' },
         querySelector: (selector) => nodes[selector.slice(9, -1)] };
     const root = { classList: classList() };
     root.classList.add('rp-loading');
@@ -46,7 +46,7 @@ function setup(mode, options = {}) {
         cancelAnimationFrame: (id) => timers.delete(id),
         matchMedia: () => ({ matches: !!options.reduced }),
         addEventListener: (name, callback) => listeners.set(name, callback),
-        location: { hash:options.hash || '', replace: (url) => redirects.push(url) },
+        location: { href:options.href || 'https://reserva-pistes-inicio.onrender.com/', hash:options.hash || '', replace: (url) => redirects.push(url) },
     };
     class FakeImage {
         constructor() { images.push(this); }
@@ -173,4 +173,18 @@ test('un fragmento externo, protocol-relative o con barras inversas no cambia el
 });
 test('volver desde la caché del navegador reinicia una comprobación cancelada', async () => {
     const s=setup('gateway');s.listeners.get('pagehide')();s.listeners.get('pageshow')({persisted:true});assert.equal(s.images.length,2);await s.respond();assert.equal(s.redirects.length,1);
+});
+
+
+test('la escena local conserva la URL completa y continúa una vez con rp_ready', async () => {
+    const s=setup('gateway',{current:true,href:'https://reserva-pistes.onrender.com/clubs/7?date=2026-11-28&sports%5B0%5D=padel#court-9'});
+    assert.equal(s.redirects.length,0);await s.respond();
+    const target=new URL(s.redirects[0]);assert.equal(target.pathname,'/clubs/7');assert.equal(target.searchParams.get('date'),'2026-11-28');assert.equal(target.hash,'#court-9');assert.equal(target.searchParams.get('rp_ready'),'1');
+});
+test('el enlace manual omite otra escena incluso si el servidor aún no respondió',()=>{
+    const s=setup('gateway',{current:true,href:'https://reserva-pistes.onrender.com/profile'});
+    assert.equal(s.nodes.direct.href,'https://reserva-pistes.onrender.com/profile?rp_ready=1');assert.equal(s.redirects.length,0);
+});
+test('abrir el HTML público directamente continúa hacia la portada sin bucles',async()=>{
+    const s=setup('gateway',{current:true,href:'https://reserva-pistes.onrender.com/brand/navigation-shell.html'});await s.respond();assert.equal(s.redirects[0],'https://reserva-pistes.onrender.com/?rp_ready=1');
 });
