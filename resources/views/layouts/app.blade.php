@@ -51,6 +51,8 @@
     @endif
     <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/comfort.css') }}">
     <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/password-visibility.js') }}"></script>
+    <link rel="stylesheet" href="{{ \App\Support\FrontendAsset::url('ui/sounds.css') }}">
+    <script type="module" src="{{ \App\Support\FrontendAsset::url('ui/sounds.js') }}"></script>
     @stack('styles')
 </head>
 <body @class(['rp-home-page' => request()->routeIs('home'), 'rp-app' => !request()->routeIs('login', 'register')])>
@@ -69,17 +71,18 @@
     </nav>
 
     <div class="header-actions">
-        <button type="button" id="sound-toggle" class="icon-btn"
+        <button type="button" id="sound-toggle" class="icon-btn" hidden aria-describedby="sound-status"
                 title="Sonidos de la interfaz" aria-pressed="false" aria-label="Activar sonidos">
-            <svg class="snd-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="snd-off" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m23 9-6 6M17 9l6 6"/>
             </svg>
-            <svg class="snd-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden>
+            <svg class="snd-on" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" hidden>
                 <path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
             </svg>
         </button>
 
-        <div class="divider"></div>
+        <span id="sound-status" class="rp-sound-status" role="status" aria-live="polite" hidden></span>
+        <div class="divider" data-sound-divider hidden></div>
 
         @auth
             <a class="user-chip" aria-label="Mi perfil" href="{{ route('profile.edit') }}">
