@@ -1,6 +1,7 @@
 import test from 'node:test';
+import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
-import {formIdentity, fieldMessage, collectIssues, fieldsForError, chooseServerForm, enhanceValidation} from '../../public/ui/form-validation.js';
+import {hasEmailDomainExtension, formIdentity, fieldMessage, collectIssues, fieldsForError, chooseServerForm, enhanceValidation} from '../../public/ui/form-validation.js';
 
 // El adaptador DOM permite comprobar ámbito, eventos y accesibilidad sin dependencias.
 // Las flags de ValidityState se suministran explícitamente: no simula un navegador.
@@ -142,4 +143,22 @@ test('el error queda fuera del contenedor del icono para no desplazar el ojo',()
     const f=form([]);f.elements.push(password);password.form=f;f.append(outer);outer.append(icon);icon.append(wrapper);wrapper.append(password);
     const {doc}=documentOf([f]);const binding=enhanceValidation(doc);doc.emit('submit',f);
     const error=binding.states.get(f).nodes[0];assert.equal(error.parent,outer);assert.equal(icon.children.length,1);
+});
+
+test('el registro exige dominio con extensión usando la misma tabla que el servidor',()=>{
+    const examples=JSON.parse(readFileSync(new URL('../Fixtures/registration-email-domains.json',import.meta.url),'utf8'));
+    for(const email of examples.valid) assert.equal(hasEmailDomainExtension(email),true,email);
+    for(const email of examples.invalid) assert.equal(hasEmailDomainExtension(email),false,email);
+    assert.equal(hasEmailDomainExtension('cuenta@example.test\n'),false);
+});
+test('el dominio sin extensión produce una corrección clara solo al registrar una cuenta',()=>{
+    const email=input('email','david@reservapistes',{type:'email'}),confirmation=input('password_confirmation','');
+    assert.match(errorMessage(email,[email,confirmation]),/dominio y extensión/);
+    email.value='david@reservapistes.test';assert.equal(errorMessage(email,[email,confirmation]),'');
+    email.value='david@reservapistes';assert.equal(errorMessage(email,[email]),'');
+});
+test('al pulsar enviar no aparece un error de blur que desplace el botón antes del clic',()=>{
+    const n=input('name','',{required:true}),f=form([n]),{doc}=documentOf([f]);const b=enhanceValidation(doc);
+    doc.emit('focusout',n,{relatedTarget:{form:f,type:'submit'}});assert.equal(b.states.get(f).summary.hidden,true);
+    const event=doc.emit('submit',f);assert.equal(event.defaultPrevented,true);assert.equal(n.focused,true);
 });

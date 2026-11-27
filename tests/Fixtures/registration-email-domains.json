@@ -1,0 +1,26 @@
+{
+  "valid": [
+    "david@reservapistes.test",
+    "jugador@example.com",
+    "jugadora@example.es",
+    "cuenta@sub.club.co.uk",
+    "usuario+partido@club.cat",
+    "CUENTA@EXAMPLE.COM",
+    "cuenta@pista-2.example.test",
+    "cuenta@club.xn--p1ai"
+  ],
+  "invalid": [
+    "david@reservapistes",
+    "cuenta@localhost",
+    "cuenta@example.",
+    "cuenta@.test",
+    "cuenta@example..test",
+    "cuenta@-club.test",
+    "cuenta@club-.test",
+    "cuenta@club.123",
+    "cuenta@club.c",
+    "cuenta@[127.0.0.1]",
+    "cuenta@example test.com",
+    "sin-arroba"
+  ]
+}

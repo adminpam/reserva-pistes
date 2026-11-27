@@ -9,6 +9,13 @@ const dotted = name => name.replace(/\[([^\]]*)\]/g, '.$1').replace(/\.$/, '');
 const labels = {email:'correo electrónico', name:'nombre', password:'contraseña', password_confirmation:'confirmación de contraseña', current_password:'contraseña actual', price_euros:'precio por hora', open_hour:'hora de apertura', close_hour:'hora de cierre', min_level:'nivel mínimo', max_level:'nivel máximo', date:'fecha', hour:'hora', sport_id:'deporte', club_id:'club', q:'búsqueda', club:'club', 'payment[holder]':'titular de prueba', 'payment[number]':'número de tarjeta de prueba', 'payment[expiry]':'caducidad de prueba', 'payment[cvc]':'código de prueba'};
 const label = field => labels[field.name] || field.getAttribute('aria-label') || field.labels?.[0]?.textContent?.trim().toLocaleLowerCase('es') || 'dato';
 
+export function hasEmailDomainExtension(value) {
+    if (typeof value !== 'string' || !value.includes('@')) return false;
+    const domain = value.slice(value.lastIndexOf('@') + 1);
+    if (/\s/u.test(domain)) return false;
+    return /^(?:[\p{L}\p{N}](?:[\p{L}\p{N}-]{0,61}[\p{L}\p{N}])?\.)+(?:\p{L}{2,63}|xn--[a-z0-9-]{2,59})$/iu.test(domain);
+}
+
 export function formIdentity(form) {
     // Solo ruta, método y pista: nunca contraseñas, tarjetas ni tokens CSRF.
     const method = text(named(form, '_method')) || form.method || 'get';
@@ -22,6 +29,7 @@ export function fieldMessage(field, form) {
         return field.name === 'hour' ? 'Elige una hora disponible.' : field.type === 'radio' ? `Elige una opción para ${title}.` : `Completa el campo ${title}.`;
     }
     if (validity.typeMismatch) return field.type === 'email' ? 'Introduce un correo electrónico válido.' : `Revisa el formato de ${title}.`;
+    if (field.name === 'email' && value && named(form, 'password_confirmation') && !hasEmailDomainExtension(value.trim())) return 'Introduce un correo con dominio y extensión, por ejemplo nombre@dominio.com.';
     if (validity.rangeUnderflow) return `El campo ${title} debe ser como mínimo ${field.min}.`;
     if (validity.rangeOverflow) return `El campo ${title} no puede superar ${field.max}.`;
     if (validity.stepMismatch) return field.name === 'price_euros' ? 'El precio admite como máximo dos decimales.' : `Introduce un valor válido en ${title}.`;
@@ -155,6 +163,8 @@ export function enhanceValidation(doc = document) {
     const edit = event => {
         const field = event.target, form = field.form, state = states.get(form);
         if (!state || !field.name || field.type === 'hidden') return;
+        // No desplazar el botón entre mousedown y mouseup al mostrar un error de blur.
+        if (event.type === 'focusout' && event.relatedTarget?.form === form && ['submit','image'].includes(event.relatedTarget.type)) return;
         if (event.type === 'focusout') state.touched.add(field.name);
         const related = ['password','password_confirmation'].includes(field.name) ? ['password','password_confirmation'] : ['open_hour','close_hour'].includes(field.name) ? ['open_hour','close_hour'] : ['min_level','max_level','is_open'].includes(field.name) ? ['min_level','max_level','is_open'] : [field.name];
         for (const key of [...state.server.keys()]) if (related.some(name => key === dotted(name) || dotted(name).startsWith(key + '.'))) state.server.delete(key);
