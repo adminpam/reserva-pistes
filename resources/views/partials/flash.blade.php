@@ -1,4 +1,4 @@
-{{-- Mensajes del servidor. data-sound le dice a app.js que tono reproducir. --}}
+{{-- Mensajes del servidor: los avisos visuales no dependen del sonido opcional. --}}
 @if(session('ok'))
     <div class="flash flash-ok" data-sound="ok" role="status">{{ session('ok') }}</div>
 @endif

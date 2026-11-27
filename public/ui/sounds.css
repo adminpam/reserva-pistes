@@ -1,0 +1,6 @@
+#sound-toggle[hidden], [data-sound-divider][hidden], .rp-sound-status[hidden] { display:none!important; }
+#sound-toggle[aria-busy=true] { outline:2px solid #ffbd46; outline-offset:2px; }
+#sound-toggle[aria-pressed=true] { color:#ffd16a; }
+.rp-sound-status { position:fixed; z-index:10000; top:88px; right:18px; width:max-content; max-width:min(340px,calc(100vw - 36px)); margin:0; padding:13px 16px; border:1px solid #c7ded3; border-radius:12px; background:#fff; color:#164d3d; box-shadow:0 8px 24px #00382e18; font-size:13px; line-height:1.5; white-space:normal; overflow-wrap:anywhere; pointer-events:none; }
+.rp-sound-status[data-kind=error] { border-color:#e3b8af; background:#fff7f3; color:#843b2d; }
+@media(max-width:600px) { .rp-sound-status { top:76px; right:12px; max-width:calc(100vw - 24px); } }
